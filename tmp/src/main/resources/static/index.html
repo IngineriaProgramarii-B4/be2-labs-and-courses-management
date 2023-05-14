@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JWT Auth Example</title>
+    <style>
+    form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    label {
+        display: inline-block;
+        width: 100px;
+        text-align: right;
+        margin-right: 10px;
+    }
+
+    input {
+        flex: 1;
+        margin-bottom: 10px;
+    }
+</style>
+</head>
+<body>
+<div style="text-align:center;">
+<h1>Login</h1>
+<form id="login-form">
+    <div style="display: flex; align-items: center; justify-content: center;">
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+    </div>
+    <div style="display: flex; align-items: center; justify-content: center;">
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+    </div>
+    <button type="submit">Login</button>
+</form>
+<h1>Register</h1>
+<form id="register-form">
+    <div style="display: flex; align-items: center; justify-content: center;">
+        <label for="userId">User ID:</label>
+        <input type="text" id="userId" name="userId" required>
+    </div>
+    <div style="display: flex; align-items: center; justify-content: center;">
+        <label for="registerEmail">Email:</label>
+        <input type="email" id="registerEmail" name="email" required>
+    </div>
+    <div style="display: flex; align-items: center; justify-content: center;">
+        <label for="registerPassword">Password:</label>
+        <input type="password" id="registerPassword" name="password" required>
+    </div>
+    <button type="submit">Register</button>
+</form>
+
+<button onclick="callProtectedAPI('student')">Call Student API</button>
+<button onclick="callProtectedAPI('teacher')">Call Teacher API</button>
+</div>
+<script>
+
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            const response = await fetch(`/api/v1/auth/login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email, password })
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                localStorage.setItem('jwtToken', data.accessToken);
+                alert('Login success! Token saved in localStorage.');
+            } else {
+                alert('Error logging in.');
+            }
+        });
+
+        document.getElementById('register-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const userId = document.getElementById('userId').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+
+            const response = await fetch(`/api/v1/auth/register`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ userId, email, password })
+            });
+
+            if (response.ok) {
+                alert('User registered successfully!');
+            } else {
+                alert('Error registering user.');
+            }
+        });
+        async function callProtectedAPI(endpoint) {
+    const token = localStorage.getItem('jwtToken');
+
+    if (!token) {
+        alert('No JWT token found. Please log in first.');
+        return;
+    }
+
+    const response = await fetch(`http://localhost:8082/api/v1/demo-controller/${endpoint}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+    });
+
+    if (response.ok) {
+        const data = await response.text();
+        console.log(`Protected API response (${endpoint}):`, data);
+    } else {
+        alert(`Error calling protected API (${endpoint}).`);
+    }
+}
+
+    </script>
+    </script>
+</body>
+</html>
