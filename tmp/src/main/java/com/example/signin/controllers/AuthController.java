@@ -1,7 +1,9 @@
 package com.example.signin.controllers;
 
+import com.example.security.objects.Admin;
 import com.example.security.objects.Student;
 import com.example.security.objects.Teacher;
+import com.example.security.repositories.AdminsRepository;
 import com.example.security.repositories.StudentsRepository;
 import com.example.security.repositories.TeachersRepository;
 import com.example.signin.dto.*;
@@ -41,13 +43,15 @@ public class AuthController {
     private final EmailService emailService;
     private final StudentService studentService;
     private final TeacherService teacherService;
+    private final AdminService adminService;
     private final CredentialsRepository credentialsRepository;
     private final CredentialsService credentialsService;
     private final StudentsRepository studentsRepository;
+    private final AdminsRepository adminsRepository;
 
 
     @Autowired
-    public AuthController(AuthenticationManager authenticationManager, RoleRepository roleRepository, TeachersRepository teachersRepository, PasswordEncoder passwordEncoder, JWTGenerator jwtGenerator, EmailService emailService, StudentService studentService, TeacherService teacherService, CredentialsRepository credentialsRepository, CredentialsService credentialsService, StudentsRepository studentsRepository) {
+    public AuthController(AuthenticationManager authenticationManager, RoleRepository roleRepository, TeachersRepository teachersRepository, PasswordEncoder passwordEncoder, JWTGenerator jwtGenerator, EmailService emailService, StudentService studentService, TeacherService teacherService, AdminService adminService, CredentialsRepository credentialsRepository, CredentialsService credentialsService, StudentsRepository studentsRepository, AdminsRepository adminsRepository) {
         this.authenticationManager = authenticationManager;
         this.teachersRepository = teachersRepository;
         this.passwordEncoder = passwordEncoder;
@@ -55,9 +59,11 @@ public class AuthController {
         this.emailService = emailService;
         this.studentService = studentService;
         this.teacherService = teacherService;
+        this.adminService = adminService;
         this.credentialsRepository = credentialsRepository;
         this.credentialsService = credentialsService;
         this.studentsRepository = studentsRepository;
+        this.adminsRepository = adminsRepository;
     }
 
     @PostMapping("/login")
@@ -95,11 +101,20 @@ public class AuthController {
                     List<Role> roles = credentials.getRoles();
                     int role =  roles.get(0).getId();
                     System.out.println(role);
+                    if(role == 1){
+                        Admin adminAuth = new Admin();
+                        adminAuth.setRegistrationNumber(credentials.getUserId());
+                        adminAuth.setEmail(credentials.getEmail());
+                        adminAuth.setPassword(credentials.getPassword());
+                        adminsRepository.save(adminAuth);
+                    }
                      if(role == 2){
                         Teacher teacherAuth = new Teacher();
                         teacherAuth.setRegistrationNumber(credentials.getUserId());
                         teacherAuth.setEmail(credentials.getEmail());
                         teacherAuth.setPassword(credentials.getPassword());
+                        teacherAuth.setFirstname(credentials.getFirstname());
+                        teacherAuth.setLastname(credentials.getLastname());
                         teachersRepository.save(teacherAuth);
                     }
                     else if(role == 3){
@@ -107,6 +122,8 @@ public class AuthController {
                         studentAuth.setRegistrationNumber(credentials.getUserId());
                         studentAuth.setEmail(credentials.getEmail());
                         studentAuth.setPassword(credentials.getPassword());
+                        studentAuth.setFirstname(credentials.getFirstname());
+                        studentAuth.setLastname(credentials.getLastname());
                         studentsRepository.save(studentAuth);
                     }
 
@@ -170,6 +187,12 @@ public class AuthController {
             credentialsService.resetPassword(theUser, passwordResetRequest.getNewPassword());
             List<Role> roles = theUser.getRoles();
             int role =  roles.get(0).getId();
+            if(role == 1){
+                Admin updatedAdminAuth = adminService.getAdminByRegistrationNumber(theUser.getUserId());
+                updatedAdminAuth.setPassword(theUser.getPassword());
+                adminService.addAdmin(updatedAdminAuth);
+
+            }
             if(role == 2){
                 Teacher updatedTeacherAuth = teacherService.getTeacherByRegistrationNumber(theUser.getUserId());
                 updatedTeacherAuth.setPassword(theUser.getPassword());
