@@ -20,6 +20,7 @@ import static org.springframework.http.HttpStatus.*;
 
 @RestController
 @RequestMapping(path = "api/v1/subjects")
+@CrossOrigin(origins = "http://localhost:3000")
 public class SubjectController {
     
     private static final String SUBJECT_ERROR = "Subject not found";

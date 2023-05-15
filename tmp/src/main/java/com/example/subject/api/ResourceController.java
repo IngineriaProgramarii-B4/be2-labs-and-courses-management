@@ -22,6 +22,7 @@ import static org.springframework.http.HttpStatus.*;
 
 @RestController
 @RequestMapping("api/v1/subjects/{subjectTitle}/components/{componentType}/resources")
+@CrossOrigin(origins = "http://localhost:3000")
 public class ResourceController {
     
     private static final String SUBJECT_ERROR = "Subject not found";

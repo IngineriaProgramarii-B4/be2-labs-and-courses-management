@@ -14,6 +14,7 @@ import static org.springframework.http.HttpStatus.*;
 
 @RestController
 @RequestMapping("api/v1/subjects/{subjectTitle}/components")
+@CrossOrigin(origins = "http://localhost:3000")
 public class ComponentController {
 
     private static final String SUBJECT_ERROR = "Subject not found";
