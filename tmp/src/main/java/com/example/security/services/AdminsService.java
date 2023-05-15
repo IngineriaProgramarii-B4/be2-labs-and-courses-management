@@ -11,7 +11,6 @@ import java.util.*;
 @Service
 public class AdminsService {
     private final AdminsRepository adminsRepository;
-    private List<Admin> admins = new ArrayList<>();
 
     public AdminsService(AdminsRepository adminsRepository) {
         this.adminsRepository = adminsRepository;
@@ -31,10 +30,6 @@ public class AdminsService {
         }
 
         return adminsRepository.findAdminsByParams(id, firstname, lastname, email, username, office, department);
-    }
-
-    public void updateAdmins() {
-        admins = adminsRepository.findAll();
     }
 
     public void saveAdmin(Admin admin) {

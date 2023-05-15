@@ -31,15 +31,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/v1/auth")
 public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final TeachersRepository teachersRepository;
-
     private final PasswordEncoder passwordEncoder;
     private final JWTGenerator jwtGenerator;
-
     private final EmailService emailService;
     private final StudentService studentService;
     private final TeacherService teacherService;
@@ -77,7 +76,7 @@ public class AuthController {
         if(credentials !=null && !credentials.getRoles().isEmpty()){
             roles = credentials.getRoles();
         }
-        String token = jwtGenerator.generateToken(authentication,roles);
+        String token = jwtGenerator.generateToken(authentication, roles);
         return new ResponseEntity<>(new AuthResponseDto(token), HttpStatus.OK);
     }
 
@@ -106,6 +105,7 @@ public class AuthController {
                         adminAuth.setRegistrationNumber(credentials.getUserId());
                         adminAuth.setEmail(credentials.getEmail());
                         adminAuth.setPassword(credentials.getPassword());
+                        adminAuth.setUsername(credentials.getEmail().substring(0, credentials.getEmail().indexOf('@')));
                         adminsRepository.save(adminAuth);
                     }
                      if(role == 2){
@@ -113,6 +113,7 @@ public class AuthController {
                         teacherAuth.setRegistrationNumber(credentials.getUserId());
                         teacherAuth.setEmail(credentials.getEmail());
                         teacherAuth.setPassword(credentials.getPassword());
+                        teacherAuth.setUsername(credentials.getEmail().substring(0, credentials.getEmail().indexOf('@')));
                         teacherAuth.setFirstname(credentials.getFirstname());
                         teacherAuth.setLastname(credentials.getLastname());
                         teachersRepository.save(teacherAuth);
@@ -122,6 +123,7 @@ public class AuthController {
                         studentAuth.setRegistrationNumber(credentials.getUserId());
                         studentAuth.setEmail(credentials.getEmail());
                         studentAuth.setPassword(credentials.getPassword());
+                        studentAuth.setUsername(credentials.getEmail().substring(0, credentials.getEmail().indexOf('@')));
                         studentAuth.setFirstname(credentials.getFirstname());
                         studentAuth.setLastname(credentials.getLastname());
                         studentsRepository.save(studentAuth);

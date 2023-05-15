@@ -15,9 +15,9 @@ import java.util.UUID;
 @Table(name = "users")
 @Inheritance(strategy = InheritanceType.JOINED)
 public class User extends DBObject {
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.UUID)
-//    protected UUID id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    protected UUID id;
     protected String firstname;
     protected String lastname;
     @Email
@@ -27,17 +27,7 @@ public class User extends DBObject {
     @Pattern(regexp = "^(?=.*[!@#$%^&*()])(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$", message = "The password must contain at least 8 characters, at least one digit, at least one special symbol and at least one capital letter")
     protected String password;
 
-    @Id
     protected String registrationNumber;
-
-    /*
-     * 0 - admin
-     * 1 - teacher
-     * 2 - student
-     * */
-    @Min(value=0)
-    @Max(value=2)
-    protected int type;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "registrationNumber"),
@@ -48,33 +38,38 @@ public class User extends DBObject {
 
     }
 
+    protected User(UUID id, String firstname, String lastname, String email, String username) {
+        this.id = id;
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.email = email;
+        this.username = username;
+    }
 
+    protected User(UUID id, String firstname, String lastname, String email, String username, String registrationNumber) {
+        this.id = id;
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.email = email;
+        this.username = username;
+        this.registrationNumber = registrationNumber;
+    }
 
-//    protected User(UUID id, String firstname, String lastname, String email, String username, int type) {
-//        this.id = id;
-//        this.firstname = firstname;
-//        this.lastname = lastname;
-//        this.email = email;
-//        this.username = username;
-//        this.type = type;
-//    }
-
-    protected User(String firstname, String lastname, String email, String username, int type,String registrationNumber) {
+    protected User(String firstname, String lastname, String email, String username, String registrationNumber) {
         this.registrationNumber = registrationNumber;
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;
         this.username = username;
-        this.type = type;
     }
 
-//    public UUID getId() {
-//        return id;
-//    }
-//
-//    public void setId(UUID id) {
-//        this.id = id;
-//    }
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
 
     public String getFirstname() {
         return firstname;
@@ -108,14 +103,6 @@ public class User extends DBObject {
         this.username = username;
     }
 
-    public int getType() {
-        return type;
-    }
-
-    public void setType(int type) {
-        this.type = type;
-    }
-
     public List<Role> getRoles() {
         return roles;
     }
@@ -136,22 +123,27 @@ public class User extends DBObject {
         this.registrationNumber = registrationNumber;
     }
 
-
     @Override
-    public boolean equals(Object user) {
-
-        if (this == user)
-            return true;
-
-        if (user == null || getClass() != user.getClass())
-            return false;
-
-        User user1 = (User) user;
-        return type == user1.type && Objects.equals(firstname, user1.firstname) && Objects.equals(lastname, user1.lastname) && Objects.equals(email, user1.email) && Objects.equals(username, user1.username);
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", firstname='" + firstname + '\'' +
+                ", lastname='" + lastname + '\'' +
+                ", email='" + email + '\'' +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", registrationNumber='" + registrationNumber + '\'' +
+                ", roles=" + roles +
+                '}';
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(firstname, lastname, email, username, type);
+        return super.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
     }
 }

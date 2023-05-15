@@ -4,6 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
 
 import java.util.Date;
+import java.util.Objects;
 
 @MappedSuperclass
 public class DBObject {
@@ -23,7 +24,7 @@ public class DBObject {
         this.updatedAt = updatedAt;
     }
 
-    public DBObject setDeleted(boolean deleted) {
+    public DBObject setIsDeleted(boolean deleted) {
         isDeleted = deleted;
         return this;
     }
@@ -36,7 +37,29 @@ public class DBObject {
         return updatedAt;
     }
 
-    public boolean isDeleted() {
+    public boolean getIsDeleted() {
         return isDeleted;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DBObject dbObject = (DBObject) o;
+        return isDeleted == dbObject.isDeleted && Objects.equals(createdAt, dbObject.createdAt) && Objects.equals(updatedAt, dbObject.updatedAt);
+    }
+
+    @Override
+    public String toString() {
+        return "DBObject{" +
+                "createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                ", isDeleted=" + isDeleted +
+                '}';
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(createdAt, updatedAt, isDeleted);
     }
 }

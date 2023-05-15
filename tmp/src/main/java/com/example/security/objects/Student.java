@@ -2,10 +2,8 @@ package com.example.security.objects;
 
 import com.example.catalog.models.Grade;
 import com.example.security.objects.User;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import com.example.subject.model.Subject;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import org.hibernate.annotations.SQLDelete;
@@ -18,7 +16,13 @@ import java.util.*;
 @Where(clause = "deleted=false")
 @Table(name = "students")
 public class Student extends User {
-    private Set<String> enrolledCourses = new HashSet<>();
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "enrolled_courses",
+            joinColumns = @JoinColumn(name = "students_id"),
+            inverseJoinColumns = @JoinColumn(name = "courses_id")
+    )
+    private Set<Subject> enrolledCourses = new HashSet<>();
 //    @Min(value=1)
 //    @Max(value=3)
     private int year;
@@ -33,22 +37,21 @@ public class Student extends User {
     private List<Grade> grades = new ArrayList<>();
     // <--------------------------------------------------------------------------------> //
 
-//    public Student(UUID id,
-//                   String firstname,
-//                   String lastname,
-//                   String email,
-//                   String username,
-//                   int year,
-//                   int semester,
-//                   String registrationNumber,
-//                   Set<String> enrolledCourses) {
-//        super(id, firstname, lastname, email, username, 2);
-//        this.enrolledCourses = enrolledCourses;
-//        this.year = year;
-//        this.semester = semester;
-//        this.registrationNumber = registrationNumber;
-//    }
-
+    public Student(UUID id,
+                   String firstname,
+                   String lastname,
+                   String email,
+                   String username,
+                   int year,
+                   int semester,
+                   String registrationNumber,
+                   Set<Subject> enrolledCourses) {
+        super(id, firstname, lastname, email, username);
+        this.enrolledCourses = enrolledCourses;
+        this.year = year;
+        this.semester = semester;
+        this.registrationNumber = registrationNumber;
+    }
 
     public Student(String firstname,
                    String lastname,
@@ -57,8 +60,8 @@ public class Student extends User {
                    int year,
                    int semester,
                    String registrationNumber,
-                   Set<String> enrolledCourses) {
-        super(firstname, lastname, email, username, 2,registrationNumber);
+                   Set<Subject> enrolledCourses) {
+        super(firstname, lastname, email, username, registrationNumber);
         this.enrolledCourses = enrolledCourses;
         this.year = year;
         this.semester = semester;
@@ -69,12 +72,12 @@ public class Student extends User {
 
     }
 
-    public Set<String> getEnrolledCourses() {
-        return enrolledCourses;
+    public void setEnrolledCourses(Set<Subject> enrolledCourses) {
+        this.enrolledCourses = enrolledCourses;
     }
 
-    public void setEnrolledCourses(Set<String> enrolledCourses) {
-        this.enrolledCourses = enrolledCourses;
+    public Set<Subject> getEnrolledCourses() {
+        return enrolledCourses;
     }
 
     public int getYear() {
@@ -101,7 +104,7 @@ public class Student extends User {
         this.registrationNumber = registrationNumber;
     }
 
-    public void addEnrolledCourse(String course) {
+    public void addEnrolledCourse(Subject course) {
         enrolledCourses.add(course);
     }
 
@@ -115,16 +118,20 @@ public class Student extends User {
 
     @Override
     public String toString() {
-        return "Student_auth{" +
+        return "Student{" +
                 "enrolledCourses=" + enrolledCourses +
                 ", year=" + year +
                 ", semester=" + semester +
-                ", registrationNumber='" + registrationNumber + '\'' +
-                ", id="  +
+                ", grupa='" + grupa + '\'' +
+                ", maxGradeId=" + maxGradeId +
+                ", grades=" + grades +
+                ", id=" + id +
                 ", firstname='" + firstname + '\'' +
                 ", lastname='" + lastname + '\'' +
                 ", email='" + email + '\'' +
                 ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", registrationNumber='" + registrationNumber + '\'' +
                 '}';
     }
 

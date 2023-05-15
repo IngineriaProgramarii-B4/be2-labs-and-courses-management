@@ -62,6 +62,7 @@ public class UsersController {
         try {
             String email = jwtGenerator.getEmailFromJWT(finalToken);
             user = usersService.getUsersByParams(Map.of("email", email)).get(0);
+            System.out.println(user);
             return new ResponseEntity<>(user, HttpStatus.CREATED);
         } catch (RuntimeException e) {
             System.out.println("An error occurred at object mapping");
