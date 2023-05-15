@@ -31,7 +31,7 @@ public class StudentsService {
         String username = (String) params.get("username");
         int year = 0;
         int semester = 0;
-        long registrationNumber = parseLong((String) params.get("registrationNumber"));
+        String registrationNumber = (String) params.get("registrationNumber");
 
         final String idKey = "id";
         if (params.containsKey(idKey) && (!params.get(idKey).equals(""))) {
@@ -63,7 +63,7 @@ public class StudentsService {
         Student student = studentsRepository.findStudentById(id);
         if (student == null)
             return null;
-        return (Student) student.setDeleted(true);
+        return (Student) student.setIsDeleted(true);
     }
 
     @Transactional

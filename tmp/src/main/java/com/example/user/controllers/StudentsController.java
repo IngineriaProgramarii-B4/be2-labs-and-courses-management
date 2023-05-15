@@ -128,7 +128,7 @@ public class StudentsController {
         if (isRemoved.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        isRemoved.get().setDeleted(true);
+        isRemoved.get().setIsDeleted(true);
         return new ResponseEntity<>(isRemoved.get(), HttpStatus.OK);
     }
 

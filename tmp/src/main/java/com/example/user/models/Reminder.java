@@ -1,5 +1,6 @@
 package com.example.user.models;
 
+import com.example.security.objects.DBObject;
 import com.example.security.objects.Student;
 import jakarta.persistence.*;
 import org.hibernate.annotations.SQLDelete;
@@ -12,9 +13,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "reminders")
-@SQLDelete(sql = "UPDATE reminders SET deleted = true WHERE id=?")
-@Where(clause = "deleted=false")
-public class Reminder {
+public class Reminder extends DBObject {
     private UUID creatorId;
     private String creatorUsername;
     @Id
@@ -23,14 +22,13 @@ public class Reminder {
     private LocalDateTime dueDateTime;
     private String title;
     private String description;
-    private boolean deleted = Boolean.FALSE;
 
     public Reminder() {
 
     }
 
     public Reminder(Student student, UUID id, String dueDateTime, String title, String description) {
-//        this.creatorId = student.getId();
+        this.creatorId = student.getId();
         this.creatorUsername = student.getUsername();
         this.id = id;
         this.dueDateTime = LocalDateTime.parse(dueDateTime, DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"  ));
@@ -39,19 +37,11 @@ public class Reminder {
     }
 
     public Reminder(Student student, String dueDateTime, String title, String description) {
-//        this.creatorId = student.getId();
+        this.creatorId = student.getId();
         creatorUsername = student.getUsername();
         this.dueDateTime = LocalDateTime.parse(dueDateTime, DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"  ));
         this.title = title;
         this.description = description;
-    }
-
-    public boolean getDeleted() {
-        return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     public String getCreatorUsername() {
@@ -103,6 +93,15 @@ public class Reminder {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Reminder reminder = (Reminder) o;
+        return Objects.equals(creatorId, reminder.creatorId) && Objects.equals(creatorUsername, reminder.creatorUsername) && Objects.equals(id, reminder.id) && Objects.equals(dueDateTime, reminder.dueDateTime) && Objects.equals(title, reminder.title) && Objects.equals(description, reminder.description);
+    }
+
+    @Override
     public String toString() {
         return "Reminder{" +
                 "creatorId=" + creatorId +
@@ -111,26 +110,11 @@ public class Reminder {
                 ", dueDateTime=" + dueDateTime +
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
-                ", deleted=" + deleted +
                 '}';
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Reminder reminder = (Reminder) o;
-        return deleted == reminder.deleted &&
-                Objects.equals(creatorId, reminder.creatorId) &&
-                Objects.equals(creatorUsername, reminder.creatorUsername) &&
-                Objects.equals(id, reminder.id) &&
-                Objects.equals(dueDateTime, reminder.dueDateTime) &&
-                Objects.equals(title, reminder.title) &&
-                Objects.equals(description, reminder.description);
-    }
-
-    @Override
     public int hashCode() {
-        return Objects.hash(creatorId, creatorUsername, id, dueDateTime, title, description, deleted);
+        return super.hashCode();
     }
 }

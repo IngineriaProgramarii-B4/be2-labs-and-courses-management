@@ -14,13 +14,13 @@ public class Admin extends AcademicStaff {
 
     }
 
-//    public Admin(UUID id, String firstname, String lastname, String email, String username, String office, String department) {
-//        super(id, firstname, lastname, email, username, office, 0);
-//        this.department = department;
-//    }
+    public Admin(UUID id, String firstname, String lastname, String email, String username, String office, String department, String registrationNumber) {
+        super(id, firstname, lastname, email, username, office, registrationNumber);
+        this.department = department;
+    }
     public Admin(String firstname, String lastname, String email, String username, String office, String department,String registrationNumber) {
 
-        super(firstname, lastname, email, username, office, 0,registrationNumber);
+        super(firstname, lastname, email, username, office, registrationNumber);
         this.department = department;
     }
 
@@ -34,7 +34,17 @@ public class Admin extends AcademicStaff {
 
     @Override
     public String toString() {
-        return "Admin{" + "department='" + department + '\'' + ", office='" + office + '\'' + ", id=" + ", firstname='" + firstname + '\'' + ", lastname='" + lastname + '\'' + ", email='" + email + '\'' + ", username='" + username + '\'' + '}';
+        return "Admin{" +
+                "department='" + department + '\'' +
+                ", office='" + office + '\'' +
+                ", id=" + id +
+                ", firstname='" + firstname + '\'' +
+                ", lastname='" + lastname + '\'' +
+                ", email='" + email + '\'' +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", registrationNumber='" + registrationNumber + '\'' +
+                '}';
     }
 
     @Override

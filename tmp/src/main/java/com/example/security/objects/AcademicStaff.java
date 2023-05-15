@@ -12,13 +12,13 @@ public abstract class AcademicStaff extends User {
     protected AcademicStaff() {
 
     }
-//    protected AcademicStaff(UUID id, String firstname, String lastname, String email, String username, String office, int type) {
-//        super(id, firstname, lastname, email, username, type);
-//        this.office = office;
-//    }
+    protected AcademicStaff(UUID id, String firstname, String lastname, String email, String username, String office, String registrationNumber) {
+        super(id, firstname, lastname, email, username, registrationNumber);
+        this.office = office;
+    }
 
-    protected AcademicStaff(String firstname, String lastname, String email, String username, String office, int type,String registrationNumber) {
-        super(firstname, lastname, email, username, type,registrationNumber);
+    protected AcademicStaff(String firstname, String lastname, String email, String username, String office,  String registrationNumber) {
+        super(firstname, lastname, email, username, registrationNumber);
         this.office = office;
     }
 

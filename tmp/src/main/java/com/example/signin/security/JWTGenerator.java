@@ -1,6 +1,5 @@
 package com.example.signin.security;
 
-import com.example.security.objects.User;
 import com.example.signin.model.Credentials;
 import com.example.signin.model.Role;
 import io.jsonwebtoken.Claims;

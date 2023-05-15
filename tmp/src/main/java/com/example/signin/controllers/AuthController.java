@@ -29,15 +29,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/api/v1/auth")
 public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final TeachersRepository teachersRepository;
-
     private final PasswordEncoder passwordEncoder;
     private final JWTGenerator jwtGenerator;
-
     private final EmailService emailService;
     private final StudentService studentService;
     private final TeacherService teacherService;
@@ -71,7 +70,7 @@ public class AuthController {
         if(credentials !=null && !credentials.getRoles().isEmpty()){
             roles = credentials.getRoles();
         }
-        String token = jwtGenerator.generateToken(authentication,roles);
+        String token = jwtGenerator.generateToken(authentication, roles);
         return new ResponseEntity<>(new AuthResponseDto(token), HttpStatus.OK);
     }
 
@@ -94,7 +93,6 @@ public class AuthController {
 
                     List<Role> roles = credentials.getRoles();
                     int role =  roles.get(0).getId();
-                    System.out.println(role);
                      if(role == 2){
                         Teacher teacherAuth = new Teacher();
                         teacherAuth.setRegistrationNumber(credentials.getUserId());
