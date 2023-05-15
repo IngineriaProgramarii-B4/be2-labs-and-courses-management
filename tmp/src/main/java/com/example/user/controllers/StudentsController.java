@@ -16,10 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
@@ -135,7 +132,7 @@ public class StudentsController {
     //
     @GetMapping("students/{id}/grades/{gradeId}")
     @Nullable
-    public ResponseEntity<Grade> getGradeById(@PathVariable("id") UUID id, @PathVariable("gradeId") int gradeId) {
+    public ResponseEntity<Grade> getGradeById(@PathVariable("id") UUID id, @PathVariable("gradeId") UUID gradeId) {
         Optional<Student> student = Optional.ofNullable(studentsService.getStudentById(id));
         if (student.isPresent()) {
             Optional<Grade> grade = Optional.ofNullable(studentsService.getGradeById(id, gradeId));
@@ -166,7 +163,7 @@ public class StudentsController {
     @DeleteMapping(value = "students/{id}/grades/{gradeId}",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Grade> deleteGrade(@PathVariable UUID id, @PathVariable int gradeId) {
+    public ResponseEntity<Grade> deleteGrade(@PathVariable UUID id, @PathVariable UUID gradeId) {
         Grade isRemoved = studentsService.deleteGrade(id, gradeId);
         if (isRemoved == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -176,7 +173,7 @@ public class StudentsController {
 
     @Nullable
     @PutMapping("students/{id}/grades/{gradeId}")
-    public ResponseEntity<Grade> updateGradeValue(@PathVariable("id") UUID id, @PathVariable("gradeId") int gradeId,@RequestParam(required = false) String evaluationDate,@RequestParam(required = false) Integer value){
+    public ResponseEntity<Grade> updateGradeValue(@PathVariable("id") UUID id, @PathVariable("gradeId") UUID gradeId, @RequestParam(required = false) Date evaluationDate, @RequestParam(required = false) Integer value){
         Optional<Student> student = Optional.ofNullable(studentsService.getStudentById(id));
         if (student.isPresent()) {
             Optional<Grade> grade = Optional.ofNullable(studentsService.getGradeById(id, gradeId));

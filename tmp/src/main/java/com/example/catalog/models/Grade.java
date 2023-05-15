@@ -5,6 +5,9 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
+import java.util.Date;
+import java.util.UUID;
+
 // <-------------------------------- FROM CATALOG ----------------------------------> //
 
 @Entity
@@ -23,29 +26,29 @@ public class Grade {
     )
     private int databaseGradeId;
 
-    private int gradeId;
+    private UUID gradeId;
     private int value;
 
     //CascadeType.MERGE : copiaza obiectul intr-un obiect cu acelasi identificator
     @ManyToOne(cascade = {CascadeType.MERGE})
     private Subject subject;
 
-    private String evaluationDate;
+    private Date evaluationDate;
 
     private boolean deleted=false;
     public Grade(){}
 
 
-    public Grade(int value, Subject subject, String evaluationDate) {
+    public Grade(int value, Subject subject, Date evaluationDate) {
         this.value = value;
         this.subject = subject;
         this.evaluationDate = evaluationDate;
     }
 
-    public int getId() {
+    public UUID getId() {
         return gradeId;
     }
-    public void setId(int gradeId) {
+    public void setId(UUID gradeId) {
         this.gradeId = gradeId;
     }
     public int getValue() {
@@ -64,11 +67,11 @@ public class Grade {
         this.subject = subject;
     }
 
-    public String getEvaluationDate() {
+    public Date getEvaluationDate() {
         return evaluationDate;
     }
 
-    public void setEvaluationDate(String evaluationDate) {
+    public void setEvaluationDate(Date evaluationDate) {
         this.evaluationDate = evaluationDate;
     }
 

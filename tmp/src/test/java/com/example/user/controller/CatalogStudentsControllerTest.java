@@ -53,7 +53,7 @@ class CatalogStudentsControllerTest {
                 4,
                 "123FAKE92929",
                 new HashSet<>(Arrays.asList(new Subject())));
-        grade = new Grade( 7, subject, "12.02.1996");
+        grade = new Grade( 7, subject, new Date());
 
         student.addGrade(grade);
         students.add(student);
@@ -128,12 +128,12 @@ class CatalogStudentsControllerTest {
 
         assertNotNull(gradesResponse);
 
-        int gradesIds = 0;
-        int gradesResponseIds = 0;
+        long gradesIds = 0;
+        long gradesResponseIds = 0;
         for (Grade grade1 : grades)
-            gradesIds += grade1.getId();
+            gradesIds += grade1.getId().getLeastSignificantBits();
         for (Grade grade2 : gradesResponse)
-            gradesResponseIds += grade2.getId();
+            gradesResponseIds += grade2.getId().getLeastSignificantBits();
 
         assertEquals(gradesIds, gradesResponseIds);
 
@@ -173,7 +173,7 @@ class CatalogStudentsControllerTest {
     void TestGetGradeByIdReturnsGradeWhenStudentAndGradeExist() throws Exception {
         // Arrange
         UUID studentId = student.getId();
-        int gradeId = grade.getId();
+        UUID gradeId = grade.getId();
         when(studentsService.getStudentById(studentId)).thenReturn(student);
         when(studentsService.getGradeById(studentId, gradeId)).thenReturn(grade);
 
@@ -193,7 +193,7 @@ class CatalogStudentsControllerTest {
     void TestGetGradeByIdReturnsNotFoundWhenStudentDoesNotExist() throws Exception {
         // Arrange
         UUID studentId = UUID.randomUUID();
-        int gradeId = grade.getId();
+        UUID gradeId = grade.getId();
         when(studentsService.getStudentById(studentId)).thenReturn(null);
 
         // Act
@@ -210,7 +210,7 @@ class CatalogStudentsControllerTest {
     void getGradeByIdReturnsNotFoundWhenGradeDoesNotExist() throws Exception {
         // Arrange
         UUID studentId = student.getId();
-        int gradeId = 10;
+        UUID gradeId = UUID.randomUUID();
         when(studentsService.getStudentById(studentId)).thenReturn(student);
         when(studentsService.getGradeById(studentId, gradeId)).thenReturn(null);
 
@@ -228,7 +228,7 @@ class CatalogStudentsControllerTest {
     void TestGetGradeByIdReturnsNotFoundWhenStudentAndGradeDoNotExist() throws Exception {
         // Arrange
         UUID studentId = UUID.randomUUID();
-        int gradeId = 10;
+        UUID gradeId = UUID.randomUUID();
         when(studentsService.getStudentById(studentId)).thenReturn(null);
         when(studentsService.getGradeById(studentId, gradeId)).thenReturn(null);
 
@@ -246,8 +246,8 @@ class CatalogStudentsControllerTest {
     @Test
     void createGradeTest() throws Exception {
         //GradeId pus in postGradeResult inainte ca metoda Student.addGrade() sa aloce un ID.
-        Grade gradeForPost = new Grade(10, subject, "12.12.1222");
-        gradeForPost.setId(1);
+        Grade gradeForPost = new Grade(10, subject, new Date());
+        gradeForPost.setId(UUID.randomUUID());
 
         // Non-existent student ID
         UUID nonExistentStudentId = UUID.randomUUID();
@@ -379,10 +379,10 @@ class CatalogStudentsControllerTest {
         when(studentsService.getStudentById(student.getId())).thenReturn(student);
         when(studentsService.getGradeById(student.getId(), grade.getId())).thenReturn(grade);
 
-        String evalDateTest = "12.12.2002";
+        Date evalDateTest = new Date();
         int valueTest = 3;
 
-        when(studentsService.updateGrade(any(UUID.class), any(Integer.class), anyString(), anyInt())).thenAnswer((Answer<Grade>) invocationOnMock -> {
+        when(studentsService.updateGrade(any(UUID.class), any(Integer.class), any(Date.class), any(UUID.class))).thenAnswer((Answer<Grade>) invocationOnMock -> {
             Grade toUpdate = student.getGradeById(grade.getId());
             toUpdate.setEvaluationDate(evalDateTest);
             toUpdate.setValue(valueTest);
