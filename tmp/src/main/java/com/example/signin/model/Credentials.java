@@ -21,6 +21,8 @@ public class Credentials {
 
     @Email
     private String email;
+    protected String firstname;
+    protected String lastname;
     @Pattern(regexp = "^(?=.*[!@#$%^&*()])(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$", message = "The password must contain at least 8 characters, at least one digit, at least one special symbol and at least one capital letter")
 
     private String password;
