@@ -1,6 +1,5 @@
 package com.example.signin.model;
 
-import com.example.security.objects.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
