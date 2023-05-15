@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-@CrossOrigin
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/v1/auth")
 public class AuthController {
@@ -98,6 +98,7 @@ public class AuthController {
                         teacherAuth.setRegistrationNumber(credentials.getUserId());
                         teacherAuth.setEmail(credentials.getEmail());
                         teacherAuth.setPassword(credentials.getPassword());
+                        teacherAuth.setUsername(credentials.getEmail().substring(0, credentials.getEmail().indexOf('@')));
                         teachersRepository.save(teacherAuth);
                     }
                     else if(role == 3){
@@ -105,6 +106,7 @@ public class AuthController {
                         studentAuth.setRegistrationNumber(credentials.getUserId());
                         studentAuth.setEmail(credentials.getEmail());
                         studentAuth.setPassword(credentials.getPassword());
+                        studentAuth.setUsername(credentials.getEmail().substring(0, credentials.getEmail().indexOf('@')));
                         studentsRepository.save(studentAuth);
                     }
 
