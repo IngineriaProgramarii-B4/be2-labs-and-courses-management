@@ -6,6 +6,7 @@ import com.example.subject.service.SubjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
@@ -19,7 +20,6 @@ import static org.springframework.http.HttpStatus.*;
 
 @RestController
 @RequestMapping(path = "api/v1/subjects")
-@CrossOrigin(origins = "http://localhost:3000")
 public class SubjectController {
     
     private static final String SUBJECT_ERROR = "Subject not found";
@@ -37,6 +37,7 @@ public class SubjectController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('TEACHER') || hasAuthority('ADMIN')")
     public void addSubject(@RequestBody Subject subject)
     {
         if(subjectService.addSubject(subject) == 0)
@@ -45,6 +46,7 @@ public class SubjectController {
     }
 
     @DeleteMapping("subjectTitle={title}")
+    @PreAuthorize("hasAuthority('TEACHER') || hasAuthority('ADMIN')")
     public void deleteSubjectByTitle(@PathVariable("title") String title) {
         if(subjectService.deleteSubjectByTitle(title) == 0)
             throw new ResponseStatusException(NOT_FOUND, SUBJECT_ERROR);
@@ -52,6 +54,7 @@ public class SubjectController {
     }
 
     @PutMapping("subjectTitle={title}")
+    @PreAuthorize("hasAuthority('TEACHER') || hasAuthority('ADMIN')")
     public void updateSubjectByTitle(@PathVariable("title") String title, @RequestBody Subject subject) {
         if(subjectService.getSubjectByTitle(title).isEmpty())
             throw new ResponseStatusException(NOT_FOUND, SUBJECT_ERROR);
@@ -72,6 +75,7 @@ public class SubjectController {
     }
 
     @PutMapping(path = "subjectTitle={title}/image")
+    @PreAuthorize("hasAuthority('TEACHER') || hasAuthority('ADMIN')")
     public void uploadSubjectImage(@PathVariable("title") String title, @RequestParam("image")MultipartFile image) {
         if(subjectService.getSubjectByTitle(title).isEmpty())
             throw new ResponseStatusException(NOT_FOUND, SUBJECT_ERROR);

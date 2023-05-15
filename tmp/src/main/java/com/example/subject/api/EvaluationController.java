@@ -4,6 +4,7 @@ import com.example.subject.service.ComponentService;
 import com.example.subject.service.EvaluationService;
 import com.example.subject.service.SubjectService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -13,7 +14,6 @@ import static org.springframework.http.HttpStatus.*;
 
 @RestController
 @RequestMapping(path = "api/v1/subjects/{subjectTitle}/evaluationMethods")
-@CrossOrigin(origins = "http://localhost:3000")
 public class EvaluationController {
 
     private static final String SUBJECT_ERROR = "Subject not found";
@@ -49,6 +49,7 @@ public class EvaluationController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('TEACHER') || hasAuthority('ADMIN')")
     public void addEvaluationMethod(@PathVariable("subjectTitle") String title,
                                     @RequestBody Evaluation evaluation) {
         if(subjectService.getSubjectByTitle(title).isEmpty())
@@ -61,6 +62,7 @@ public class EvaluationController {
     }
 
     @DeleteMapping(path = "component={component}")
+    @PreAuthorize("hasAuthority('TEACHER') || hasAuthority('ADMIN')")
     public void deleteEvaluationMethodByComponent(@PathVariable("subjectTitle") String title,
                                                   @PathVariable("component") String component) {
         if(subjectService.getSubjectByTitle(title).isEmpty())
@@ -74,6 +76,7 @@ public class EvaluationController {
     }
 
     @PutMapping(path = "component={component}")
+    @PreAuthorize("hasAuthority('TEACHER') || hasAuthority('ADMIN')")
     public void updateEvaluationMethodByComponent(@PathVariable("subjectTitle") String title,
                                                   @PathVariable("component") String component,
                                                   @RequestBody Evaluation evaluation) {

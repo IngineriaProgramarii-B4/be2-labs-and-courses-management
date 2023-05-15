@@ -4,6 +4,7 @@ import com.example.subject.model.Component;
 import com.example.subject.service.ComponentService;
 import com.example.subject.service.SubjectService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -13,7 +14,6 @@ import static org.springframework.http.HttpStatus.*;
 
 @RestController
 @RequestMapping("api/v1/subjects/{subjectTitle}/components")
-@CrossOrigin(origins = "http://localhost:3000")
 public class ComponentController {
 
     private static final String SUBJECT_ERROR = "Subject not found";
@@ -34,6 +34,7 @@ public class ComponentController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('TEACHER') || hasAuthority('ADMIN')")
     public void addComponent(@PathVariable("subjectTitle") String title, @RequestBody Component component) {
         if(subjectService.getSubjectByTitle(title).isEmpty())
             throw new ResponseStatusException(NOT_FOUND, SUBJECT_ERROR);
@@ -53,6 +54,7 @@ public class ComponentController {
     }
 
     @DeleteMapping(path = "type={type}")
+    @PreAuthorize("hasAuthority('TEACHER') || hasAuthority('ADMIN')")
     public void deleteComponentByType(@PathVariable("subjectTitle") String title, @PathVariable("type") String type) {
         if(subjectService.getSubjectByTitle(title).isEmpty())
             throw new ResponseStatusException(NOT_FOUND, SUBJECT_ERROR);
@@ -63,6 +65,7 @@ public class ComponentController {
     }
 
     @PutMapping(path = "type={type}")
+    @PreAuthorize("hasAuthority('TEACHER') || hasAuthority('ADMIN')")
     public void updateComponentByType(@PathVariable("subjectTitle") String title,
                                       @PathVariable("type") String type,
                                       @RequestBody Component component) {

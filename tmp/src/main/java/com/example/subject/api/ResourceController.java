@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
@@ -21,7 +22,6 @@ import static org.springframework.http.HttpStatus.*;
 
 @RestController
 @RequestMapping("api/v1/subjects/{subjectTitle}/components/{componentType}/resources")
-@CrossOrigin(origins = "http://localhost:3000")
 public class ResourceController {
     
     private static final String SUBJECT_ERROR = "Subject not found";
@@ -60,6 +60,7 @@ public class ResourceController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('TEACHER') || hasAuthority('ADMIN')")
     public void addResourceFile(@PathVariable("subjectTitle") String title,
                                 @PathVariable("componentType") String type,
                                 @RequestParam("file") MultipartFile file) {
@@ -95,6 +96,7 @@ public class ResourceController {
     }
 
     @DeleteMapping(path = "title={resourceTitle}")
+    @PreAuthorize("hasAuthority('TEACHER') || hasAuthority('ADMIN')")
     public void deleteResourceByTitle(@PathVariable("subjectTitle") String title,
                                       @PathVariable("componentType") String type,
                                       @PathVariable("resourceTitle") String resourceTitle) {
