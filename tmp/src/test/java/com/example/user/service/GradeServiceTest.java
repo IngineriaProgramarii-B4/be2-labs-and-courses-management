@@ -50,8 +50,8 @@ class GradeServiceTest {
 
     @Test
     void canGetGradeById() {
-        when(gradeRepository.findById(grade.getId())).thenReturn(Optional.of(grade));
-        assertEquals(Optional.of(grade), gradeRepository.findById(grade.getId()));
+        when(gradeRepository.getGradeById(grade.getId())).thenReturn(Optional.of(grade));
+        assertEquals(Optional.of(grade), gradeRepository.getGradeById((grade.getId())));
         // given existing grade
         Optional<Grade> get = Optional.ofNullable(gradeService.getGradeById(grade.getId()));
 
@@ -68,7 +68,7 @@ class GradeServiceTest {
         assertEquals(get, captured);
 
         // given not existing grade
-        assertNull(gradeService.getGradeById(new Random().nextInt()));
+        assertNull(gradeService.getGradeById(UUID.randomUUID()));
     }
 
     @Test
