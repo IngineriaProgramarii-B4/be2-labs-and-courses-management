@@ -42,12 +42,9 @@ public class ResourceController {
     public ResponseEntity<List<Resource>> getResources(@PathVariable("subjectTitle") String title,
                                        @PathVariable("componentType") String type) {
         if(subjectService.getSubjectByTitle(title).isEmpty())
-            /*throw new ResponseStatusException(NOT_FOUND, SUBJECT_ERROR);*/
             return ResponseEntity.status(NOT_FOUND).body(null);
         if(componentService.getComponentByType(title, type).isEmpty())
-            /*throw new ResponseStatusException(NOT_FOUND, COMPONENT_ERROR);*/
             return ResponseEntity.status(NOT_FOUND).body(null);
-        /*return resourceService.getResources(title, type);*/
         return ResponseEntity.status(OK).body(resourceService.getResources(title, type));
     }
 
@@ -56,13 +53,9 @@ public class ResourceController {
                                        @PathVariable("componentType") String type,
                                        @PathVariable("resourceTitle") String resourceTitle) {
         if(subjectService.getSubjectByTitle(title).isEmpty())
-            /*throw new ResponseStatusException(NOT_FOUND, SUBJECT_ERROR);*/
             return ResponseEntity.status(NOT_FOUND).body(null);
         if(componentService.getComponentByType(title, type).isEmpty())
-            /*throw new ResponseStatusException(NOT_FOUND, COMPONENT_ERROR);*/
             return ResponseEntity.status(NOT_FOUND).body(null);
-        /*return resourceService.getResourceByTitle(title, type, resourceTitle)
-                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, RESOURCE_ERROR));*/
         return resourceService.getResourceByTitle(title, type, resourceTitle)
                 .map(resource -> ResponseEntity.status(OK).body(resource))
                 .orElseGet(() -> ResponseEntity.status(NOT_FOUND).body(null));
@@ -74,15 +67,11 @@ public class ResourceController {
                                 @PathVariable("componentType") String type,
                                 @RequestParam("file") MultipartFile file) {
         if(subjectService.getSubjectByTitle(title).isEmpty())
-            /*throw new ResponseStatusException(NOT_FOUND, SUBJECT_ERROR);*/
-            return ResponseEntity.status(NOT_FOUND).body("Subject not found".getBytes());
+            return ResponseEntity.status(NOT_FOUND).body(SUBJECT_ERROR.getBytes());
         if(componentService.getComponentByType(title, type).isEmpty())
-            /*throw new ResponseStatusException(NOT_FOUND, COMPONENT_ERROR);*/
-            return ResponseEntity.status(NOT_FOUND).body("Component not found".getBytes());
+            return ResponseEntity.status(NOT_FOUND).body(COMPONENT_ERROR.getBytes());
         if(resourceService.addResource(file, title, type) == 0)
-            /*throw new ResponseStatusException(NOT_FOUND, RESOURCE_ERROR);*/
-            return ResponseEntity.status(NOT_FOUND).body("Resource not found".getBytes());
-        /*throw new ResponseStatusException(CREATED, "Resource added successfully");*/
+            return ResponseEntity.status(NOT_FOUND).body(RESOURCE_ERROR.getBytes());
         return ResponseEntity.status(CREATED).body("Resource added successfully".getBytes());
     }
 
@@ -114,15 +103,11 @@ public class ResourceController {
                                       @PathVariable("componentType") String type,
                                       @PathVariable("resourceTitle") String resourceTitle) {
         if(subjectService.getSubjectByTitle(title).isEmpty())
-            /*throw new ResponseStatusException(NOT_FOUND, SUBJECT_ERROR);*/
-            return ResponseEntity.status(NOT_FOUND).body("Subject not found".getBytes());
+            return ResponseEntity.status(NOT_FOUND).body(SUBJECT_ERROR.getBytes());
         if(componentService.getComponentByType(title, type).isEmpty())
-            /*throw new ResponseStatusException(NOT_FOUND, COMPONENT_ERROR);*/
-            return ResponseEntity.status(NOT_FOUND).body("Component not found".getBytes());
+            return ResponseEntity.status(NOT_FOUND).body(COMPONENT_ERROR.getBytes());
         if(resourceService.deleteResourceByTitle(title, type, resourceTitle) == 0)
-            /*throw new ResponseStatusException(NOT_FOUND, RESOURCE_ERROR);*/
-            return ResponseEntity.status(NOT_FOUND).body("Resource not found".getBytes());
-        /*throw new ResponseStatusException(NO_CONTENT, "Resource deleted successfully");*/
+            return ResponseEntity.status(NOT_FOUND).body(RESOURCE_ERROR.getBytes());
         return ResponseEntity.status(NO_CONTENT).body("Resource deleted successfully".getBytes());
     }
 }
