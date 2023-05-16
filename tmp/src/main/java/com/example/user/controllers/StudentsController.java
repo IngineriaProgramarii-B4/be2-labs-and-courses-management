@@ -80,6 +80,15 @@ public class StudentsController {
         return new ResponseEntity<>(student, HttpStatus.CREATED);
     }
 
+    @GetMapping("/students/enrolledCourse/{course}")
+    public ResponseEntity<Set<Student>> getStudentsByCourse(@PathVariable String course) {
+        Set<Student> students = studentsService.getStudentByEnrolledCourse(course);
+        if(students.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(students, HttpStatus.OK);
+    }
+
     @GetMapping("/students/{id}")
     public ResponseEntity<Student> getStudentById(@PathVariable("id") String id) {
         Student student = studentsService.getStudentById(UUID.fromString(id));

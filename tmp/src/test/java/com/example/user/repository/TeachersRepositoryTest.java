@@ -2,6 +2,7 @@ package com.example.user.repository;
 
 import com.example.security.objects.Teacher;
 import com.example.security.repositories.TeachersRepository;
+import org.junit.AfterClass;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -20,6 +21,7 @@ class TeachersRepositoryTest {
 
     @Autowired
     private TeachersRepository teachersRepository;
+    Teacher teacher;
 
     @Test
     @DirtiesContext
@@ -27,7 +29,7 @@ class TeachersRepositoryTest {
         //
         //Given
         //
-        Teacher teacher = new Teacher(
+        teacher = new Teacher(
                 UUID.randomUUID(),
                 "testName",
                 "testSurname",

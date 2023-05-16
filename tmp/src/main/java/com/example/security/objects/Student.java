@@ -1,7 +1,6 @@
 package com.example.security.objects;
 
 import com.example.catalog.models.Grade;
-import com.example.security.objects.User;
 import com.example.subject.model.Subject;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
@@ -94,15 +93,6 @@ public class Student extends User {
     public void setSemester(int semester) {
         this.semester = semester;
     }
-
-    public String getRegistrationNumber() {
-        return registrationNumber;
-    }
-
-    public void setRegistrationNumber(String registrationNumber) {
-        this.registrationNumber = registrationNumber;
-    }
-
     public void addEnrolledCourse(Subject course) {
         enrolledCourses.add(course);
     }
@@ -110,6 +100,8 @@ public class Student extends User {
     public String getGrupa() {
         return grupa;
     }
+
+
 
 
     @Override
