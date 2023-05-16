@@ -21,11 +21,10 @@ class AdminTest{
         //
         admin.setFirstname("testFirstName");
         admin.setLastname("setLastname");
-
         //
         //Then
         //
-        assertEquals("Admin{department='null', office='null', id=, firstname='testFirstName', lastname='setLastname', email='null', username='null'}",admin.toString());
+        assertEquals("Admin{department='null', office='null', id=null, firstname='testFirstName', lastname='setLastname', email='null', username='null', password='null', registrationNumber='null'}",admin.toString());
 
     }
     @Test

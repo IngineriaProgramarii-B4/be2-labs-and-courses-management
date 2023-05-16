@@ -3,12 +3,15 @@ package com.example.user.controller;
 import com.example.security.objects.Student;
 import com.example.user.controllers.RemindersController;
 import com.example.user.models.Reminder;
+import com.example.user.repository.RemindersRepository;
 import com.example.user.services.RemindersService;
+import org.junit.AfterClass;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +30,7 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @WebMvcTest(ReminderControllerTest.class)
+@AutoConfigureMockMvc(addFilters = false)
 class ReminderControllerTest {
 
     @Autowired
@@ -37,6 +41,9 @@ class ReminderControllerTest {
 
     @Mock
     private RemindersService remindersService;
+
+    @Mock
+    private RemindersRepository remindersRepository;
 
     private Reminder reminder1, reminder2;
     private Student tempStudent;
@@ -70,6 +77,12 @@ class ReminderControllerTest {
                 "Examen-IP",
                 "Primul examen din sesiune"
         );
+    }
+
+    @AfterClass
+    public void clean() {
+        remindersRepository.delete(reminder1);
+        remindersRepository.delete(reminder2);
     }
 
     @Test
@@ -183,6 +196,7 @@ class ReminderControllerTest {
 
         //Then
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        remindersRepository.delete(reminder1);
     }
 
     @Test

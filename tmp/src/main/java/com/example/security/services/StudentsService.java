@@ -3,15 +3,17 @@ package com.example.security.services;
 import com.example.catalog.models.Grade;
 import com.example.security.objects.Student;
 import com.example.security.repositories.StudentsRepository;
+import com.example.subject.model.Component;
+import com.example.subject.model.Evaluation;
+import com.example.subject.model.Subject;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.lang.Long.parseLong;
 
@@ -47,7 +49,6 @@ public class StudentsService {
         if (params.containsKey(semesterKey) && (!params.get(semesterKey).equals(""))) {
             semester = Integer.parseInt((String) params.get(semesterKey));
         }
-
         return studentsRepository.findStudentsByParams(id, firstname, lastname, email, username, year, semester, registrationNumber);
     }
 
@@ -72,7 +73,20 @@ public class StudentsService {
         studentsRepository.updateStudent(id, student.getFirstname(), student.getLastname(), student.getEmail(), student.getUsername(), student.getYear(), student.getSemester(), student.getRegistrationNumber());
     }
 
-//
+    public Set<Student> getStudentByEnrolledCourse(String course) {
+        List<Student> allStudents = studentsRepository.findStudentsByParams(null, null, null, null, null, 0, 0, null);
+        Set<Student> searchedStudents = new HashSet<>();
+        for(Student st : allStudents) {
+            for(Subject c: st.getEnrolledCourses()) {
+                if(c.getTitle().equals(course)) {
+                    searchedStudents.add(st);
+                }
+            }
+        }
+        return searchedStudents;
+    }
+
+
 //    public void updateStudents(){x
 //        students=studentRepository.findAll();
 //    }

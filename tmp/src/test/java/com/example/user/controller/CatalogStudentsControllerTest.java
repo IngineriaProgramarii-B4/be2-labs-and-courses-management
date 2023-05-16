@@ -2,16 +2,20 @@ package com.example.user.controller;
 
 import com.example.catalog.models.Grade;
 import com.example.security.objects.Student;
+import com.example.security.repositories.StudentsRepository;
 import com.example.security.services.StudentsService;
 import com.example.subject.model.Subject;
 import com.example.user.controllers.StudentsController;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.AfterClass;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -27,6 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(StudentsController.class)
+@AutoConfigureMockMvc(addFilters = false)
 class CatalogStudentsControllerTest {
     @Autowired
     private MockMvc mvc;
@@ -34,6 +39,9 @@ class CatalogStudentsControllerTest {
     private ObjectMapper objectMapper;
     @MockBean
     private StudentsService studentsService;
+    @Mock
+    private StudentsRepository studentsRepository;
+
     private Student student;
     private Subject subject;
     private Grade grade;
@@ -61,6 +69,11 @@ class CatalogStudentsControllerTest {
     }
     @AfterEach
     void tearDown() {
+    }
+
+    @AfterClass
+    public void clean() {
+        studentsRepository.delete(student);
     }
     @Test
     void getAllStudentsTest() throws Exception {

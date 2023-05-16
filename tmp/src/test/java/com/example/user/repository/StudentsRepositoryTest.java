@@ -2,6 +2,7 @@ package com.example.user.repository;
 
 import com.example.security.objects.Student;
 import com.example.security.repositories.StudentsRepository;
+import org.junit.AfterClass;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -18,13 +19,15 @@ class StudentsRepositoryTest {
     @Autowired
     private StudentsRepository studentsRepository;
 
+    Student student;
+
     @Test
     @DirtiesContext
     void findStudentsByParamsEmailExistsTest() {
         //
         //Given
         //
-        Student student = new Student(
+        student = new Student(
                 "testName",
                 "testSurename",
                 "testemail@mail.com",
@@ -184,6 +187,12 @@ class StudentsRepositoryTest {
         //
         assertTrue(result.contains(student));
     }
+
+    @AfterClass
+    public void clean() {
+        studentsRepository.delete(student);
+    }
+
 
     @Test
     void findStudentsByParamsRegistrationNumberNonexistentTest() {

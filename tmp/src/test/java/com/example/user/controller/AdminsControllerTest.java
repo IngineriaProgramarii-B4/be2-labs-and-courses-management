@@ -1,13 +1,17 @@
 package com.example.user.controller;
 
 import com.example.security.objects.Admin;
+import com.example.security.repositories.AdminsRepository;
 import com.example.security.services.AdminsService;
 import com.example.user.controllers.AdminsController;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.AfterClass;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
@@ -24,6 +28,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(AdminsController.class)
+@AutoConfigureMockMvc(addFilters = false)
 class AdminsControllerTest {
 
     @Autowired
@@ -31,6 +36,8 @@ class AdminsControllerTest {
 
     @MockBean
     private AdminsService adminsService;
+    @Mock
+    private AdminsRepository adminsRepository;
 
     private Admin admin1;
 
@@ -46,6 +53,10 @@ class AdminsControllerTest {
                 "P1",
                 "Secretariat",
                 "36fbe822-f24f-11ed-a05b-0242ac120003");
+    }
+    @AfterClass
+    public void clean() {
+        adminsRepository.delete(admin1);
     }
 
     @Test
