@@ -59,7 +59,10 @@ class ResourceControllerTest {
         when(subjectService.getSubjectByTitle("Algebraic Foundations of Science")).thenReturn(Optional.of(subject));
         when(componentService.getComponentByType(subject.getTitle(), "Seminar")).thenReturn(Optional.of(new Component("Seminar", 14, new ArrayList<>(), false)));
         when(resourceService.getResources("Algebraic Foundations of Science", "Seminar")).thenReturn(subject.getComponentList().get(1).getResources());
-        List<Resource> result = resourceController.getResources("Algebraic Foundations of Science", "Seminar");
+        ResponseEntity<List<Resource>> response = resourceController.getResources("Algebraic Foundations of Science", "Seminar");
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        List<Resource> result = response.getBody();
+        assert result != null;
         assertEquals(1, result.size());
         assertEquals(resource.getTitle(), result.get(0).getTitle());
         assertEquals(resource.getLocation(), result.get(0).getLocation());
@@ -70,9 +73,8 @@ class ResourceControllerTest {
     @Test
     void getResourcesSubjectNotFound(){
         when(subjectService.getSubjectByTitle("Algebraic Foundations of Science")).thenReturn(Optional.empty());
-        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> resourceController.getResources("Algebraic Foundations of Science", "Seminar"));
-        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
-        assertEquals("Subject not found", exception.getReason());
+        ResponseEntity<List<Resource>> response = resourceController.getResources("Algebraic Foundations of Science", "Seminar");
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     @Test
@@ -85,9 +87,8 @@ class ResourceControllerTest {
                 , false);
         when(subjectService.getSubjectByTitle("Algebraic Foundations of Science")).thenReturn(Optional.of(subject));
         when(componentService.getComponentByType(subject.getTitle(), "Course")).thenReturn(Optional.empty());
-        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> resourceController.getResources("Algebraic Foundations of Science", "Course"));
-        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
-        assertEquals("Component not found", exception.getReason());
+        ResponseEntity<List<Resource>> response = resourceController.getResources("Algebraic Foundations of Science", "Course");
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     @Test
@@ -102,7 +103,11 @@ class ResourceControllerTest {
         when(subjectService.getSubjectByTitle("Algebraic Foundations of Science")).thenReturn(Optional.of(subject));
         when(componentService.getComponentByType(subject.getTitle(), "Seminar")).thenReturn(Optional.of(new Component("Seminar", 14, new ArrayList<>(), false)));
         when(resourceService.getResourceByTitle(subject.getTitle(), "Seminar", "Book")).thenReturn(Optional.of(resource));
-        Resource result = resourceController.getResourceByTitle("Algebraic Foundations of Science", "Seminar", "Book");
+
+        ResponseEntity<Resource> response = resourceController.getResourceByTitle(subject.getTitle(), "Seminar", "Book");
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        Resource result = response.getBody();
+        assert result != null;
         assertEquals(resource.getTitle(), result.getTitle());
         assertEquals(resource.getLocation(), result.getLocation());
         assertEquals(resource.getType(), result.getType());
@@ -113,9 +118,8 @@ class ResourceControllerTest {
     @Test
     void getResourceByTitleSubjectNotFound(){
         when(subjectService.getSubjectByTitle("Algebraic Foundations of Science")).thenReturn(Optional.empty());
-        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> resourceController.getResourceByTitle("Algebraic Foundations of Science", "Seminar", "Book"));
-        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
-        assertEquals("Subject not found", exception.getReason());
+        ResponseEntity<Resource> response = resourceController.getResourceByTitle("Algebraic Foundations of Science", "Seminar", "Book");
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     @Test
@@ -128,9 +132,8 @@ class ResourceControllerTest {
                 , false);
         when(subjectService.getSubjectByTitle("Algebraic Foundations of Science")).thenReturn(Optional.of(subject));
         when(componentService.getComponentByType(subject.getTitle(), "Course")).thenReturn(Optional.empty());
-        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> resourceController.getResourceByTitle("Algebraic Foundations of Science", "Course", "Book"));
-        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
-        assertEquals("Component not found", exception.getReason());
+        ResponseEntity<Resource> response = resourceController.getResourceByTitle("Algebraic Foundations of Science", "Course", "Book");
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     @Test
@@ -144,9 +147,8 @@ class ResourceControllerTest {
         when(subjectService.getSubjectByTitle("Algebraic Foundations of Science")).thenReturn(Optional.of(subject));
         when(componentService.getComponentByType(subject.getTitle(), "Seminar")).thenReturn(Optional.of(new Component("Seminar", 14, new ArrayList<>(), false)));
         when(resourceService.getResourceByTitle(subject.getTitle(), "Seminar", "Book")).thenReturn(Optional.empty());
-        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> resourceController.getResourceByTitle("Algebraic Foundations of Science", "Seminar", "Book"));
-        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
-        assertEquals("Resource not found", exception.getReason());
+        ResponseEntity<Resource> response = resourceController.getResourceByTitle("Algebraic Foundations of Science", "Seminar", "Book");
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     @Test
@@ -163,18 +165,16 @@ class ResourceControllerTest {
         when(componentService.getComponentByType(subject.getTitle(), "Seminar")).thenReturn(Optional.of(new Component("Seminar", 14, new ArrayList<>(), false)));
         when(resourceService.addResource(file, subject.getTitle(), "Seminar")).thenReturn(1);
 
-        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> resourceController.addResourceFile("Algebraic Foundations of Science", "Seminar", file));
-        assertEquals(HttpStatus.CREATED, exception.getStatusCode());
-        assertEquals("Resource added successfully", exception.getReason());
+        ResponseEntity<byte[]> response = resourceController.addResourceFile("Algebraic Foundations of Science", "Seminar", file);
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
     }
 
     @Test
     void addResourceFileSubjectNotFound(){
         MultipartFile file = new MockMultipartFile("Physics_romania.png", "Physics_romania.png", "image/png", "Physics_romania.png".getBytes());
         when(subjectService.getSubjectByTitle("Algebraic Foundations of Science")).thenReturn(Optional.empty());
-        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> resourceController.addResourceFile("Algebraic Foundations of Science", "Seminar", file));
-        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
-        assertEquals("Subject not found", exception.getReason());
+        ResponseEntity<byte[]> response = resourceController.addResourceFile("Algebraic Foundations of Science", "Seminar", file);
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     @Test
@@ -188,9 +188,8 @@ class ResourceControllerTest {
         MultipartFile file = new MockMultipartFile("Physics_romania.png", "Physics_romania.png", "image/png", "Physics_romania.png".getBytes());
         when(subjectService.getSubjectByTitle("Algebraic Foundations of Science")).thenReturn(Optional.of(subject));
         when(componentService.getComponentByType(subject.getTitle(), "Seminar")).thenReturn(Optional.empty());
-        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> resourceController.addResourceFile("Algebraic Foundations of Science", "Seminar", file));
-        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
-        assertEquals("Component not found", exception.getReason());
+        ResponseEntity<byte[]> response = resourceController.addResourceFile("Algebraic Foundations of Science", "Seminar", file);
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     @Test
@@ -205,9 +204,8 @@ class ResourceControllerTest {
         when(subjectService.getSubjectByTitle("Algebraic Foundations of Science")).thenReturn(Optional.of(subject));
         when(componentService.getComponentByType(subject.getTitle(), "Seminar")).thenReturn(Optional.of(new Component("Seminar", 14, new ArrayList<>(), false)));
         when(resourceService.addResource(file, subject.getTitle(), "Seminar")).thenReturn(0);
-        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> resourceController.addResourceFile("Algebraic Foundations of Science", "Seminar", file));
-        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
-        assertEquals("Resource not found", exception.getReason());
+        ResponseEntity<byte[]> response = resourceController.addResourceFile("Algebraic Foundations of Science", "Seminar", file);
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     @Test
@@ -298,17 +296,15 @@ class ResourceControllerTest {
         when(componentService.getComponentByType(subject.getTitle(), "Seminar")).thenReturn(Optional.of(new Component("Seminar", 14, new ArrayList<>(), false)));
         when(resourceService.deleteResourceByTitle(subject.getTitle(), "Seminar", "Book")).thenReturn(1);
 
-        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> resourceController.deleteResourceByTitle("Algebraic Foundations of Science", "Seminar", "Book"));
-        assertEquals(HttpStatus.NO_CONTENT, exception.getStatusCode());
-        assertEquals("Resource deleted successfully", exception.getReason());
+        ResponseEntity<byte[]> response = resourceController.deleteResourceByTitle("Algebraic Foundations of Science", "Seminar", "Book");
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
     }
 
     @Test
     void deleteResourceByTitleSubjectNotFound(){
         when(subjectService.getSubjectByTitle("Algebraic Foundations of Science")).thenReturn(Optional.empty());
-        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> resourceController.deleteResourceByTitle("Algebraic Foundations of Science", "Seminar", "Book"));
-        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
-        assertEquals("Subject not found", exception.getReason());
+        ResponseEntity<byte[]> response = resourceController.deleteResourceByTitle("Algebraic Foundations of Science", "Seminar", "Book");
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     @Test
@@ -321,9 +317,8 @@ class ResourceControllerTest {
                 , false);
         when(subjectService.getSubjectByTitle("Algebraic Foundations of Science")).thenReturn(Optional.of(subject));
         when(componentService.getComponentByType(subject.getTitle(), "Course")).thenReturn(Optional.empty());
-        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> resourceController.deleteResourceByTitle("Algebraic Foundations of Science", "Course", "Book"));
-        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
-        assertEquals("Component not found", exception.getReason());
+        ResponseEntity<byte[]> response = resourceController.deleteResourceByTitle("Algebraic Foundations of Science", "Course", "Book");
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     @Test
@@ -337,8 +332,7 @@ class ResourceControllerTest {
         when(subjectService.getSubjectByTitle("Algebraic Foundations of Science")).thenReturn(Optional.of(subject));
         when(componentService.getComponentByType(subject.getTitle(), "Seminar")).thenReturn(Optional.of(new Component("Seminar", 14, new ArrayList<>(), false)));
         when(resourceService.deleteResourceByTitle(subject.getTitle(), "Seminar", "Book")).thenReturn(0);
-        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> resourceController.deleteResourceByTitle("Algebraic Foundations of Science", "Seminar", "Book"));
-        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
-        assertEquals("Resource not found", exception.getReason());
+        ResponseEntity<byte[]> response = resourceController.deleteResourceByTitle("Algebraic Foundations of Science", "Seminar", "Book");
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 }

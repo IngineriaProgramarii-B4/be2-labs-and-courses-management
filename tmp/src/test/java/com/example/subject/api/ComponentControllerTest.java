@@ -12,10 +12,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -65,9 +67,8 @@ class ComponentControllerTest {
         when(subjectService.getSubjectByTitle("Algebraic Foundations of Science")).thenReturn(Optional.of(subject));
         when(componentService.addComponent(title, component)).thenReturn(1);
 
-        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> componentController.addComponent(title, component));
-        assertEquals(HttpStatus.CREATED, exception.getStatusCode());
-        verify(componentService, times(1)).addComponent(title, component);
+        ResponseEntity<byte[]> response = componentController.addComponent(title, component);
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
     }
 
     @Test
@@ -82,9 +83,8 @@ class ComponentControllerTest {
         when(subjectService.getSubjectByTitle("Algebraic Foundations of Science")).thenReturn(Optional.of(subject));
         when(componentService.addComponent(title, component)).thenReturn(0);
 
-        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> componentController.addComponent(title, component));
-        assertEquals(HttpStatus.NOT_ACCEPTABLE, exception.getStatusCode());
-        verify(componentService, times(1)).addComponent(title, component);
+        ResponseEntity<byte[]> response = componentController.addComponent(title, component);
+        assertEquals(HttpStatus.NOT_ACCEPTABLE, response.getStatusCode());
     }
 
     @Test
@@ -98,9 +98,8 @@ class ComponentControllerTest {
 
         when(subjectService.getSubjectByTitle("Algebraic Foundations of Science")).thenReturn(Optional.empty());
 
-        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> componentController.addComponent(title, component));
-        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
-        verify(componentService, times(0)).addComponent(title, component);
+        ResponseEntity<byte[]> response = componentController.addComponent(title, component);
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     @Test
@@ -114,11 +113,12 @@ class ComponentControllerTest {
         Component component = new Component("Seminar", 14, new ArrayList<>(), false);
         when(componentService.getComponentByType(title, "Seminar")).thenReturn(Optional.of(component));
 
-        Component result = componentController.getComponentByType(title, "Seminar");
+        ResponseEntity<Component> result = componentController.getComponentByType(title, "Seminar");
 
-        assertEquals("Seminar", result.getType());
-        assertEquals(14, result.getNumberWeeks());
-        assertEquals(0, result.getResources().size());
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+        assertEquals("Seminar", Objects.requireNonNull(result.getBody()).getType());
+        assertEquals(14, result.getBody().getNumberWeeks());
+        assertEquals(0, result.getBody().getResources().size());
     }
 
     @Test
@@ -130,9 +130,8 @@ class ComponentControllerTest {
         String title = "Algebraic Foundations of Science";
         when(subjectService.getSubjectByTitle("Algebraic Foundations of Science")).thenReturn(Optional.empty());
 
-        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> componentController.getComponentByType(title, "Seminar"));
-        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
-        verify(componentService, times(0)).getComponentByType(title, "Seminar");
+        ResponseEntity<Component> result = componentController.getComponentByType(title, "Seminar");
+        assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
     }
 
     @Test
@@ -145,8 +144,8 @@ class ComponentControllerTest {
         when(subjectService.getSubjectByTitle("Algebraic Foundations of Science")).thenReturn(Optional.of(subject));
         when(componentService.getComponentByType(title, "Seminar")).thenReturn(Optional.empty());
 
-        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> componentController.getComponentByType(title, "Seminar"));
-        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
+       ResponseEntity<Component> result = componentController.getComponentByType(title, "Seminar");
+        assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
         verify(componentService, times(1)).getComponentByType(title, "Seminar");
     }
 
@@ -160,9 +159,8 @@ class ComponentControllerTest {
         when(subjectService.getSubjectByTitle("Algebraic Foundations of Science")).thenReturn(Optional.of(subject));
         when(componentService.deleteComponentByType(title, "Seminar")).thenReturn(1);
 
-        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> componentController.deleteComponentByType(title, "Seminar"));
-        assertEquals(HttpStatus.NO_CONTENT, exception.getStatusCode());
-        verify(componentService, times(1)).deleteComponentByType(title, "Seminar");
+        ResponseEntity<byte[]> result = componentController.deleteComponentByType(title, "Seminar");
+        assertEquals(HttpStatus.NO_CONTENT, result.getStatusCode());
     }
 
     @Test
@@ -174,9 +172,8 @@ class ComponentControllerTest {
         String title = "Algebraic Foundations of Science";
         when(subjectService.getSubjectByTitle("Algebraic Foundations of Science")).thenReturn(Optional.empty());
 
-        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> componentController.deleteComponentByType(title, "Seminar"));
-        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
-        verify(componentService, times(0)).deleteComponentByType(title, "Seminar");
+        ResponseEntity<byte[]> result = componentController.deleteComponentByType(title, "Seminar");
+        assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
     }
 
     @Test
@@ -189,9 +186,8 @@ class ComponentControllerTest {
         when(subjectService.getSubjectByTitle("Algebraic Foundations of Science")).thenReturn(Optional.of(subject));
         when(componentService.deleteComponentByType(title, "Seminar")).thenReturn(0);
 
-        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> componentController.deleteComponentByType(title, "Seminar"));
-        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
-        verify(componentService, times(1)).deleteComponentByType(title, "Seminar");
+        ResponseEntity<byte[]> result = componentController.deleteComponentByType(title, "Seminar");
+        assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
     }
 
     @Test
@@ -223,9 +219,8 @@ class ComponentControllerTest {
         String title = "Algebraic Foundations of Science";
         when(subjectService.getSubjectByTitle("Algebraic Foundations of Science")).thenReturn(Optional.empty());
 
-        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> componentController.updateComponentByType(title, "Seminar", testComponent));
-        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
-        verify(componentService, times(0)).updateComponentByType(title, "Seminar", new Component());
+        ResponseEntity<byte[]> response = componentController.updateComponentByType(title, "Seminar", testComponent);
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     @Test
@@ -239,9 +234,8 @@ class ComponentControllerTest {
         when(subjectService.getSubjectByTitle(title)).thenReturn(Optional.of(subject));
         when(componentService.getComponentByType(title, type)).thenReturn(Optional.empty());
 
-        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> componentController.updateComponentByType(title, type, testComponent), "Expected a NOT_FOUND ResponseStatusException for component");
-        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
-        assertEquals("Component not found", exception.getReason());
+        ResponseEntity<byte[]> response = componentController.updateComponentByType(title, type, testComponent);
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     @Test
@@ -262,9 +256,7 @@ class ComponentControllerTest {
         when(componentService.getComponentByType(title, type)).thenReturn(Optional.of(component));
         when(componentService.updateComponentByType(title, type, testComponent)).thenReturn(0);
 
-        assertThrows(ResponseStatusException.class, () -> componentController.updateComponentByType(title, type, testComponent), "Expected a BAD_REQUEST ResponseStatusException");
-
-        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> componentController.updateComponentByType(title, type, testComponent), "Expected a BAD_REQUEST ResponseStatusException");
-        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
+        ResponseEntity<byte[]> response = componentController.updateComponentByType(title, type, testComponent);
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 }

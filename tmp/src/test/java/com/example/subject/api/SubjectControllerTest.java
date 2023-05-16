@@ -106,8 +106,8 @@ class SubjectControllerTest {
         Subject subject = new Subject("Math", 5, 1, 2, "description", new ArrayList<>(), new ArrayList<>(), false);
         when(subjectService.addSubject(any())).thenReturn(0);
 
-        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> subjectController.addSubject(subject));
-        assertEquals(HttpStatus.NOT_ACCEPTABLE, exception.getStatusCode());
+        ResponseEntity<byte[]> response = subjectController.addSubject(subject);
+        assertEquals(HttpStatus.NOT_ACCEPTABLE, response.getStatusCode());
         verify(subjectService, times(1)).addSubject(any());
     }
 
@@ -116,8 +116,8 @@ class SubjectControllerTest {
     void deleteSubjectByTitle(){
         String title = "Math";
         when(subjectService.deleteSubjectByTitle(title)).thenReturn(1);
-        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> subjectController.deleteSubjectByTitle(title));
-        assertEquals(HttpStatus.NO_CONTENT, exception.getStatusCode());
+        ResponseEntity<byte[]> response = subjectController.deleteSubjectByTitle(title);
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
         verify(subjectService, times(1)).deleteSubjectByTitle(title);
     }
 
@@ -127,8 +127,8 @@ class SubjectControllerTest {
         String title = "Math";
         when(subjectService.deleteSubjectByTitle(title)).thenReturn(0);
 
-        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> subjectController.deleteSubjectByTitle(title));
-        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
+        ResponseEntity<byte[]> response = subjectController.deleteSubjectByTitle(title);
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         verify(subjectService, times(1)).deleteSubjectByTitle(title);
     }
 
@@ -141,10 +141,9 @@ class SubjectControllerTest {
         when(subjectService.getSubjectByTitle(title)).thenReturn(Optional.of(new Subject()));
         when(subjectService.updateSubjectByTitle(title, updatedSubject)).thenReturn(1);
 
-        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> subjectController.updateSubjectByTitle(title, updatedSubject));
+        ResponseEntity<byte[]> response = subjectController.updateSubjectByTitle(title, updatedSubject);
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
 
-        assertEquals(HttpStatus.NO_CONTENT, exception.getStatusCode());
-        assertEquals("Subject updated successfully", exception.getReason());
         verify(subjectService, times(1)).getSubjectByTitle(title);
         verify(subjectService, times(1)).updateSubjectByTitle(title, updatedSubject);
     }
@@ -156,8 +155,8 @@ class SubjectControllerTest {
         Subject updatedSubject = new Subject("Physics", 5, 1, 2, "description", new ArrayList<>(), new ArrayList<>(), false);
         when(subjectService.getSubjectByTitle(title)).thenReturn(Optional.empty());
 
-        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> subjectController.updateSubjectByTitle(title, updatedSubject));
-        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
+        ResponseEntity<byte[]> response = subjectController.updateSubjectByTitle(title, updatedSubject);
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         verify(subjectService, times(1)).getSubjectByTitle(title);
         verify(subjectService, times(0)).updateSubjectByTitle(title, updatedSubject);
     }
@@ -169,8 +168,9 @@ class SubjectControllerTest {
         when(subjectService.getSubjectByTitle(title)).thenReturn(Optional.of(new Subject()));
         when(subjectService.updateSubjectByTitle(title, updatedSubject)).thenReturn(0);
 
-        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> subjectController.updateSubjectByTitle(title, updatedSubject));
-        assertEquals(HttpStatus.NOT_ACCEPTABLE, exception.getStatusCode());
+        ResponseEntity<byte[]> response = subjectController.updateSubjectByTitle(title, updatedSubject);
+        assertEquals(HttpStatus.NOT_ACCEPTABLE, response.getStatusCode());
+
         verify(subjectService, times(1)).getSubjectByTitle(title);
         verify(subjectService, times(1)).updateSubjectByTitle(title, updatedSubject);
     }
@@ -183,8 +183,9 @@ class SubjectControllerTest {
 
         when(subjectService.getSubjectByTitle("Algebraic Foundations of Science")).thenReturn(Optional.of(subject));
 
-        Subject result = subjectController.getSubjectByTitle("Algebraic Foundations of Science");
-
+        ResponseEntity<Subject> response = subjectController.getSubjectByTitle("Algebraic Foundations of Science");
+        Subject result = response.getBody();
+        assert result != null;
         assertEquals("Algebraic Foundations of Science", result.getTitle());
         assertEquals(5, result.getCredits());
         assertEquals(1, result.getYear());
@@ -197,8 +198,8 @@ class SubjectControllerTest {
     //passed
     @Test
     void getSubjectByTitleNotFound() {
-        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> subjectController.getSubjectByTitle("Math"));
-        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
+        ResponseEntity<Subject> response = subjectController.getSubjectByTitle("Algebraic Foundations of Science");
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     //passed
@@ -230,9 +231,8 @@ class SubjectControllerTest {
         String title = "Math";
         when(subjectService.getSubjectByTitle(title)).thenReturn(Optional.of(new Subject()));
         when(subjectService.uploadSubjectImage(title, file)).thenReturn(1);
-        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> subjectController.uploadSubjectImage(title, file));
-        assertEquals(HttpStatus.NO_CONTENT, exception.getStatusCode());
-        assertEquals("Image uploaded successfully", exception.getReason());
+        ResponseEntity<byte[]> response = subjectController.uploadSubjectImage(title, file);
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
     }
 
     @Test
@@ -241,9 +241,8 @@ class SubjectControllerTest {
 
         when(subjectService.getSubjectByTitle(title)).thenReturn(Optional.empty());
 
-        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> subjectController.uploadSubjectImage(title, file));
-        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
-        assertEquals("Subject not found", exception.getReason());
+        ResponseEntity<byte[]> response = subjectController.uploadSubjectImage(title, file);
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     @Test
@@ -253,9 +252,8 @@ class SubjectControllerTest {
         when(subjectService.getSubjectByTitle(title)).thenReturn(Optional.of(new Subject()));
         when(subjectService.uploadSubjectImage(title, file)).thenReturn(0);
 
-        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> subjectController.uploadSubjectImage(title, file));
-        assertEquals(HttpStatus.NOT_ACCEPTABLE, exception.getStatusCode());
-        assertEquals("Image is invalid", exception.getReason());
+        ResponseEntity<byte[]> response = subjectController.uploadSubjectImage(title, file);
+        assertEquals(HttpStatus.NOT_ACCEPTABLE, response.getStatusCode());
     }
 
     @Test
