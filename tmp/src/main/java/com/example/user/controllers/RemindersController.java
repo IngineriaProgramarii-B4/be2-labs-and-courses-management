@@ -121,6 +121,7 @@ public class RemindersController {
     @PatchMapping(value = "/reminder/{id}")
     public ResponseEntity<Void> updateReminder(@PathVariable UUID id, @RequestBody Reminder reminder) {
         if (!remindersService.getRemindersByParams(Map.of("id", id)).isEmpty()) {
+            System.out.println(reminder);
             remindersService.updateReminder(id, reminder);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }

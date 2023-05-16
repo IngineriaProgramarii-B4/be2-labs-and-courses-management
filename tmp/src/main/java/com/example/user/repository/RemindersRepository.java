@@ -13,7 +13,7 @@ import java.util.UUID;
 @Repository
 public interface RemindersRepository extends JpaRepository<Reminder, UUID> {
 
-    @Query("select a from Reminder a where (?1 is null or a.creatorUsername=?1) and (cast(?2 as uuid) is null or a.id = ?2)")
+    @Query("select a from Reminder a where (?1 is null or a.creatorUsername=?1) and (cast(?2 as uuid) is null or a.id = ?2) and (a.isDeleted=false)")
     List<Reminder> findRemindersByParams(String creatorUsername, UUID id);
 
     @Modifying
@@ -25,4 +25,8 @@ public interface RemindersRepository extends JpaRepository<Reminder, UUID> {
             "where a.id = ?1"
     )
     void updateReminder(UUID uuid, UUID creatorId, String creatorUsername, LocalDateTime dueDateTime, String title, String description);
+
+    @Modifying
+    @Query("update Reminder a set a.isDeleted = true where a.id = ?1")
+    void remove(UUID uuid);
 }

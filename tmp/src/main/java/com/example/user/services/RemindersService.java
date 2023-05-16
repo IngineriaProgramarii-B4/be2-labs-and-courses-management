@@ -27,8 +27,9 @@ public class RemindersService {
         remindersRepository.save(reminder);
     }
 
+    @Transactional
     public void removeReminder(UUID uuid) {
-        remindersRepository.deleteById(uuid);
+        remindersRepository.remove(uuid);
     }
 
     @Transactional
