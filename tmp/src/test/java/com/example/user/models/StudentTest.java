@@ -23,11 +23,10 @@ class StudentTest {
         //
         student.setFirstname("testFirstname");
         student.setLastname("testLastname");
-
         //
         //Then
         //
-        assertEquals("Student{enrolledCourses=[], year=0, semester=0, grupa='null', maxGradeId=0, grades=[]}", student.toString());
+        assertEquals("Student{enrolledCourses=[], year=0, semester=0, grupa='null', maxGradeId=0, grades=[], id=null, firstname='testFirstname', lastname='testLastname', email='null', username='null', password='null', registrationNumber='null'}", student.toString());
 
     }
 
@@ -38,11 +37,12 @@ class StudentTest {
         //
         Student student = new Student();
         Set<Subject> courses = new HashSet<>();
-        courses.add(new Subject());
+        Subject subject = new Subject();
+        courses.add(subject);
         //
         //When
         //
-        student.addEnrolledCourse(new Subject());
+        student.addEnrolledCourse(subject);
         //
         //Then
         //

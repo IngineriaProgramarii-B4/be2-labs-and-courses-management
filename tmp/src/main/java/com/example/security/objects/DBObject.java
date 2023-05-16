@@ -1,6 +1,5 @@
 package com.example.security.objects;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
 
 import java.util.Date;

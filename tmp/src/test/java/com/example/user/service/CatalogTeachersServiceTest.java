@@ -47,7 +47,7 @@ public class CatalogTeachersServiceTest {
                 new HashSet<>(Arrays.asList(new Subject())),
                 "Prof",
                 "8e93c300-f251-11ed-a05b-0242ac120003"
-                );
+        );
     }
 
     @Test

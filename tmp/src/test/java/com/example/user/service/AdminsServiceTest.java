@@ -3,10 +3,8 @@ package com.example.user.service;
 import com.example.security.objects.Admin;
 import com.example.security.repositories.AdminsRepository;
 import com.example.security.services.AdminsService;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayNameGeneration;
-import org.junit.jupiter.api.DisplayNameGenerator;
-import org.junit.jupiter.api.Test;
+import org.junit.AfterClass;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -48,7 +46,6 @@ class AdminsServiceTest {
                 "0acbd6a8-f250-11ed-a05b-0242ac120003"
         );
     }
-
     @Test
     void getAdminsByParamsOfficeTest() {
         //Given

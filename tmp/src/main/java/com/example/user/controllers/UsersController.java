@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
-@CrossOrigin(origins = "http://localhost:3000")
 @RestController
+@CrossOrigin
 @RequestMapping("api/v1/")
 public class UsersController {
     private final UsersService usersService;
@@ -57,17 +57,15 @@ public class UsersController {
     @PostMapping(value = "/users/loggedUser")
     public ResponseEntity<User> getLoggedUser(@RequestBody String token) {
         String finalToken = token.substring(1, token.length() - 1);
-        User user;
         JWTGenerator jwtGenerator = new JWTGenerator();
-        try {
-            String email = jwtGenerator.getEmailFromJWT(finalToken);
-            user = usersService.getUsersByParams(Map.of("email", email)).get(0);
-            System.out.println(user);
-            return new ResponseEntity<>(user, HttpStatus.CREATED);
-        } catch (RuntimeException e) {
-            System.out.println("An error occurred at object mapping");
+        String email = jwtGenerator.getEmailFromJWT(finalToken);
+        List<User> users = usersService.getUsersByParams(Map.of("email", email));
+        if(users.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        else {
+            return new ResponseEntity<>(users.get(0), HttpStatus.OK);
+        }
     }
 
 }

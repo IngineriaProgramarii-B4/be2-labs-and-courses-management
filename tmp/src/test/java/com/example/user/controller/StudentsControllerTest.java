@@ -1,10 +1,7 @@
 package com.example.user.controller;
 
 import com.example.security.objects.Student;
-import com.example.security.repositories.AdminsRepository;
 import com.example.security.repositories.StudentsRepository;
-import com.example.security.repositories.TeachersRepository;
-import com.example.security.repositories.UsersRepository;
 import com.example.security.services.StudentsService;
 import com.example.security.services.UsersService;
 import com.example.signin.controllers.AuthController;
@@ -25,6 +22,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -52,6 +50,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 
 @WebMvcTest(StudentsController.class)
+@AutoConfigureMockMvc(addFilters = false)
 class StudentsControllerTest {
 
     @Autowired
@@ -59,6 +58,9 @@ class StudentsControllerTest {
 
     @MockBean
     private StudentsService studentsService;
+
+    @Mock
+    private StudentsRepository studentsRepository;
 
     private Student stud1, stud2, stud3;
 
@@ -94,6 +96,13 @@ class StudentsControllerTest {
                 1,
                 "af695692-f24e-11ed-a05b-0242ac120003",
                 new HashSet<>(Arrays.asList(new Subject())));
+    }
+
+    @AfterClass
+    public void clean(){
+        studentsRepository.delete(stud1);
+        studentsRepository.delete(stud2);
+        studentsRepository.delete(stud3);
     }
 
     @Test
