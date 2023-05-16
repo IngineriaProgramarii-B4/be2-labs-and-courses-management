@@ -1,7 +1,6 @@
 package com.example.security.objects;
 
 import com.example.catalog.models.Grade;
-import com.example.security.objects.User;
 import com.example.subject.model.Subject;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
@@ -32,7 +31,6 @@ public class Student extends User {
     private String grupa;
 
     // <-------------------------------- FROM CATALOG ----------------------------------> //
-    private int maxGradeId = 0;
     @OneToMany(cascade = {CascadeType.ALL})
     private List<Grade> grades = new ArrayList<>();
     // <--------------------------------------------------------------------------------> //
@@ -95,15 +93,6 @@ public class Student extends User {
     public void setSemester(int semester) {
         this.semester = semester;
     }
-
-    public String getRegistrationNumber() {
-        return registrationNumber;
-    }
-
-    public void setRegistrationNumber(String registrationNumber) {
-        this.registrationNumber = registrationNumber;
-    }
-
     public void addEnrolledCourse(Subject course) {
         enrolledCourses.add(course);
     }
@@ -112,9 +101,8 @@ public class Student extends User {
         return grupa;
     }
 
-    public int getMaxGradeId() {
-        return maxGradeId;
-    }
+
+
 
     @Override
     public String toString() {
@@ -123,7 +111,6 @@ public class Student extends User {
                 ", year=" + year +
                 ", semester=" + semester +
                 ", grupa='" + grupa + '\'' +
-                ", maxGradeId=" + maxGradeId +
                 ", grades=" + grades +
                 ", id=" + id +
                 ", firstname='" + firstname + '\'' +
@@ -149,15 +136,8 @@ public class Student extends User {
 
     // ati putea face add si set comun si in if-else doar sa modificati maxGradeId
     public void addGrade(Grade grade) {
-        if (!grades.isEmpty()) {
-            maxGradeId++;
-            grades.add(grade);
-            grade.setId(maxGradeId);
-        } else {
-            grades.add(grade);
-            maxGradeId = 0;
-            grade.setId(maxGradeId);
-        }
+        grades.add(grade);
+        grade.setId(UUID.randomUUID());
     }
 
     public List<Grade> getGrades() {
@@ -170,7 +150,7 @@ public class Student extends User {
         return gradesList;
     }
 
-    public Grade getGradeById(int id) {
+    public Grade getGradeById(UUID id) {
         for (Grade grade : this.getGrades()) {
             if (grade.getId() == id) {
                 return grade;

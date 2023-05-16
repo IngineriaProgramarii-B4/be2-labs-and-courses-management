@@ -3,6 +3,7 @@ package com.example.user.repository;
 import com.example.security.objects.Student;
 import com.example.security.objects.User;
 import com.example.security.repositories.UsersRepository;
+import org.junit.AfterClass;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -19,6 +20,7 @@ class UsersRepositoryTest {
 
     @Autowired
     private UsersRepository usersRepository;
+    Student student;
 
     @Test
     @DirtiesContext

@@ -3,8 +3,6 @@ package com.example.user.models;
 import com.example.security.objects.DBObject;
 import com.example.security.objects.Student;
 import jakarta.persistence.*;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -91,6 +89,7 @@ public class Reminder extends DBObject {
     public void setDescription(String description) {
         this.description = description;
     }
+
 
     @Override
     public boolean equals(Object o) {

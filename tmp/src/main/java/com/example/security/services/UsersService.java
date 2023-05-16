@@ -29,4 +29,5 @@ public class UsersService {
 
         return usersRepository.findUsersByParams(id, firstname, lastname, email, username);
     }
+
 }

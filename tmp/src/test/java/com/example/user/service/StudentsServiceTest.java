@@ -3,10 +3,8 @@ package com.example.user.service;
 import com.example.security.objects.Student;
 import com.example.security.repositories.StudentsRepository;
 import com.example.security.services.StudentsService;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayNameGeneration;
-import org.junit.jupiter.api.DisplayNameGenerator;
-import org.junit.jupiter.api.Test;
+import org.junit.AfterClass;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -48,7 +46,6 @@ class StudentsServiceTest {
                 null
         );
     }
-
     @Test
     void getStudentsByParamsYearTest() {
         //Given

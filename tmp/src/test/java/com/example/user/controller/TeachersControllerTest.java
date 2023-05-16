@@ -1,6 +1,7 @@
 package com.example.user.controller;
 
 import com.example.security.objects.Teacher;
+import com.example.security.repositories.TeachersRepository;
 import com.example.security.services.TeachersService;
 import com.example.subject.model.Subject;
 import com.example.user.controllers.TeachersController;
@@ -8,7 +9,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
@@ -25,6 +28,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(TeachersController.class)
+@AutoConfigureMockMvc(addFilters = false)
 class TeachersControllerTest {
 
     @Autowired
@@ -32,6 +36,9 @@ class TeachersControllerTest {
 
     @MockBean
     private TeachersService teachersService;
+
+    @Mock
+    private TeachersRepository teachersRepository;
 
     private Teacher teacher1;
 
@@ -47,6 +54,10 @@ class TeachersControllerTest {
                 new HashSet<>(Arrays.asList(new Subject())),
                 "Prof",
                 "8e93c300-f251-11ed-a05b-0242ac120003");
+    }
+
+    void clean() {
+        teachersRepository.delete(teacher1);
     }
 
     @Test

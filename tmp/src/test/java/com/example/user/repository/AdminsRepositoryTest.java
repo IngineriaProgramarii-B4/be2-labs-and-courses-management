@@ -2,14 +2,12 @@ package com.example.user.repository;
 
 import com.example.security.objects.Admin;
 import com.example.security.repositories.AdminsRepository;
-import org.checkerframework.checker.units.qual.A;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.Rollback;
 
 import java.util.List;
 import java.util.UUID;
@@ -23,6 +21,8 @@ class AdminsRepositoryTest {
     @Autowired
     private AdminsRepository adminsRepository;
 
+    Admin admin;
+
     @Test
     @DirtiesContext
     void findAdminsByParamsEmailExistsTest() {
@@ -30,19 +30,18 @@ class AdminsRepositoryTest {
         //
         //Given
         //
-        Admin admin = new Admin(
+        admin = new Admin(
                 UUID.randomUUID(),
                 "testName",
                 "testSurname",
                 "testemail@mail.com",
                 "testUser",
-                "testOffice",
+                "testOxgvcice",
                 "testDepartment",
                 "747f61f6-f24f-11ed-a05b-0242ac120003"
         );
 
         List<Admin> expected = List.of(admin);
-
         adminsRepository.save(admin);
 
         //
@@ -59,7 +58,6 @@ class AdminsRepositoryTest {
                 null,
                 null
         );
-        adminsRepository.delete(admin);
 
         //
         //Then
@@ -98,7 +96,7 @@ class AdminsRepositoryTest {
         //
         //Given
         //
-        Admin admin = new Admin(
+        admin = new Admin(
                 UUID.randomUUID(),
                 "testName",
                 "testSurname",

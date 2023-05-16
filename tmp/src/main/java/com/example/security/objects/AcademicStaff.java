@@ -1,6 +1,5 @@
 package com.example.security.objects;
 
-import com.example.security.objects.User;
 import jakarta.persistence.MappedSuperclass;
 
 import java.util.UUID;

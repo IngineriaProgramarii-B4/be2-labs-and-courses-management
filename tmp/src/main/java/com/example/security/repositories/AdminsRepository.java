@@ -1,7 +1,6 @@
 package com.example.security.repositories;
 
 import com.example.security.objects.Admin;
-import com.example.security.objects.Teacher;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

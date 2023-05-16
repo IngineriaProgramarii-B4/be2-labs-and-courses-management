@@ -13,6 +13,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 
 import java.util.*;
 
@@ -26,6 +27,7 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+@AutoConfigureMockMvc(addFilters = false)
 public class CatalogTeachersServiceTest {
     @InjectMocks
     TeachersService teachersService;
@@ -45,7 +47,7 @@ public class CatalogTeachersServiceTest {
                 new HashSet<>(Arrays.asList(new Subject())),
                 "Prof",
                 "8e93c300-f251-11ed-a05b-0242ac120003"
-                );
+        );
     }
 
     @Test

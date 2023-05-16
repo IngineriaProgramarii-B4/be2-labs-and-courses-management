@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin
 @RestController
 @RequestMapping("api/v1/")
 public class RemindersController {
@@ -121,6 +121,7 @@ public class RemindersController {
     @PatchMapping(value = "/reminder/{id}")
     public ResponseEntity<Void> updateReminder(@PathVariable UUID id, @RequestBody Reminder reminder) {
         if (!remindersService.getRemindersByParams(Map.of("id", id)).isEmpty()) {
+            System.out.println(reminder);
             remindersService.updateReminder(id, reminder);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }

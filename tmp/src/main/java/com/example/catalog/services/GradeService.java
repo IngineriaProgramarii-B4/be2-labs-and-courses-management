@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 // <-------------------------------- FROM CATALOG ----------------------------------> //
 
@@ -18,7 +19,7 @@ public class GradeService {
         this.repository = repository;
     }
 
-    public Grade getGradeById(int id){
+    public Grade getGradeById(UUID id){
         return repository.getGradeById(id).orElse((Grade)null);
     }
 
