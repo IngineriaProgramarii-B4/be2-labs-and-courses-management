@@ -4,6 +4,7 @@ import com.example.catalog.models.Grade;
 import com.example.security.objects.Student;
 import com.example.security.repositories.StudentsRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -179,7 +180,7 @@ public class StudentsService {
         }
 
         if (evaluationDate != null && !evaluationDate.equals(grade.getEvaluationDate())) {
-            grade.setEvaluationDate(new Date());
+            grade.setEvaluationDate(evaluationDate);
 //            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 //            try {
 //                LocalDate.parse(evaluationDate, formatter);
@@ -189,7 +190,7 @@ public class StudentsService {
 //            }
         }
 
-        return getGradeById(id, gradeId);
+        return grade;
     }
 
 }

@@ -15,7 +15,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
-public class SecurityConfig{
+public class SecurityConfig {
     private final JwtAuthEntryPoint authEntryPoint;
 
     @Autowired
@@ -27,8 +27,8 @@ public class SecurityConfig{
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception
     {    // Disabling CSRF protection is safe here since the application uses JWT for authentication and is stateless
 
-        http
-                .csrf().disable()
+        http.csrf()
+                .disable()
                 .exceptionHandling()
                 .authenticationEntryPoint(authEntryPoint)
                 .and()
@@ -43,6 +43,7 @@ public class SecurityConfig{
                 .requestMatchers("/swagger-ui.html#/").permitAll()
                 .requestMatchers("/api/v1/**").permitAll()
                 .requestMatchers("/index.html").permitAll()
+                .requestMatchers("/api/v1/students").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .httpBasic();

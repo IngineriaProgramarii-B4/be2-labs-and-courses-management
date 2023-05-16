@@ -1,5 +1,6 @@
 package com.example.catalog.models;
 
+import com.example.security.objects.DBObject;
 import com.example.subject.model.Subject;
 import jakarta.persistence.*;
 import org.hibernate.annotations.SQLDelete;
@@ -13,7 +14,7 @@ import java.util.UUID;
 @Entity
 @SQLDelete(sql="UPDATE Grade SET deleted = true WHERE id=?")
 @Where(clause = "deleted=false")
-public class Grade {
+public class Grade extends DBObject {
     @Id
     @SequenceGenerator(
             name="grade_sequence",

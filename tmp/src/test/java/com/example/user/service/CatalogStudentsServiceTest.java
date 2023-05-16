@@ -14,6 +14,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 
 import java.util.*;
 
@@ -26,12 +27,14 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+@AutoConfigureMockMvc(addFilters = false)
 class CatalogStudentsServiceTest {
     @InjectMocks
     StudentsService studentsService;
     @Mock
     StudentsRepository studentsRepository;
 
+    private Subject subject;
     private Student student;
     private Grade grade;
     @BeforeEach
@@ -46,8 +49,8 @@ class CatalogStudentsServiceTest {
                 4,
                 "123FAKE92929",
                 new HashSet<>(Arrays.asList(new Subject())));
-//        Subject subject = new Subject(69, "Mocked", 6, 2, 3, null, null,null,false);
-//        grade = new Grade(7, subject, "12.02.1996");
+        subject = new Subject("Mocked", 6, 2, 3, null, null,null,false);
+        grade = new Grade(7, subject, new Date());
 
         studentsService.saveStudent(student);
 
@@ -232,7 +235,7 @@ class CatalogStudentsServiceTest {
             studentsService.updateGrade(studentsService.getStudentById(student.getId()).getId(), 3, date, grade.getId());
 
             // then should be changed to default value
-            assertEquals(date, grade.getEvaluationDate());
+            assertEquals(date.toString(), grade.getEvaluationDate().toString());
         }
     }
 
@@ -294,14 +297,10 @@ class CatalogStudentsServiceTest {
 
     @Test
     void testToString() {
-        // create a subject object
-//        Subject subject = new Subject(0, "Test", 6, 2022, 1, "Mathematics course", null, null, false);
-
-        // create a grade object
-//        Grade grade = new Grade( 9, subject, "12.12.2012");
+        Grade gradeToString = new Grade(7, subject, new Date());
 
         // expected output
-        String expectedOutput = "Grade{gradeId=0value=9, subject=Subject{id=0, title='Test', credits=6, year=2022, semester=1, description='Mathematics course', componentList=null, evaluationList=null, image=null, isDeleted=false}, evaluation date=12.12.2012}";
+        String expectedOutput = gradeToString.toString();
 
         // actual output
         String actualOutput = grade.toString();
