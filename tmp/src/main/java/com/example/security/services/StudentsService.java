@@ -5,12 +5,14 @@ import com.example.security.objects.Student;
 import com.example.security.repositories.StudentsRepository;
 import com.example.subject.model.Subject;
 import jakarta.transaction.Transactional;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.*;
+
 
 @Service
 public class StudentsService {
@@ -142,7 +144,7 @@ public class StudentsService {
     }
 
     // Q: asta nu ar trebui in GradeService? ca si toate cele de mai jos, avand in vedere ca returneaza Grade - A: idk, apeleaza functii din studentService, idk what to say
-    public Grade getGradeById(UUID id, int gradeId) {
+    public Grade getGradeById(UUID id, UUID gradeId) {
         Student student = studentsRepository.findStudentById(id);
         Grade grade = student.getGradeById(gradeId);
         if (grade != null) {
@@ -160,7 +162,7 @@ public class StudentsService {
     }
 
     @Transactional
-    public Grade deleteGrade(UUID id, int gradeId) {
+    public Grade deleteGrade(UUID id, UUID gradeId) {
         try {
             return getGradeById(id, gradeId).setDeleted();
         } catch (Exception e) {
@@ -169,7 +171,7 @@ public class StudentsService {
     }
 
     @Transactional
-    public Grade updateGrade(UUID id, Integer value, String evaluationDate, int gradeId) {
+    public Grade updateGrade(UUID id, Integer value, Date evaluationDate, UUID gradeId) {
         Student student = studentsRepository.findStudentById(id);
 
         if (student == null) {
@@ -187,15 +189,17 @@ public class StudentsService {
         }
 
         if (evaluationDate != null && !evaluationDate.equals(grade.getEvaluationDate())) {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-            try {
-                LocalDate.parse(evaluationDate, formatter);
-                grade.setEvaluationDate(evaluationDate);
-            } catch (DateTimeParseException exception) {
-                grade.setEvaluationDate("01.01.1980");
-            }
+            grade.setEvaluationDate(evaluationDate);
+//            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+//            try {
+//                LocalDate.parse(evaluationDate, formatter);
+//                grade.setEvaluationDate(evaluationDate);
+//            } catch (DateTimeParseException exception) {
+//
+//            }
         }
-        return getGradeById(id, gradeId);
+
+        return grade;
     }
 
 }
