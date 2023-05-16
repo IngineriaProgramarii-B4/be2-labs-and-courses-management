@@ -39,35 +39,44 @@ public class SubjectController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('TEACHER') || hasAuthority('ADMIN')")
-    public void addSubject(@RequestBody Subject subject)
+    public ResponseEntity<byte[]> addSubject(@RequestBody Subject subject)
     {
         if(subjectService.addSubject(subject) == 0)
-            throw new ResponseStatusException(NOT_ACCEPTABLE, "Subject already exists or is invalid");
-        throw new ResponseStatusException(CREATED, "Subject added successfully");
+            /*throw new ResponseStatusException(NOT_ACCEPTABLE, "Subject already exists or is invalid");*/
+            return ResponseEntity.status(NOT_ACCEPTABLE).body("Subject already exists or is invalid".getBytes());
+        /*throw new ResponseStatusException(CREATED, "Subject added successfully");*/
+        return ResponseEntity.status(CREATED).body("Subject added successfully".getBytes());
     }
 
     @DeleteMapping("subjectTitle={title}")
     @PreAuthorize("hasAuthority('TEACHER') || hasAuthority('ADMIN')")
-    public void deleteSubjectByTitle(@PathVariable("title") String title) {
+    public ResponseEntity<byte[]> deleteSubjectByTitle(@PathVariable("title") String title) {
         if(subjectService.deleteSubjectByTitle(title) == 0)
-            throw new ResponseStatusException(NOT_FOUND, SUBJECT_ERROR);
-        throw new ResponseStatusException(NO_CONTENT, "Subject deleted successfully");
+            /*throw new ResponseStatusException(NOT_FOUND, SUBJECT_ERROR);*/
+            return ResponseEntity.status(NOT_FOUND).body(SUBJECT_ERROR.getBytes());
+        /*throw new ResponseStatusException(NO_CONTENT, "Subject deleted successfully");*/
+        return ResponseEntity.status(NO_CONTENT).body("Subject deleted successfully".getBytes());
     }
 
     @PutMapping("subjectTitle={title}")
     @PreAuthorize("hasAuthority('TEACHER') || hasAuthority('ADMIN')")
-    public void updateSubjectByTitle(@PathVariable("title") String title, @RequestBody Subject subject) {
+    public ResponseEntity<byte[]> updateSubjectByTitle(@PathVariable("title") String title, @RequestBody Subject subject) {
         if(subjectService.getSubjectByTitle(title).isEmpty())
-            throw new ResponseStatusException(NOT_FOUND, SUBJECT_ERROR);
+            /*throw new ResponseStatusException(NOT_FOUND, SUBJECT_ERROR);*/
+            return ResponseEntity.status(NOT_FOUND).body(SUBJECT_ERROR.getBytes());
         if(subjectService.updateSubjectByTitle(title, subject) == 0)
-            throw new ResponseStatusException(NOT_ACCEPTABLE, "Subject is invalid");
-        throw new ResponseStatusException(NO_CONTENT, "Subject updated successfully");
+            /*throw new ResponseStatusException(NOT_ACCEPTABLE, "Subject is invalid");*/
+            return ResponseEntity.status(NOT_ACCEPTABLE).body("Subject is invalid".getBytes());
+        /*throw new ResponseStatusException(NO_CONTENT, "Subject updated successfully");*/
+        return ResponseEntity.status(NO_CONTENT).body("Subject updated successfully".getBytes());
     }
 
     @GetMapping(path = "subjectTitle={title}")
-    public Subject getSubjectByTitle(@PathVariable("title") String title) {
-        return subjectService.getSubjectByTitle(title)
-                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, SUBJECT_ERROR));
+    public ResponseEntity<Subject> getSubjectByTitle(@PathVariable("title") String title) {
+        /*return subjectService.getSubjectByTitle(title)
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, SUBJECT_ERROR));*/
+        return subjectService.getSubjectByTitle(title).map(subject -> ResponseEntity.status(OK).body(subject))
+                .orElseGet(() -> ResponseEntity.status(NOT_FOUND).body(null));
     }
 
     @GetMapping(path = "year={year}&semester={semester}")
@@ -77,12 +86,15 @@ public class SubjectController {
 
     @PutMapping(path = "subjectTitle={title}/image")
     @PreAuthorize("hasAuthority('TEACHER') || hasAuthority('ADMIN')")
-    public void uploadSubjectImage(@PathVariable("title") String title, @RequestParam("image")MultipartFile image) {
+    public ResponseEntity<byte[]> uploadSubjectImage(@PathVariable("title") String title, @RequestParam("image")MultipartFile image) {
         if(subjectService.getSubjectByTitle(title).isEmpty())
-            throw new ResponseStatusException(NOT_FOUND, SUBJECT_ERROR);
+            /*throw new ResponseStatusException(NOT_FOUND, SUBJECT_ERROR);*/
+            return ResponseEntity.status(NOT_FOUND).body(SUBJECT_ERROR.getBytes());
         if(subjectService.uploadSubjectImage(title, image) == 0)
-            throw new ResponseStatusException(NOT_ACCEPTABLE, "Image is invalid");
-        throw new ResponseStatusException(NO_CONTENT, "Image uploaded successfully");
+            /*throw new ResponseStatusException(NOT_ACCEPTABLE, "Image is invalid");*/
+            return ResponseEntity.status(NOT_ACCEPTABLE).body("Image is invalid".getBytes());
+        /*throw new ResponseStatusException(NO_CONTENT, "Image uploaded successfully");*/
+        return ResponseEntity.status(NO_CONTENT).body("Image uploaded successfully".getBytes());
     }
     @GetMapping(path = "subjectTitle={title}/image")
     public ResponseEntity<byte[]> getSubjectImage(@PathVariable("title") String title) {

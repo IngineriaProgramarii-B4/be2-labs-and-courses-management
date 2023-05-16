@@ -4,6 +4,7 @@ import com.example.subject.model.Component;
 import com.example.subject.service.ComponentService;
 import com.example.subject.service.SubjectService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -36,45 +37,59 @@ public class ComponentController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('TEACHER') || hasAuthority('ADMIN')")
-    public void addComponent(@PathVariable("subjectTitle") String title, @RequestBody Component component) {
+    public ResponseEntity<byte[]> addComponent(@PathVariable("subjectTitle") String title, @RequestBody Component component) {
         if(subjectService.getSubjectByTitle(title).isEmpty())
-            throw new ResponseStatusException(NOT_FOUND, SUBJECT_ERROR);
+            /*throw new ResponseStatusException(NOT_FOUND, SUBJECT_ERROR);*/
+            return ResponseEntity.status(NOT_FOUND).body(SUBJECT_ERROR.getBytes());
 
         if(componentService.addComponent(title, component) == 0)
-            throw new ResponseStatusException(NOT_ACCEPTABLE, COMPONENT_BAD);
-        throw new ResponseStatusException(CREATED, "Component added successfully");
+            /*throw new ResponseStatusException(NOT_ACCEPTABLE, COMPONENT_BAD);*/
+            return ResponseEntity.status(NOT_ACCEPTABLE).body(COMPONENT_BAD.getBytes());
+        /*throw new ResponseStatusException(CREATED, "Component added successfully");*/
+        return ResponseEntity.status(CREATED).body("Component added successfully".getBytes());
     }
 
     @GetMapping(path = "type={type}")
-    public Component getComponentByType(@PathVariable("subjectTitle") String title, @PathVariable("type") String type) {
-        if(subjectService.getSubjectByTitle(title).isEmpty())
+    public ResponseEntity<Component> getComponentByType(@PathVariable("subjectTitle") String title, @PathVariable("type") String type) {
+        /*if(subjectService.getSubjectByTitle(title).isEmpty())
             throw new ResponseStatusException(NOT_FOUND, SUBJECT_ERROR);
 
         return componentService.getComponentByType(title, type)
-                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, COMPONENT_ERROR));
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, COMPONENT_ERROR));*/
+        if(subjectService.getSubjectByTitle(title).isEmpty())
+            return ResponseEntity.status(NOT_FOUND).body(null);
+
+        return componentService.getComponentByType(title, type)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(NOT_FOUND).body(null));
     }
 
     @DeleteMapping(path = "type={type}")
     @PreAuthorize("hasAuthority('TEACHER') || hasAuthority('ADMIN')")
-    public void deleteComponentByType(@PathVariable("subjectTitle") String title, @PathVariable("type") String type) {
+    public ResponseEntity<byte[]> deleteComponentByType(@PathVariable("subjectTitle") String title, @PathVariable("type") String type) {
         if(subjectService.getSubjectByTitle(title).isEmpty())
-            throw new ResponseStatusException(NOT_FOUND, SUBJECT_ERROR);
+            /*throw new ResponseStatusException(NOT_FOUND, SUBJECT_ERROR);*/
+            return ResponseEntity.status(NOT_FOUND).body(SUBJECT_ERROR.getBytes());
 
         if(componentService.deleteComponentByType(title, type) == 0)
-            throw new ResponseStatusException(NOT_FOUND, COMPONENT_ERROR);
-        throw new ResponseStatusException(NO_CONTENT, "Component deleted successfully");
+            /*throw new ResponseStatusException(NOT_FOUND, COMPONENT_ERROR);*/
+            return ResponseEntity.status(NOT_FOUND).body(COMPONENT_ERROR.getBytes());
+        /*throw new ResponseStatusException(NO_CONTENT, "Component deleted successfully");*/
+        return ResponseEntity.status(NO_CONTENT).body("Component deleted successfully".getBytes());
     }
 
     @PutMapping(path = "type={type}")
     @PreAuthorize("hasAuthority('TEACHER') || hasAuthority('ADMIN')")
-    public void updateComponentByType(@PathVariable("subjectTitle") String title,
+    public ResponseEntity<byte[]> updateComponentByType(@PathVariable("subjectTitle") String title,
                                       @PathVariable("type") String type,
                                       @RequestBody Component component) {
         if(subjectService.getSubjectByTitle(title).isEmpty())
-            throw new ResponseStatusException(NOT_FOUND, SUBJECT_ERROR);
+            return ResponseEntity.status(NOT_FOUND).body(SUBJECT_ERROR.getBytes());
         if(componentService.getComponentByType(title, type).isEmpty())
-            throw new ResponseStatusException(NOT_FOUND, COMPONENT_ERROR);
+            return ResponseEntity.status(NOT_FOUND).body(COMPONENT_ERROR.getBytes());
         if(componentService.updateComponentByType(title, type, component) == 0)
-            throw new ResponseStatusException(BAD_REQUEST, COMPONENT_BAD);
+            return ResponseEntity.status(BAD_REQUEST).body(COMPONENT_BAD.getBytes());
+
+        return ResponseEntity.status(NO_CONTENT).body("Component updated successfully".getBytes());
     }
 }
