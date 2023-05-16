@@ -1,18 +1,20 @@
 package com.example.signin.dto;
 
-import com.example.signin.security.ForgotPasswordRequestBody;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class EmailRequestTest {
 
     @Test
     void testSetEmailAndGetEmail() {
-        String email = "test@example.com";
+        String expectedEmail = "test@example.com";
 
-        ForgotPasswordRequestBody requestBody = new ForgotPasswordRequestBody();
-        requestBody.setEmail(email);
+        EmailRequest emailRequest = new EmailRequest();
+        emailRequest.setEmail(expectedEmail);
 
-        Assertions.assertEquals(email, requestBody.getEmail());
+        String actualEmail = emailRequest.getEmail();
+
+        assertEquals(expectedEmail, actualEmail, "The actual email should match the expected email");
     }
 }

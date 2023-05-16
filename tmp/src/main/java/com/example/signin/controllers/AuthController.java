@@ -38,7 +38,7 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final TeachersRepository teachersRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JWTGenerator jwtGenerator;
+    final JWTGenerator jwtGenerator;
     private final EmailService emailService;
     private final StudentService studentService;
     private final TeacherService teacherService;

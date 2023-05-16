@@ -1,4 +1,4 @@
-package com.example.signin;
+package com.example.signin.controllers;
 
 import com.example.signin.controllers.HomeController;
 import org.junit.jupiter.api.Test;

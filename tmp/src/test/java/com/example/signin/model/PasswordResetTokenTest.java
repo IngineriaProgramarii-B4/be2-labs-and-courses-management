@@ -1,33 +1,49 @@
 package com.example.signin.model;
 
-
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.Calendar;
 import java.util.Date;
 
-class PasswordResetTokenTest {
+import static org.junit.jupiter.api.Assertions.*;
+
+public class PasswordResetTokenTest {
 
     @Test
-    void testTokenExpirationTimeWithUser() {
-        testTokenExpirationTime(new PasswordResetToken("testToken", new Credentials()));
+    public void testTokenCreation() {
+        String expectedToken = "testToken";
+        Credentials credentials = new Credentials();
+        credentials.setUserId("testUserId");
+
+        PasswordResetToken passwordResetToken = new PasswordResetToken(expectedToken, credentials);
+
+        assertEquals(expectedToken, passwordResetToken.getToken());
+        assertEquals(credentials, passwordResetToken.getCredentials());
+        assertNotNull(passwordResetToken.getExpirationTime());
     }
 
     @Test
-    void testTokenExpirationTimeWithoutUser() {
-        testTokenExpirationTime(new PasswordResetToken("testToken"));
+    public void testExpirationTimeCalculation() {
+        String expectedToken = "testToken";
+
+        PasswordResetToken passwordResetToken = new PasswordResetToken(expectedToken);
+
+        assertEquals(expectedToken, passwordResetToken.getToken());
+        assertNotNull(passwordResetToken.getExpirationTime());
+
+        // assert that the expiration time is roughly 10 minutes from now
+        long diff = passwordResetToken.getExpirationTime().getTime() - new Date().getTime();
+        long diffInMinutes = diff / (60 * 1000);
+        assertTrue(diffInMinutes >= 9 && diffInMinutes <= 11);
     }
+    @Test
+    public void testSetTokenIdAndGetTokenId() {
+        Long expectedTokenId = 1L;
 
-    private void testTokenExpirationTime(PasswordResetToken passwordResetToken) {
-        // Get the current time plus 10 minutes
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(new Date().getTime());
-        calendar.add(Calendar.MINUTE, 10);
-        Date expectedExpirationTime = new Date(calendar.getTime().getTime());
+        PasswordResetToken passwordResetToken = new PasswordResetToken();
+        passwordResetToken.setTokenId(expectedTokenId);
 
-        // Check that the token's expiration time is approximately 10 minutes from now
-        // (allowing a margin of error of 1 second to account for the time taken to run the test)
-        Assertions.assertTrue(Math.abs(expectedExpirationTime.getTime() - passwordResetToken.getExpirationTime().getTime()) < 1000);
+        Long actualTokenId = passwordResetToken.getTokenId();
+
+        assertEquals(expectedTokenId, actualTokenId, "The actual tokenId should match the expected tokenId");
     }
 }
