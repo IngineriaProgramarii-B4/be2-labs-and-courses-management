@@ -3,8 +3,6 @@ package com.example.security.services;
 import com.example.catalog.models.Grade;
 import com.example.security.objects.Student;
 import com.example.security.repositories.StudentsRepository;
-import com.example.subject.model.Component;
-import com.example.subject.model.Evaluation;
 import com.example.subject.model.Subject;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -13,9 +11,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.*;
-import java.util.stream.Collectors;
-
-import static java.lang.Long.parseLong;
 
 @Service
 public class StudentsService {

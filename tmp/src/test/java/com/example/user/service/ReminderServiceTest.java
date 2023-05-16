@@ -62,12 +62,6 @@ class ReminderServiceTest {
                 "Primul examen din sesiune"
         );
     }
-
-    @AfterClass
-    public void clean() {
-        remindersRepository.delete(reminder1);
-    }
-
     @Test
     void getRemindersByParamsTest() {
         //Given

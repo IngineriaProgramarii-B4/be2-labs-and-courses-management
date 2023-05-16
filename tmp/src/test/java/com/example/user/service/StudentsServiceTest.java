@@ -46,12 +46,6 @@ class StudentsServiceTest {
                 null
         );
     }
-
-    @AfterClass
-    public void clean() {
-        studentsRepository.delete(student);
-    }
-
     @Test
     void getStudentsByParamsYearTest() {
         //Given

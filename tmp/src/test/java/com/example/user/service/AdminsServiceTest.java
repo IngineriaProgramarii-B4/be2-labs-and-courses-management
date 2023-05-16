@@ -46,11 +46,6 @@ class AdminsServiceTest {
                 "0acbd6a8-f250-11ed-a05b-0242ac120003"
         );
     }
-    @AfterClass
-    public void clean() {
-        adminsRepository.delete(admin);
-    }
-
     @Test
     void getAdminsByParamsOfficeTest() {
         //Given

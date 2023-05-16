@@ -48,13 +48,6 @@ class TeachersServiceTest {
                 "8e93c300-f251-11ed-a05b-0242ac120003"
         );
     }
-
-    @AfterClass
-    public void clean() {
-        teachersRepository.delete(teacher);
-    }
-
-
     @Test
     void getTeachersByParamsOfficeTest() {
         //Given

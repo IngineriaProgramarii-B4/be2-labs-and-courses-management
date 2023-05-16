@@ -23,11 +23,6 @@ class TeachersRepositoryTest {
     private TeachersRepository teachersRepository;
     Teacher teacher;
 
-    @AfterClass
-    public void clean() {
-        teachersRepository.delete(teacher);
-    }
-
     @Test
     @DirtiesContext
     void findTeachersByParamsEmailExistsTest() {

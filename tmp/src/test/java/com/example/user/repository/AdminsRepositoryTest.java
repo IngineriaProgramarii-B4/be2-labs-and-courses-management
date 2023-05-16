@@ -25,7 +25,6 @@ class AdminsRepositoryTest {
 
     @Test
     @DirtiesContext
-    @Rollback
     void findAdminsByParamsEmailExistsTest() {
 
         //
@@ -93,7 +92,6 @@ class AdminsRepositoryTest {
 
     @Test
     @DirtiesContext
-    @Rollback
     void findAdminsByParamsUsernameExistsTest() {
         //
         //Given

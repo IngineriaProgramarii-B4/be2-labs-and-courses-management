@@ -188,12 +188,6 @@ class StudentsRepositoryTest {
         assertTrue(result.contains(student));
     }
 
-    @AfterClass
-    public void clean() {
-        studentsRepository.delete(student);
-    }
-
-
     @Test
     void findStudentsByParamsRegistrationNumberNonexistentTest() {
         //
