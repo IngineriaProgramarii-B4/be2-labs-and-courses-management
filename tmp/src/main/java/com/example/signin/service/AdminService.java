@@ -30,8 +30,9 @@ public class AdminService {
         if (adminAuthToUpdate != null) {
             adminAuthToUpdate.setPassword(passwordEncoder.encode(newPassword));
             adminsRepository.save(adminAuthToUpdate);
+        } else {
+            throw new StudentNotFoundException("Student_auth not found with registration number: " + registrationNumber);
         }
-        throw new StudentNotFoundException("Student_auth not found with registration number: " + registrationNumber);
     }
 
     @Transactional

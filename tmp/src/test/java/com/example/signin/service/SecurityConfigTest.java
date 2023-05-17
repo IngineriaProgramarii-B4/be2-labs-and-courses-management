@@ -1,17 +1,24 @@
-package com.example.signin.security;
+package com.example.signin.service;
 
+import com.example.signin.security.JwtAuthEntryPoint;
+import com.example.signin.security.JwtAuthenticationFilter;
+import com.example.signin.security.SecurityConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -31,14 +38,10 @@ public class SecurityConfigTest {
     }
 
 
+
     @Test
-    public void testAuthenticationManager() throws Exception {
-        AuthenticationManager authenticationManager = mock(AuthenticationManager.class);
-        when(authenticationConfiguration.getAuthenticationManager()).thenReturn(authenticationManager);
-
-        AuthenticationManager result = securityConfig.authenticationManager(authenticationConfiguration);
-
-        assertEquals(authenticationManager, result);
-        verify(authenticationConfiguration, times(1)).getAuthenticationManager();
+    public void testPasswordEncoder() {
+        PasswordEncoder passwordEncoder = securityConfig.passwordEncoder();
+        assertTrue(passwordEncoder instanceof BCryptPasswordEncoder);
     }
 }

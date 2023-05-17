@@ -1,6 +1,7 @@
 package com.example.signin.service;
 
 import com.example.signin.exception.StudentNotFoundException;
+
 import com.example.signin.model.Credentials;
 import com.example.signin.repository.CredentialsRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,8 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class CredentialsServiceTest {
