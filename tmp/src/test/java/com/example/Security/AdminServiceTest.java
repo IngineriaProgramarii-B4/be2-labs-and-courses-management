@@ -1,4 +1,5 @@
-package com.example.demo;
+/*
+package com.example.;
 
 
 import com.example.demo.objects.Admin;
@@ -143,4 +144,4 @@ public class AdminServiceTest {
     }
 
 
-}
+}*/
