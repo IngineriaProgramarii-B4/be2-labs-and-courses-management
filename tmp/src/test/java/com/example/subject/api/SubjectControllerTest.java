@@ -56,8 +56,8 @@ class SubjectControllerTest {
     void getAllSubjects() {
 
         List<Subject> subjects = new ArrayList<>();
-        subjects.add(new Subject("Math", 5, 1, 1, "description A", new ArrayList<>(), new ArrayList<>(), false));
-        subjects.add(new Subject("English", 4, 1, 1, "description B", new ArrayList<>(), new ArrayList<>(), false));
+        subjects.add(new Subject("Math", 5, 1, 1, "description A", new ArrayList<>(), new ArrayList<>()));
+        subjects.add(new Subject("English", 4, 1, 1, "description B", new ArrayList<>(), new ArrayList<>()));
         when(subjectService.getAllSubjects()).thenReturn(subjects);
 
         List<Subject> result = subjectController.getAllSubjects();
@@ -103,7 +103,7 @@ class SubjectControllerTest {
     //passed
     @Test
     void addSubjectThatAlreadyExists() {
-        Subject subject = new Subject("Math", 5, 1, 2, "description", new ArrayList<>(), new ArrayList<>(), false);
+        Subject subject = new Subject("Math", 5, 1, 2, "description", new ArrayList<>(), new ArrayList<>());
         when(subjectService.addSubject(any())).thenReturn(0);
 
         ResponseEntity<byte[]> response = subjectController.addSubject(subject);
@@ -137,7 +137,7 @@ class SubjectControllerTest {
     @Test
     void updateSubjectById() {
         String title = "Math";
-        Subject updatedSubject = new Subject("Math", 5, 1, 2, "description", new ArrayList<>(), new ArrayList<>(), false);
+        Subject updatedSubject = new Subject("Math", 5, 1, 2, "description", new ArrayList<>(), new ArrayList<>());
         when(subjectService.getSubjectByTitle(title)).thenReturn(Optional.of(new Subject()));
         when(subjectService.updateSubjectByTitle(title, updatedSubject)).thenReturn(1);
 
@@ -152,7 +152,7 @@ class SubjectControllerTest {
     @Test
     void updateSubjectByIdNotFound() {
         String title = "Physics";
-        Subject updatedSubject = new Subject("Physics", 5, 1, 2, "description", new ArrayList<>(), new ArrayList<>(), false);
+        Subject updatedSubject = new Subject("Physics", 5, 1, 2, "description", new ArrayList<>(), new ArrayList<>());
         when(subjectService.getSubjectByTitle(title)).thenReturn(Optional.empty());
 
         ResponseEntity<byte[]> response = subjectController.updateSubjectByTitle(title, updatedSubject);
@@ -164,7 +164,7 @@ class SubjectControllerTest {
     @Test
     void updateSubjectWithInvalidSubject(){
         String title = "Math";
-        Subject updatedSubject = new Subject("Math", 5, 1, 2, "description", new ArrayList<>(), new ArrayList<>(), false);
+        Subject updatedSubject = new Subject("Math", 5, 1, 2, "description", new ArrayList<>(), new ArrayList<>());
         when(subjectService.getSubjectByTitle(title)).thenReturn(Optional.of(new Subject()));
         when(subjectService.updateSubjectByTitle(title, updatedSubject)).thenReturn(0);
 
@@ -178,7 +178,7 @@ class SubjectControllerTest {
     //passed
     @Test
     void getSubjectByTitle() {
-        Subject subject = new Subject("Algebraic Foundations of Science", 5, 1, 2, "not gonna pass", new ArrayList<>(), new ArrayList<>(), false);
+        Subject subject = new Subject("Algebraic Foundations of Science", 5, 1, 2, "not gonna pass", new ArrayList<>(), new ArrayList<>());
         subjectService.addSubject(subject);
 
         when(subjectService.getSubjectByTitle("Algebraic Foundations of Science")).thenReturn(Optional.of(subject));
@@ -206,8 +206,8 @@ class SubjectControllerTest {
     @Test
     void getSubjectsByYearAndSemesterSuccessful() {
         List<Subject> subjects = new ArrayList<>();
-        subjects.add(new Subject("Physics", 5, 1, 2, "description", List.of(new Component("Course", 10, List.of(new Resource("Book.pdf", "savedResources/Book.pdf", "application/pdf", false)), false)),
-                List.of(new Evaluation("Course", 0.5f, "description B", false)), false));
+        subjects.add(new Subject("Physics", 5, 1, 2, "description", List.of(new Component("Course", 10, List.of(new Resource("Book.pdf", "savedResources/Book.pdf", "application/pdf")))),
+                List.of(new Evaluation("Course", 0.5f, "description B"))));
         when(subjectService.getSubjectsByYearAndSemester(1, 2)).thenReturn(subjects);
 
         List<Subject> result = subjectController.getSubjectsByYearAndSemester(1, 2);
@@ -286,7 +286,7 @@ class SubjectControllerTest {
     @Test
     void testGetSubjectImageSuccess() throws Exception {
         Subject mockSubject = new Subject();
-        Resource resource = new Resource("IP_romania.png", "savedResources\\IP_romania.png", "image/png", false);
+        Resource resource = new Resource("IP_romania.png", "savedResources\\IP_romania.png", "image/png");
         mockSubject.setImage(resource);
 
         when(subjectService.getSubjectByTitle("test")).thenReturn(Optional.of(mockSubject));

@@ -56,7 +56,7 @@ class SubjectDataAccessServiceTest {
     @Test
     void insertSubject(){
         Subject testSubject = new Subject("Test Subject", 6, 1, 2, "Test Description",
-                new ArrayList<>(), new ArrayList<>(), false);
+                new ArrayList<>(), new ArrayList<>());
         int result = subjectDas.insertSubject(testSubject);
         assertEquals(1, result);
         verify(subjectRepo, times(1)).save(testSubject);
@@ -91,9 +91,9 @@ class SubjectDataAccessServiceTest {
     @Test
     void deleteSubjectByTitleOldImageNotNull(){
         Subject subject = new Subject("Test Subject", 6, 1, 2, "Test Description",
-                new ArrayList<>(), new ArrayList<>(), false);
+                new ArrayList<>(), new ArrayList<>());
 
-        Resource image = new Resource("image.jpg", "/path/to/image.jpg","type", false);
+        Resource image = new Resource("image.jpg", "/path/to/image.jpg","type");
         subject.setImage(image);
 
         subjectRepo.save(subject);
@@ -179,14 +179,14 @@ class SubjectDataAccessServiceTest {
     void updateSubjectByTitleWhereNewTitleIsSame(){
         // given
         Subject subject = new Subject("Math", 4, 1, 1, "Math subject",
-                new ArrayList<>(), new ArrayList<>(), false);
-        Component component = new Component("Course", 10, List.of(new Resource("Lecture 1", "/resources/Math/lectures/Lecture1.txt", "txt", false)), false);
+                new ArrayList<>(), new ArrayList<>());
+        Component component = new Component("Course", 10, List.of(new Resource("Lecture 1", "/resources/Math/lectures/Lecture1.txt", "txt")));
         subject.setComponentList(List.of(component));
         Mockito.when(subjectRepo.findSubjectByTitle("Math")).thenReturn(Optional.of(subject));
 
         // when
         Subject newSubject = new Subject("Math", 5, 1, 2, "Mathematics subject",
-                new ArrayList<>(), new ArrayList<>(), false);
+                new ArrayList<>(), new ArrayList<>());
         int result = subjectDas.updateSubjectByTitle("Math", newSubject);
 
         // then
@@ -200,14 +200,14 @@ class SubjectDataAccessServiceTest {
 
     @Test
     void testUpdateSubjectWithOldImage() {
-        Resource image = new Resource("image","location","type", false);
+        Resource image = new Resource("image","location","type");
         Subject subject = new Subject("Title", 6, 1, 2, "Description",
-                new ArrayList<>(), new ArrayList<>(), false);
+                new ArrayList<>(), new ArrayList<>());
         subject.setImage(image);
         subjectRepo.save(subject);
         Mockito.when(subjectRepo.findSubjectByTitle("Title")).thenReturn(Optional.of(subject));
 
-        Resource newImage = new Resource("newImage", "newImage.jpg", "jpg", false);
+        Resource newImage = new Resource("newImage", "newImage.jpg", "jpg");
         subject.setImage(newImage);
         subjectDas.updateSubjectByTitle("Title", subject);
 
@@ -217,7 +217,7 @@ class SubjectDataAccessServiceTest {
 
     @Test
     void saveImageToSubjectSubjectNotFound(){
-        Resource image = new Resource("Image", "location", "type", false);
+        Resource image = new Resource("Image", "location", "type");
         int result = subjectDas.saveImageToSubject("Test Subject", image);
         assertEquals(0, result);
     }
@@ -226,20 +226,20 @@ class SubjectDataAccessServiceTest {
     void saveImageToSubjectSuccessful(){
         subjectRepo.save(subject);
         Mockito.when(subjectRepo.findSubjectByTitle("Test Subject")).thenReturn(Optional.of(subject));
-        Resource image = new Resource("Image", "location", "type", false);
+        Resource image = new Resource("Image", "location", "type");
         int result = subjectDas.saveImageToSubject("Test Subject", image);
         assertEquals(1, result);
     }
 
     @Test
     void saveImageToSubject_WithOldImage() {
-        Subject subject = new Subject("Math", 3, 2023, 2, "Mathematics subject", null, null, false);
-        Resource oldImage = new Resource("Old Image", "location", "type", false);
+        Subject subject = new Subject("Math", 3, 2023, 2, "Mathematics subject", null, null);
+        Resource oldImage = new Resource("Old Image", "location", "type");
         subject.setImage(oldImage);
         subjectRepo.save(subject);
         Mockito.when(subjectRepo.findSubjectByTitle("Math")).thenReturn(Optional.of(subject));
 
-        Resource newImage = new Resource("Math_image_v2.jpg", "RESOURCE_PATH/Math_image_v2.jpg", "image", false);
+        Resource newImage = new Resource("Math_image_v2.jpg", "RESOURCE_PATH/Math_image_v2.jpg", "image");
 
         int result = subjectDas.saveImageToSubject("Math", newImage);
 
@@ -254,14 +254,14 @@ class SubjectDataAccessServiceTest {
     //COMPONENT
     @Test
     void addComponentNoSubject(){
-        Component component = new Component("Course", 10, new ArrayList<>(), false);
+        Component component = new Component("Course", 10, new ArrayList<>());
         int result = subjectDas.addComponent("Test Subject", component);
         assertEquals(0, result);
     }
 
     @Test
     void addComponentSuccessful(){
-        Component component = new Component("Course", 10, new ArrayList<>(), false);
+        Component component = new Component("Course", 10, new ArrayList<>());
         subject.setComponentList(new ArrayList<>());
         subjectRepo.save(subject);
         Mockito.when(subjectRepo.findSubjectByTitle("Test Subject")).thenReturn(Optional.of(subject));
@@ -302,8 +302,8 @@ class SubjectDataAccessServiceTest {
         String type = "Course";
 
         Subject subject = new Subject("Test Subject", 6, 1, 2, "Test Description",
-                new ArrayList<>(), new ArrayList<>(), false);
-        Component component = new Component( type, 10, new ArrayList<>(), false);
+                new ArrayList<>(), new ArrayList<>());
+        Component component = new Component( type, 10, new ArrayList<>());
         subject.addComponent(component);
         subjectRepo.save(subject);
         subjectDas.addComponent(title, component);
@@ -333,8 +333,8 @@ class SubjectDataAccessServiceTest {
         String type = "Course";
 
         Subject subject = new Subject("Test Subject", 6, 1, 2, "Test Description",
-                new ArrayList<>(), new ArrayList<>(), false);
-        Component component = new Component(type, 10, new ArrayList<>(), false);
+                new ArrayList<>(), new ArrayList<>());
+        Component component = new Component(type, 10, new ArrayList<>());
         subject.addComponent(component);
         subjectRepo.save(subject);
         subjectDas.addComponent(title, component);
@@ -366,7 +366,7 @@ class SubjectDataAccessServiceTest {
 
     @Test
     void addResourceForComponentTypeComponentNotFound(){
-        Resource resource = new Resource("Test Resource", "Test Link", "Test Description", false);
+        Resource resource = new Resource("Test Resource", "Test Link", "Test Description");
         int result = subjectDas.addResourceForComponentType("Test Subject", "Course", resource);
         assertEquals(0, result);
     }
@@ -377,15 +377,15 @@ class SubjectDataAccessServiceTest {
         String type = "Course";
 
         Subject subject = new Subject("Test Subject", 6, 1, 2, "Test Description",
-                new ArrayList<>(), new ArrayList<>(), false);
-        Component component = new Component(type, 10, new ArrayList<>(), false);
+                new ArrayList<>(), new ArrayList<>());
+        Component component = new Component(type, 10, new ArrayList<>());
         subject.addComponent(component);
         subjectRepo.save(subject);
         subjectDas.addComponent(title, component);
         Mockito.when(subjectRepo.findSubjectByTitle(title)).thenReturn(Optional.of(subject));
         Mockito.when(componentRepo.findBySubjectTitleAndType(title, type)).thenReturn(Optional.of(component));
 
-        Resource resource = new Resource("Test Resource", "Test Link", "Test Description", false);
+        Resource resource = new Resource("Test Resource", "Test Link", "Test Description");
         int result = subjectDas.addResourceForComponentType(title, type, resource);
 
         assertEquals(1, result);
@@ -406,15 +406,15 @@ class SubjectDataAccessServiceTest {
         String type = "Course";
 
         Subject subject = new Subject("Test Subject", 6, 1, 2, "Test Description",
-                new ArrayList<>(), new ArrayList<>(), false);
-        Component component = new Component(type, 10, new ArrayList<>(), false);
+                new ArrayList<>(), new ArrayList<>());
+        Component component = new Component(type, 10, new ArrayList<>());
         subject.addComponent(component);
         subjectRepo.save(subject);
         subjectDas.addComponent(title, component);
         Mockito.when(subjectRepo.findSubjectByTitle(title)).thenReturn(Optional.of(subject));
         Mockito.when(componentRepo.findBySubjectTitleAndType(title, type)).thenReturn(Optional.of(component));
 
-        Resource resource = new Resource("Test Resource", "Test Link", "Test Description", false);
+        Resource resource = new Resource("Test Resource", "Test Link", "Test Description");
         subjectDas.addResourceForComponentType(title, type, resource);
         Mockito.when(resourceRepo.findBySubjectTitleAndComponentTypeAndResourceTitle(title, type, "Test Resource")).thenReturn(Optional.of(resource));
 
@@ -438,8 +438,8 @@ class SubjectDataAccessServiceTest {
         String type = "Course";
 
         Subject subject = new Subject("Test Subject", 6, 1, 2, "Test Description",
-                new ArrayList<>(), new ArrayList<>(), false);
-        Component component = new Component(type, 10, new ArrayList<>(), false);
+                new ArrayList<>(), new ArrayList<>());
+        Component component = new Component(type, 10, new ArrayList<>());
         subject.addComponent(component);
         subjectRepo.save(subject);
         subjectDas.addComponent(title, component);
@@ -456,15 +456,15 @@ class SubjectDataAccessServiceTest {
         String type = "Course";
 
         Subject subject = new Subject("Test Subject", 6, 1, 2, "Test Description",
-                new ArrayList<>(), new ArrayList<>(), false);
-        Component component = new Component(type, 10, new ArrayList<>(), false);
+                new ArrayList<>(), new ArrayList<>());
+        Component component = new Component(type, 10, new ArrayList<>());
         subject.addComponent(component);
         subjectRepo.save(subject);
         subjectDas.addComponent(title, component);
         Mockito.when(subjectRepo.findSubjectByTitle(title)).thenReturn(Optional.of(subject));
         Mockito.when(componentRepo.findBySubjectTitleAndType(title, type)).thenReturn(Optional.of(component));
 
-        Resource resource = new Resource("Test Resource", "Test Link", "Test Description", false);
+        Resource resource = new Resource("Test Resource", "Test Link", "Test Description");
         subjectDas.addResourceForComponentType(title, type, resource);
         Mockito.when(resourceRepo.findBySubjectTitleAndComponentTypeAndResourceTitle(title, type, "Test Resource")).thenReturn(Optional.of(resource));
 
@@ -480,7 +480,7 @@ class SubjectDataAccessServiceTest {
 
     @Test
     void addEvaluationMethodSubjectNotFound(){
-        Evaluation evaluation = new Evaluation("Course", 0.5F, "description", false);
+        Evaluation evaluation = new Evaluation("Course", 0.5F, "description");
         int result = subjectDas.addEvaluationMethod("Test Subject", evaluation);
         assertEquals(0, result);
     }
@@ -491,11 +491,11 @@ class SubjectDataAccessServiceTest {
         String type = "Course";
 
         Subject subject = new Subject("Test Subject", 6, 1, 2, "Test Description",
-                new ArrayList<>(), new ArrayList<>(), false);
+                new ArrayList<>(), new ArrayList<>());
         subjectRepo.save(subject);
         Mockito.when(subjectRepo.findSubjectByTitle(title)).thenReturn(Optional.of(subject));
 
-        Evaluation evaluation = new Evaluation(type, 0.5F, "description", false);
+        Evaluation evaluation = new Evaluation(type, 0.5F, "description");
         int result = subjectDas.addEvaluationMethod(title, evaluation);
 
         assertEquals(1, result);
@@ -510,11 +510,11 @@ class SubjectDataAccessServiceTest {
         String type = "Course";
 
         Subject subject = new Subject("Test Subject", 6, 1, 2, "Test Description",
-                new ArrayList<>(), new ArrayList<>(), false);
+                new ArrayList<>(), new ArrayList<>());
         subjectRepo.save(subject);
         Mockito.when(subjectRepo.findSubjectByTitle(title)).thenReturn(Optional.of(subject));
 
-        Evaluation evaluation = new Evaluation(type, 0.5F, "description", false);
+        Evaluation evaluation = new Evaluation(type, 0.5F, "description");
         subjectDas.addEvaluationMethod(title, evaluation);
         Mockito.when(evaluationRepo.findAllBySubjectTitle(title)).thenReturn(new ArrayList<>(List.of(evaluation)));
 
@@ -541,7 +541,7 @@ class SubjectDataAccessServiceTest {
         String type = "Course";
 
         Subject subject = new Subject("Test Subject", 6, 1, 2, "Test Description",
-                new ArrayList<>(), new ArrayList<>(), false);
+                new ArrayList<>(), new ArrayList<>());
         subjectRepo.save(subject);
         Mockito.when(subjectRepo.findSubjectByTitle(title)).thenReturn(Optional.of(subject));
 
@@ -556,11 +556,11 @@ class SubjectDataAccessServiceTest {
         String type = "Course";
 
         Subject subject = new Subject("Test Subject", 6, 1, 2, "Test Description",
-                new ArrayList<>(), new ArrayList<>(), false);
+                new ArrayList<>(), new ArrayList<>());
         subjectRepo.save(subject);
         Mockito.when(subjectRepo.findSubjectByTitle(title)).thenReturn(Optional.of(subject));
 
-        Evaluation evaluation = new Evaluation(type, 0.5F, "description", false);
+        Evaluation evaluation = new Evaluation(type, 0.5F, "description");
         subjectDas.addEvaluationMethod(title, evaluation);
         Mockito.when(evaluationRepo.findBySubjectTitleAndComponent(title, type)).thenReturn(Optional.of(evaluation));
 
@@ -582,15 +582,15 @@ class SubjectDataAccessServiceTest {
     void updateEvaluationMethodByComponentSuccessful(){
         String title = "Test Subject";
         String type = "Course";
-        Evaluation evaluation = new Evaluation(type, 0.5F, "description", false);
+        Evaluation evaluation = new Evaluation(type, 0.5F, "description");
 
         Subject subject = new Subject(title, 6, 1, 2, "Test Description",
-                new ArrayList<>(), new ArrayList<>(), false);
+                new ArrayList<>(), new ArrayList<>());
         subjectRepo.save(subject);
         subjectDas.addEvaluationMethod(title, evaluation);
         Mockito.when(evaluationRepo.findBySubjectTitleAndComponent(title, type)).thenReturn(Optional.of(evaluation));
 
-        Evaluation updatedEvaluation = new Evaluation(type, 0.5F, "updated description", false);
+        Evaluation updatedEvaluation = new Evaluation(type, 0.5F, "updated description");
         int result = subjectDas.updateEvaluationMethodByComponent(title, type, updatedEvaluation);
 
         assertEquals(1, result);
