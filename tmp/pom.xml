@@ -16,7 +16,7 @@
     <properties>
         <java.version>17</java.version>
         <sonar.host.url>http://localhost:9000/</sonar.host.url>
-        <sonar.token>sqp_ce5a2b235d32ca8c26ac25e0ff38816f1ed758bb
+        <sonar.token>sqp_ebacd29ae77929c8d6df4373b3b6bcd7a1c7604f
         </sonar.token>
         <sonar.projectKey>uni-manager</sonar.projectKey>
     </properties>
