@@ -152,7 +152,7 @@ public class Student extends User {
 
     public Grade getGradeById(UUID id) {
         for (Grade grade : this.getGrades()) {
-            if (grade.getId() == id) {
+            if (grade.getId().equals(id)) {
                 return grade;
             }
         }
