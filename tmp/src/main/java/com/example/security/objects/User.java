@@ -4,8 +4,6 @@ import com.example.signin.model.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,10 +39,7 @@ public class User extends DBObject {
         this.id = id;
         this.firstname = firstname;
         this.lastname = lastname;
-        //this.email = email;
-        //Encrypting the email first
-        PasswordEncoder emailEncoder = new BCryptPasswordEncoder();
-        this.email = emailEncoder.encode(email);
+        this.email = email;
         this.username = username;
     }
 
@@ -52,10 +47,7 @@ public class User extends DBObject {
         this.id = id;
         this.firstname = firstname;
         this.lastname = lastname;
-        //this.email = email;
-        //Encrypting the email first
-        PasswordEncoder emailEncoder = new BCryptPasswordEncoder();
-        this.email = emailEncoder.encode(email);
+        this.email = email;
         this.username = username;
         this.registrationNumber = registrationNumber;
     }
@@ -64,10 +56,7 @@ public class User extends DBObject {
         this.registrationNumber = registrationNumber;
         this.firstname = firstname;
         this.lastname = lastname;
-        //this.email = email;
-        //Encrypting the email first
-        PasswordEncoder emailEncoder = new BCryptPasswordEncoder();
-        this.email = emailEncoder.encode(email);
+        this.email = email;
         this.username = username;
     }
 
@@ -100,10 +89,7 @@ public class User extends DBObject {
     }
 
     public void setEmail(String email) {
-        //this.email = email;
-        //Encrypting the email first
-        PasswordEncoder emailEncoder = new BCryptPasswordEncoder();
-        this.email = emailEncoder.encode(email);
+        this.email = email;
     }
 
     public String getUsername() {
