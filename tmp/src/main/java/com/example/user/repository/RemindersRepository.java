@@ -1,5 +1,6 @@
 package com.example.user.repository;
 
+import com.example.security.objects.Student;
 import com.example.user.models.Reminder;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -29,4 +30,8 @@ public interface RemindersRepository extends JpaRepository<Reminder, UUID> {
     @Modifying
     @Query("update Reminder a set a.isDeleted = true where a.id = ?1")
     void remove(UUID uuid);
+
+    @Modifying
+    @Query("delete from Reminder a where a=?1")
+    void delete(Reminder reminder);
 }

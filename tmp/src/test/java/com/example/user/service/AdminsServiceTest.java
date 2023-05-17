@@ -3,21 +3,20 @@ package com.example.user.service;
 import com.example.security.objects.Admin;
 import com.example.security.repositories.AdminsRepository;
 import com.example.security.services.AdminsService;
-import org.junit.AfterClass;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.nullable;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
@@ -43,9 +42,10 @@ class AdminsServiceTest {
                 "UsernameTest",
                 "OfficeTest",
                 "DepartmentTest",
-                "0acbd6a8-f250-11ed-a05b-0242ac120003"
+                "12345"
         );
     }
+
     @Test
     void getAdminsByParamsOfficeTest() {
         //Given

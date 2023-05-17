@@ -1,6 +1,7 @@
 package com.example.user.models;
 
 import com.example.security.objects.Student;
+import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -20,7 +21,7 @@ class ReminderTest {
     @BeforeEach
     public void setup() {
         tempStudent = new Student(
-//                UUID.randomUUID(),
+                UUID.randomUUID(),
                 "Organized",
                 "Student",
                 "ilovereminders@yahoo.com",
@@ -161,7 +162,7 @@ class ReminderTest {
         //
         //When
         //
-        reminder.setIsDeleted(true);
+        reminder.setDeleted(true);
 
         //
         //Then
@@ -180,7 +181,7 @@ class ReminderTest {
         //
         //When
         //
-        reminder.setIsDeleted(false);
+        reminder.setDeleted(false);
 
         //
         //Then
@@ -200,7 +201,7 @@ class ReminderTest {
         //
         //When
         //
-        reminder.setIsDeleted(false);
+        reminder.setDeleted(false);
 
         //
         //Then
@@ -406,8 +407,7 @@ class ReminderTest {
         //
         reminder.setTitle("firstReminder");
         reminder.setDescription("this is an important reminder");
-        reminder.setIsDeleted(false);
-        System.out.println(reminder);
+        reminder.setDeleted(false);
         //
         //Then
         //

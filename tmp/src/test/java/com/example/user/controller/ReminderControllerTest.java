@@ -3,9 +3,7 @@ package com.example.user.controller;
 import com.example.security.objects.Student;
 import com.example.user.controllers.RemindersController;
 import com.example.user.models.Reminder;
-import com.example.user.repository.RemindersRepository;
 import com.example.user.services.RemindersService;
-import org.junit.AfterClass;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -20,10 +18,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doNothing;
@@ -42,16 +37,13 @@ class ReminderControllerTest {
     @Mock
     private RemindersService remindersService;
 
-    @Mock
-    private RemindersRepository remindersRepository;
-
     private Reminder reminder1, reminder2;
     private Student tempStudent;
 
     @BeforeEach
     public void setup() {
         tempStudent = new Student(
-//                UUID.randomUUID(),
+                UUID.randomUUID(),
                 "Organized",
                 "Student",
                 "ilovereminders@yahoo.com",
@@ -77,12 +69,6 @@ class ReminderControllerTest {
                 "Examen-IP",
                 "Primul examen din sesiune"
         );
-    }
-
-    @AfterClass
-    public void clean() {
-        remindersRepository.delete(reminder1);
-        remindersRepository.delete(reminder2);
     }
 
     @Test
@@ -196,7 +182,6 @@ class ReminderControllerTest {
 
         //Then
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        remindersRepository.delete(reminder1);
     }
 
     @Test

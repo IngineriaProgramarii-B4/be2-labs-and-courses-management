@@ -3,17 +3,17 @@ package com.example.user.service;
 import com.example.security.objects.Student;
 import com.example.security.repositories.StudentsRepository;
 import com.example.security.services.StudentsService;
-import org.junit.AfterClass;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.*;
@@ -42,10 +42,11 @@ class StudentsServiceTest {
                 "UsernameTest",
                 1,
                 2,
-                "0034cd1c-f250-11ed-a05b-0242ac120003",
+                "RegNumberTest",
                 null
         );
     }
+
     @Test
     void getStudentsByParamsYearTest() {
         //Given
