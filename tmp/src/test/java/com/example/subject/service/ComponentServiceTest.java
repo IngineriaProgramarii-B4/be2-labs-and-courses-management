@@ -33,41 +33,42 @@ class ComponentServiceTest {
 
     @Test
     void validateComponentReturnsTrueForValidComponent() {
-        Component component = new Component("Seminar", 14, new ArrayList<>(), false);
+        Component component = new Component("Seminar", 14, new ArrayList<>());
         when(courseDao.selectSubjectByTitle("Algebraic Foundations of Science")).thenReturn(Optional.of(new Subject()));
         assertTrue(componentService.validateComponent("Algebraic Foundations of Science", component));
     }
 
     @Test
     void validateComponentReturnsFalseForDeletedComponent(){
-        Component component = new Component("Seminar", 14, new ArrayList<>(), true);
+        Component component = new Component("Seminar", 14, new ArrayList<>());
+        component.setDeleted(true);
         assertFalse(componentService.validateComponent("Algebraic Foundations of Science", component));
     }
 
     @Test
     void validateComponentReturnsFalseForInvalidType(){
-        Component component = new Component("Seminar", 14, new ArrayList<>(), false);
+        Component component = new Component("Seminar", 14, new ArrayList<>());
         component.setType("Invalid");
         assertFalse(componentService.validateComponent("Algebraic Foundations of Science", component));
     }
 
     @Test
     void validateComponentReturnsFalseForInvalidNumberWeeks(){
-        Component component = new Component("Seminar", 0, new ArrayList<>(), false);
+        Component component = new Component("Seminar", 0, new ArrayList<>());
         assertFalse(componentService.validateComponent("Algebraic Foundations of Science", component));
     }
 
     @Test
     void validateComponentReturnsFalseForSubjectNotFound(){
-        Component component = new Component("Seminar", 14, new ArrayList<>(), false);
+        Component component = new Component("Seminar", 14, new ArrayList<>());
         when(courseDao.selectSubjectByTitle("Algebraic Foundations of Science")).thenReturn(Optional.empty());
         assertFalse(componentService.validateComponent("Algebraic Foundations of Science", component));
     }
     @Test
     void validateComponentToUpdateReturnsTrueForValidComponent() {
         Subject subject = new Subject("Algebraic Foundations of Science", 5, 1, 2, "not gonna pass",
-                List.of(new Component("Course", 14, new ArrayList<>(), false)), new ArrayList<>(), false);
-        Component component = new Component("Seminar", 14, new ArrayList<>(), false);
+                List.of(new Component("Course", 14, new ArrayList<>())), new ArrayList<>());
+        Component component = new Component("Seminar", 14, new ArrayList<>());
         when(courseDao.selectSubjectByTitle("Algebraic Foundations of Science")).thenReturn(Optional.of(subject));
         assertNotEquals(component.getType(), subject.getComponentList().get(0).getType());
         assertTrue(componentService.validateComponentToUpdate("Algebraic Foundations of Science", "Seminar", component));
@@ -76,47 +77,48 @@ class ComponentServiceTest {
     @Test
     void testValidateComponent_DuplicateComponent() {
         List<Component> components = List.of(
-                new Component("Course", 12, new ArrayList<>(), false),
-                new Component("Laboratory", 13, new ArrayList<>(), false));
+                new Component("Course", 12, new ArrayList<>()),
+                new Component("Laboratory", 13, new ArrayList<>()));
         Subject subject = new Subject();
         subject.setTitle("title");
         subject.setComponentList(components);
         when(courseDao.selectSubjectByTitle("title")).thenReturn(Optional.of(subject));
         when(courseDao.getComponents("title")).thenReturn(components);
-        Component component = new Component("Course", 14, new ArrayList<>(), false);
+        Component component = new Component("Course", 14, new ArrayList<>());
         boolean result = componentService.validateComponent("title", component);
         assertFalse(result);
     }
 
     @Test
     void validateComponentToUpdateReturnsFalseForDeletedComponent(){
-        Component component = new Component("Seminar", 14, new ArrayList<>(), true);
+        Component component = new Component("Seminar", 14, new ArrayList<>());
+        component.setDeleted(true);
         assertFalse(componentService.validateComponentToUpdate("Algebraic Foundations of Science", "Seminar", component));
     }
 
     @Test
     void validateComponentToUpdateReturnsFalseForInvalidNumberWeeks(){
-        Component component = new Component("Seminar", 0, new ArrayList<>(), false);
+        Component component = new Component("Seminar", 0, new ArrayList<>());
         assertFalse(componentService.validateComponentToUpdate("Algebraic Foundations of Science", "Seminar", component));
     }
 
     @Test
     void validateComponentToUpdateReturnsFalseForInvalidType(){
-        Component component = new Component("Seminar", 14, new ArrayList<>(), false);
+        Component component = new Component("Seminar", 14, new ArrayList<>());
         component.setType("Invalid");
         assertFalse(componentService.validateComponentToUpdate("Algebraic Foundations of Science", "Seminar", component));
     }
 
     @Test
     void validateComponentToUpdateReturnsFalseForSubjectNotFound(){
-        Component component = new Component("Seminar", 14, new ArrayList<>(), false);
+        Component component = new Component("Seminar", 14, new ArrayList<>());
         when(courseDao.selectSubjectByTitle("Algebraic Foundations of Science")).thenReturn(Optional.empty());
         assertFalse(componentService.validateComponentToUpdate("Algebraic Foundations of Science", "Seminar", component));
     }
 
     @Test
     void validateComponentToUpdateReturnsFalseForDifferentType(){
-        Component component = new Component("Seminar", 14, new ArrayList<>(), false);
+        Component component = new Component("Seminar", 14, new ArrayList<>());
         assertFalse(componentService.validateComponentToUpdate("Algebraic Foundations of Science", "Laboratory", component));
     }
     @Test
@@ -133,13 +135,13 @@ class ComponentServiceTest {
 
     @Test
     void addComponentReturnsFalseForInvalidComponent() {
-        Component component = new Component("Seminar", 0, new ArrayList<>(), false);
+        Component component = new Component("Seminar", 0, new ArrayList<>());
         assertEquals(0, componentService.addComponent("Algebraic Foundations of Science", component));
     }
 
     @Test
     void addComponentSuccessful(){
-        Component component = new Component("Seminar", 14, new ArrayList<>(), false);
+        Component component = new Component("Seminar", 14, new ArrayList<>());
         Subject subject = new Subject();
         when(courseDao.selectSubjectByTitle("Algebraic Foundations of Science")).thenReturn(Optional.of(subject));
         when(courseDao.addComponent("Algebraic Foundations of Science", component)).thenReturn(1);
@@ -148,8 +150,8 @@ class ComponentServiceTest {
 
     @Test
     void getComponents() {
-        List<Component> components = List.of(new Component("Seminar", 14, new ArrayList<>(), false),
-                new Component("Laboratory", 10, new ArrayList<>(), false));
+        List<Component> components = List.of(new Component("Seminar", 14, new ArrayList<>()),
+                new Component("Laboratory", 10, new ArrayList<>()));
         Subject subject = new Subject();
         subject.setComponentList(components);
         when(courseDao.getComponents("Algebraic Foundations of Science")).thenReturn(components);
@@ -159,7 +161,7 @@ class ComponentServiceTest {
 
     @Test
     void getComponentByTypeSuccessful() {
-        Component component = new Component("Seminar", 14, new ArrayList<>(), false);
+        Component component = new Component("Seminar", 14, new ArrayList<>());
         Subject subject = new Subject();
         subject.setComponentList(List.of(component));
         when(courseDao.getComponentByType("Algebraic Foundations of Science", "Seminar")).thenReturn(Optional.of(component));
@@ -169,7 +171,7 @@ class ComponentServiceTest {
 
     @Test
     void getComponentByTypeReturnsEmptyOptionalForInvalidType() {
-        Component component = new Component("Seminar", 14, new ArrayList<>(), false);
+        Component component = new Component("Seminar", 14, new ArrayList<>());
         Subject subject = new Subject();
         subject.setComponentList(List.of(component));
         Optional<Component> result = componentService.getComponentByType("Algebraic Foundations of Science", "Invalid");
@@ -178,7 +180,7 @@ class ComponentServiceTest {
 
     @Test
     void deleteComponentByTypeSuccessfulNoResources() {
-        Component component = new Component("Seminar", 14, new ArrayList<>(), false);
+        Component component = new Component("Seminar", 14, new ArrayList<>());
         Subject subject = new Subject();
         subject.setComponentList(List.of(component));
         when(courseDao.selectSubjectByTitle("Algebraic Foundations of Science")).thenReturn(Optional.of(subject));
@@ -192,7 +194,7 @@ class ComponentServiceTest {
         Subject subject = new Subject();
         subject.setTitle("Mathematics");
         when(courseDao.selectSubjectByTitle("Mathematics")).thenReturn(Optional.of(subject));
-        when(courseDao.getResourcesForComponentType("Mathematics", "Course")).thenReturn(List.of( new Resource("Book", "location", "Course", false)));
+        when(courseDao.getResourcesForComponentType("Mathematics", "Course")).thenReturn(List.of( new Resource("Book", "location", "Course")));
         assertNotEquals(Optional.empty(), courseDao.selectSubjectByTitle("Mathematics"));
         assertNotEquals(null, courseDao.getComponents("Mathematics"));
         assertNotEquals(null, courseDao.getResourcesForComponentType("Mathematics", "Course"));
@@ -209,7 +211,7 @@ class ComponentServiceTest {
         when(courseDao.selectSubjectByTitle("Mathematics")).thenReturn(Optional.of(new Subject()));
         when(courseDao.getResourcesForComponentType("Mathematics", "Course")).thenReturn(new ArrayList<>());
         when(courseDao.getEvaluationMethodByComponent("Mathematics", "Course"))
-                .thenReturn(Optional.of(new Evaluation("Course", 0.5F, "Exam", false)));
+                .thenReturn(Optional.of(new Evaluation("Course", 0.5F, "Exam")));
 
         when(courseDao.deleteEvaluationMethod("Mathematics", "Course")).thenReturn(1);
         when(courseDao.deleteComponentByType("Mathematics", "Course")).thenReturn(1);
@@ -221,7 +223,7 @@ class ComponentServiceTest {
 
     @Test
     void deleteComponentByTypeReturnsZeroForInvalidComponentType() {
-        Component component = new Component("Invalid", 0, new ArrayList<>(), false);
+        Component component = new Component("Invalid", 0, new ArrayList<>());
         Subject subject = new Subject();
         subject.setComponentList(List.of(component));
         subject.setTitle("Algebraic Foundations of Science");
@@ -237,7 +239,7 @@ class ComponentServiceTest {
 
     @Test
     void updateComponentByTypeSuccessful() {
-        Component component = new Component("Seminar", 14, new ArrayList<>(), false);
+        Component component = new Component("Seminar", 14, new ArrayList<>());
         Subject subject = new Subject();
         subject.setComponentList(List.of(component));
         when(courseDao.selectSubjectByTitle("Algebraic Foundations of Science")).thenReturn(Optional.of(subject));
@@ -247,13 +249,13 @@ class ComponentServiceTest {
 
     @Test
     void updateComponentByTypeReturnsZeroForInvalidSubject() {
-        Component component = new Component("Seminar", 14, new ArrayList<>(), false);
+        Component component = new Component("Seminar", 14, new ArrayList<>());
         assertEquals(0, componentService.updateComponentByType("Algebraic Foundations of Science", "Seminar", component));
     }
 
     @Test
     void updateComponentByTypeReturnsZeroForInvalidComponent() {
-        Component component = new Component("Invalid", 0, new ArrayList<>(), false);
+        Component component = new Component("Invalid", 0, new ArrayList<>());
         Subject subject = new Subject();
         subject.setComponentList(List.of(component));
         assertEquals(0, componentService.updateComponentByType("Algebraic Foundations of Science", "Seminar", component));

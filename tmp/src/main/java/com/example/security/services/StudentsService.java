@@ -177,7 +177,7 @@ public class StudentsService {
     }
 
     @Transactional
-    public Grade updateGrade(UUID id, Integer value, Date evaluationDate, UUID gradeId) {
+    public Grade updateGrade(UUID id, Integer value, String evaluationDate, UUID gradeId) {
         Student student = studentsRepository.findStudentById(id);
 
         if (student == null) {
@@ -195,14 +195,14 @@ public class StudentsService {
         }
 
         if (evaluationDate != null && !evaluationDate.equals(grade.getEvaluationDate())) {
-            grade.setEvaluationDate(evaluationDate);
-//            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-//            try {
-//                LocalDate.parse(evaluationDate, formatter);
-//                grade.setEvaluationDate(evaluationDate);
-//            } catch (DateTimeParseException exception) {
-//
-//            }
+//            grade.setEvaluationDate(evaluationDate);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+            try {
+                LocalDate.parse(evaluationDate, formatter);
+                grade.setEvaluationDate(evaluationDate);
+            } catch (DateTimeParseException exception) {
+
+            }
         }
 
         return grade;

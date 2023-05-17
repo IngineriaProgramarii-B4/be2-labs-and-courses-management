@@ -56,8 +56,8 @@ public class ResourceService {
         Resource resource = new Resource(
                 file.getOriginalFilename(),
                 RESOURCE_PATH + fileName,
-                file.getContentType(),
-                false);
+                file.getContentType()
+        );
         if(!validateNewResource(title, type, resource))
             return 0;
         if(courseDao.addResourceForComponentType(title, type, resource) == 0)

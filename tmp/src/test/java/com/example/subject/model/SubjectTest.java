@@ -48,14 +48,14 @@ class SubjectTest {
 
     @Test
     void setComponentList() {
-        Component component = new Component("Course", 14, new ArrayList<>(), false);
+        Component component = new Component("Course", 14, new ArrayList<>());
         subject.setComponentList(List.of(component));
         assertEquals(component, subject.getComponentList().get(0));
     }
 
     @Test
     void setEvaluationList() {
-        Evaluation evaluation = new Evaluation("Course", 0.5f, "evaluation description", false);
+        Evaluation evaluation = new Evaluation("Course", 0.5f, "evaluation description");
         subject.setEvaluationList(List.of(evaluation));
         assertEquals(evaluation, subject.getEvaluationList().get(0));
     }
@@ -68,7 +68,7 @@ class SubjectTest {
 
     @Test
     void setImage() {
-        Resource image = new Resource("Resource", "RESOURCE_PATH/Maths_Resource", "image/jpeg", false);
+        Resource image = new Resource("Resource", "RESOURCE_PATH/Maths_Resource", "image/jpeg");
         subject.setImage(image);
         assertEquals("Resource", subject.getImage().getTitle());
         assertEquals("RESOURCE_PATH/Maths_Resource", subject.getImage().getLocation());
@@ -77,7 +77,7 @@ class SubjectTest {
 
     @Test
     void addComponent() {
-        Component component = new Component("Course", 14, new ArrayList<>(), false);
+        Component component = new Component("Course", 14, new ArrayList<>());
         subject.addComponent(component);
         assertEquals(1, subject.getComponentList().size());
         assertEquals(component, subject.getComponentList().get(0));
@@ -85,7 +85,7 @@ class SubjectTest {
 
     @Test
     void removeComponent() {
-        Component component = new Component("Course", 14, new ArrayList<>(), false);
+        Component component = new Component("Course", 14, new ArrayList<>());
         subject.addComponent(component);
         assertEquals(1, subject.getComponentList().size());
 
@@ -95,7 +95,7 @@ class SubjectTest {
 
     @Test
     void softDeleteComponent() {
-        Component component = new Component("Course", 14, new ArrayList<>(), false);
+        Component component = new Component("Course", 14, new ArrayList<>());
         subject.addComponent(component);
         assertEquals(1, subject.getComponentList().size());
 
@@ -106,7 +106,7 @@ class SubjectTest {
 
     @Test
     void softDeleteComponentNotFound() {
-        Component component = new Component("Course", 14, new ArrayList<>(), false);
+        Component component = new Component("Course", 14, new ArrayList<>());
         assertEquals(0, subject.getComponentList().size());
 
         subject.softDeleteComponent(component);
@@ -115,7 +115,7 @@ class SubjectTest {
 
     @Test
     void addEvaluation() {
-        Evaluation evaluation = new Evaluation("Course", 0.5f, "evaluation description", false);
+        Evaluation evaluation = new Evaluation("Course", 0.5f, "evaluation description");
         subject.addEvaluation(evaluation);
         assertEquals(1, subject.getEvaluationList().size());
         assertEquals(evaluation, subject.getEvaluationList().get(0));
@@ -123,7 +123,7 @@ class SubjectTest {
 
     @Test
     void removeEvaluation() {
-        Evaluation evaluation = new Evaluation("Course", 0.5f, "evaluation description", false);
+        Evaluation evaluation = new Evaluation("Course", 0.5f, "evaluation description");
         subject.addEvaluation(evaluation);
         assertEquals(1, subject.getEvaluationList().size());
 
@@ -133,7 +133,7 @@ class SubjectTest {
 
     @Test
     void softDeleteEvaluation() {
-        Evaluation evaluation = new Evaluation("Course", 0.5f, "evaluation description", false);
+        Evaluation evaluation = new Evaluation("Course", 0.5f, "evaluation description");
         subject.addEvaluation(evaluation);
         assertEquals(1, subject.getEvaluationList().size());
 
@@ -144,7 +144,7 @@ class SubjectTest {
 
     @Test
     void softDeleteEvaluationNotFound() {
-        Evaluation evaluation = new Evaluation("Course", 0.5f, "evaluation description", false);
+        Evaluation evaluation = new Evaluation("Course", 0.5f, "evaluation description");
         assertEquals(0, subject.getEvaluationList().size());
 
         subject.softDeleteEvaluation(evaluation);
@@ -159,7 +159,6 @@ class SubjectTest {
         subject.setYear(1);
         subject.setSemester(2);
         subject.setDescription("description");
-        subject.setDeleted(false);
 
         String expected = "Subject{" +
                 "title='Maths', " +
@@ -169,8 +168,7 @@ class SubjectTest {
                 "description='description', " +
                 "componentList=" + subject.getComponentList() + ", " +
                 "evaluationList=" + subject.getEvaluationList() + ", " +
-                "image=" + subject.getImage() + ", " +
-                "isDeleted=false" +
+                "image=" + subject.getImage() +
                 "}";
         assertEquals(expected, subject.toString());
     }

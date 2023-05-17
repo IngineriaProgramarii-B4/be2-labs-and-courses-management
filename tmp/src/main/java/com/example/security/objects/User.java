@@ -9,6 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 @Entity
 @Table(name = "users")
@@ -149,12 +150,20 @@ public class User extends DBObject {
     }
 
     @Override
-    public int hashCode() {
-        return super.hashCode();
+    public boolean equals(Object user) {
+
+        if (this == user)
+            return true;
+
+        if (user == null || getClass() != user.getClass())
+            return false;
+
+        User user1 = (User) user;
+        return Objects.equals(id, user1.id) && Objects.equals(firstname, user1.firstname) && Objects.equals(lastname, user1.lastname) && Objects.equals(email, user1.email) && Objects.equals(username, user1.username);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        return super.equals(obj);
+    public int hashCode() {
+        return Objects.hash(id, firstname, lastname, email, username);
     }
 }

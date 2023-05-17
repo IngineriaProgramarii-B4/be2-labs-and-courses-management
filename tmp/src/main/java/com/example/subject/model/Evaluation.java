@@ -1,14 +1,14 @@
 package com.example.subject.model;
 
+import com.example.security.objects.DBObject;
 import jakarta.persistence.*;
 import org.hibernate.annotations.GenericGenerator;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
 @Table(name = "evaluation")
-public class Evaluation {
+public class Evaluation extends DBObject {
     @Id
     @GenericGenerator(
             name = "evaluation_sequence",
@@ -25,22 +25,15 @@ public class Evaluation {
     private float value;
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
-    @Column(name = "is_deleted", nullable = false)
-    private boolean isDeleted;
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
-    @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updatedAt;
 
     public Evaluation() {
     }
 
-    public Evaluation(String component, float value, String description, boolean isDeleted) {
+    public Evaluation(String component, float value, String description) {
         this.id = UUID.randomUUID();
         this.component = component;
         this.value = value;
         this.description = description;
-        this.isDeleted = isDeleted;
     }
 
     public UUID getId() {
@@ -71,26 +64,11 @@ public class Evaluation {
         this.description = description;
     }
 
-    public boolean isDeleted() {
-        return isDeleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        isDeleted = deleted;
-    }
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
     @Override
     public String toString() {
         return "Evaluation{" +
                 "component='" + component + '\'' +
                 ", value=" + value +
-                ", isDeleted=" + isDeleted +
                 '}';
     }
 }

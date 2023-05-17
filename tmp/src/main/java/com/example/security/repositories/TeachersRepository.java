@@ -1,5 +1,6 @@
 package com.example.security.repositories;
 
+import com.example.security.objects.Student;
 import com.example.security.objects.Teacher;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -36,4 +37,7 @@ public interface TeachersRepository extends JpaRepository<Teacher, UUID> {
     @Query("select a from Teacher a where a.id = ?1")
     Teacher findTeacherById(UUID id);
 
+    @Modifying
+    @Query("delete from Teacher a where a=?1")
+    void delete(Teacher teacher);
 }
