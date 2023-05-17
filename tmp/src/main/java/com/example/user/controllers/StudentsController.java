@@ -183,9 +183,8 @@ public class StudentsController {
 
     @Nullable
     @PutMapping("students/{id}/grades/{gradeId}")
-    public ResponseEntity<Grade> updateGradeValue(@PathVariable("id") UUID id, @PathVariable("gradeId") UUID gradeId, @RequestParam(required = false) @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss") long evaluationDateMs, @RequestParam(required = false) Integer value){
+    public ResponseEntity<Grade> updateGradeValue(@PathVariable("id") UUID id, @PathVariable("gradeId") UUID gradeId,@RequestParam(required = false) String evaluationDate,@RequestParam(required = false) Integer value){
         Optional<Student> student = Optional.ofNullable(studentsService.getStudentById(id));
-        Date evaluationDate = new Date(evaluationDateMs);
         if (student.isPresent()) {
             Optional<Grade> grade = Optional.ofNullable(studentsService.getGradeById(id, gradeId));
             if (grade.isPresent()){

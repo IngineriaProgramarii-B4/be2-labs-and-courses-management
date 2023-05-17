@@ -171,7 +171,7 @@ public class StudentsService {
     }
 
     @Transactional
-    public Grade updateGrade(UUID id, Integer value, Date evaluationDate, UUID gradeId) {
+    public Grade updateGrade(UUID id, Integer value, String evaluationDate, UUID gradeId) {
         Student student = studentsRepository.findStudentById(id);
 
         if (student == null) {

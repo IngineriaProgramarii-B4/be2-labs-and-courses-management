@@ -31,16 +31,16 @@ public class Grade extends DBObject {
     private int value;
 
     //CascadeType.MERGE : copiaza obiectul intr-un obiect cu acelasi identificator
-    @ManyToOne(cascade = {CascadeType.MERGE})
-    private Subject subject;
+//    @ManyToOne(cascade = {CascadeType.MERGE})
+    private String subject;
 
-    private Date evaluationDate;
+    private String evaluationDate;
 
     private boolean deleted=false;
     public Grade(){}
 
 
-    public Grade(int value, Subject subject, Date evaluationDate) {
+    public Grade(int value, String subject, String evaluationDate) {
         this.value = value;
         this.subject = subject;
         this.evaluationDate = evaluationDate;
@@ -60,19 +60,19 @@ public class Grade extends DBObject {
         this.value = value;
     }
 
-    public Subject getSubject() {
+    public String getSubject() {
         return subject;
     }
 
-    public void setSubject(Subject subject) {
+    public void setSubject(String subject) {
         this.subject = subject;
     }
 
-    public Date getEvaluationDate() {
+    public String getEvaluationDate() {
         return evaluationDate;
     }
 
-    public void setEvaluationDate(Date evaluationDate) {
+    public void setEvaluationDate(String evaluationDate) {
         this.evaluationDate = evaluationDate;
     }
 

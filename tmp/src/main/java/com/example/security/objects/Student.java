@@ -162,7 +162,7 @@ public class Student extends User {
     public List<Grade> getGradesBySubject(String subject) {
         List<Grade> gradesList = new ArrayList<>();
         for (Grade grade : this.getGrades()) {
-            if (grade.getSubject().getTitle().equals(subject)) {
+            if (grade.getSubject().equals(subject)) {
                 gradesList.add(grade);
             }
         }
