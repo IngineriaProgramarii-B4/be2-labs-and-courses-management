@@ -39,7 +39,7 @@ public class DBObject {
     public boolean getIsDeleted() {
         return isDeleted;
     }
-
+    
     public boolean isDeleted() {
         return isDeleted;
     }
@@ -47,7 +47,6 @@ public class DBObject {
     public void setDeleted(boolean deleted) {
         isDeleted = deleted;
     }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
