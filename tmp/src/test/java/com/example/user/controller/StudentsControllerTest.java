@@ -1,13 +1,10 @@
 package com.example.user.controller;
 import com.example.security.objects.Student;
 import com.example.security.services.StudentsService;
+import com.example.subject.service.SubjectService;
 import com.example.user.controllers.StudentsController;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.http.HttpServletRequest;
-import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
-
-import org.junit.AfterClass;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,13 +33,15 @@ class StudentsControllerTest {
 
     @MockBean
     private StudentsService studentsService;
+    @MockBean
+    private SubjectService subjectService;
 
     private Student stud1, stud2, stud3;
 
     @BeforeEach
     public void setup() {
         stud1 = new Student(
-                UUID.randomUUID(),
+                UUID.fromString("a838ae68-f4b0-11ed-a05b-0242ac120003"),
                 "Florin",
                 "Rotaru",
                 "florin.eugen@uaic.ro",
@@ -52,7 +51,7 @@ class StudentsControllerTest {
                 "123FAKE92929",
                 null);
         stud2 = new Student(
-                UUID.randomUUID(),
+                UUID.fromString("c6a41a36-f4b0-11ed-a05b-0242ac120003"),
                 "Antip",
                 "Andrei",
                 "andrei.antip@uaic.ro",
@@ -62,7 +61,7 @@ class StudentsControllerTest {
                 "123BOSS135",
                 null);
         stud3 = new Student(
-                UUID.randomUUID(),
+                UUID.fromString("caa30a3e-f4b0-11ed-a05b-0242ac120003"),
                 "Olariu",
                 "Andreea",
                 "andreea.olariu@uaic.ro",

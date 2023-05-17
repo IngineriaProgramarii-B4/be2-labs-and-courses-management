@@ -286,14 +286,14 @@ class SubjectControllerTest {
     @Test
     void testGetSubjectImageSuccess() throws Exception {
         Subject mockSubject = new Subject();
-        Resource resource = new Resource("IP_romania.png", "savedResources\\IP_romania.png", "image/png");
+        Resource resource = new Resource("IP_romania.png", "savedResources/IP_romania.png", "image/png");
         mockSubject.setImage(resource);
 
         when(subjectService.getSubjectByTitle("test")).thenReturn(Optional.of(mockSubject));
 
         String absolutePath = new File("").getAbsolutePath();
         String path = mockSubject.getImage().getLocation();
-        String filePath = absolutePath + "\\" + path;
+        String filePath = absolutePath + "/" + path;
         System.out.println(filePath);
 
         byte[] mockImageBytes = Files.readAllBytes(new File(filePath).toPath());

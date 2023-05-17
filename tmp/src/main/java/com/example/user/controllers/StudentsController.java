@@ -3,7 +3,6 @@ package com.example.user.controllers;
 import com.example.catalog.models.Grade;
 import com.example.security.objects.Student;
 import com.example.security.services.StudentsService;
-import com.example.subject.model.Subject;
 import com.example.subject.service.SubjectService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -12,7 +11,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -163,7 +161,9 @@ public class StudentsController {
     @Nullable
     public ResponseEntity<Grade> addGrade(@PathVariable UUID id, @RequestBody Grade grade) {
         Optional <Student> students = Optional.ofNullable(studentsService.getStudentById(id));
-        if (students.isPresent() && subjectService.getSubjectByTitle(grade.getSubject()).isPresent()) {
+        if (students.isPresent()
+                && subjectService.getSubjectByTitle(grade.getSubject()).isPresent()
+        ) {
             studentsService.addGrade(id, grade);
             return new ResponseEntity<>(grade, HttpStatus.CREATED);
         } else {

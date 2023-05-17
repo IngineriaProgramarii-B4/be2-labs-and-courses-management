@@ -5,7 +5,6 @@ import com.example.security.objects.Student;
 import com.example.security.repositories.StudentsRepository;
 import com.example.subject.model.Subject;
 import jakarta.transaction.Transactional;
-import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
