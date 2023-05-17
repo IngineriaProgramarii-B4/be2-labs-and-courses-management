@@ -49,7 +49,7 @@ class CatalogStudentsServiceTest {
                 4,
                 "123FAKE92929",
                 new HashSet<>(Arrays.asList(new Subject())));
-        subject = new Subject("Mocked", 6, 2, 3, null, null,null,false);
+        subject = new Subject("Mocked", 6, 2, 3, null, null,null);
         grade = new Grade(7, subject, new Date());
 
         studentsService.saveStudent(student);

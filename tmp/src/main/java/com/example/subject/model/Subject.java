@@ -1,15 +1,15 @@
 
 package com.example.subject.model;
 
+import com.example.security.objects.DBObject;
 import jakarta.persistence.*;
 import org.hibernate.annotations.GenericGenerator;
 
-import java.time.LocalDateTime;
 import java.util.*;
 
 @Entity
 @Table(name = "subject")
-public class Subject {
+public class Subject extends DBObject {
     @Id
     @GenericGenerator(
             name = "subject_sequence",
@@ -44,19 +44,13 @@ public class Subject {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "image_id", referencedColumnName = "id")
     private Resource image;
-    @Column(name="is_deleted", nullable = false)
-    private boolean isDeleted;
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
-    @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updatedAt;
 
     //constructors
     public Subject() {
     }
 
     public Subject(String title, int credits, int year, int semester, String description, List<Component> componentList,
-                   List<Evaluation> evaluationList, boolean isDeleted) {
+                   List<Evaluation> evaluationList) {
         this.id = UUID.randomUUID();
         this.title = title;
         this.credits = credits;
@@ -65,7 +59,6 @@ public class Subject {
         this.description = description;
         this.componentList = componentList;
         this.evaluationList = evaluationList;
-        this.isDeleted = isDeleted;
     }
 
     //setters
@@ -93,10 +86,6 @@ public class Subject {
 
     public void setComponentList(List<Component> componentList) {
         this.componentList = componentList;
-    }
-
-    public void setDeleted(boolean deleted) {
-        isDeleted = deleted;
     }
 
     public Resource getImage() {
@@ -132,17 +121,6 @@ public class Subject {
 
     public List<Component> getComponentList() {
         return componentList;
-    }
-
-    public boolean isDeleted() {
-        return isDeleted;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
     }
 
     //additional methods
@@ -190,7 +168,6 @@ public class Subject {
                 ", componentList=" + componentList +
                 ", evaluationList=" + evaluationList +
                 ", image=" + image +
-                ", isDeleted=" + isDeleted +
                 '}';
     }
 }

@@ -46,14 +46,14 @@ class EvaluationControllerTest {
     @Test
     void getEvaluationMethods() {
         Subject subject = new Subject( "Algebraic Foundations of Science", 6, 1, 2, "not gonna pass",
-                List.of(new Component( "Seminar", 14, new ArrayList<>(), false),
-                        new Component("Laboratory", 14, new ArrayList<>(), false)),
-                List.of(new Evaluation( "Seminar", 0.5F, "Test", false),
-                        new Evaluation("Laboratory", 0.5F, "Test", false))
-                , false);
+                List.of(new Component( "Seminar", 14, new ArrayList<>()),
+                        new Component("Laboratory", 14, new ArrayList<>())),
+                List.of(new Evaluation( "Seminar", 0.5F, "Test"),
+                        new Evaluation("Laboratory", 0.5F, "Test"))
+                );
         when(subjectService.getSubjectByTitle("Algebraic Foundations of Science")).thenReturn(Optional.of(subject));
-        List<Evaluation> evaluations = List.of(new Evaluation( "Seminar", 0.5F, "Test", false),
-                        new Evaluation("Laboratory", 0.5F, "Exam", false));
+        List<Evaluation> evaluations = List.of(new Evaluation( "Seminar", 0.5F, "Test"),
+                        new Evaluation("Laboratory", 0.5F, "Exam"));
         when(evaluationService.getEvaluationMethods(subject.getTitle())).thenReturn(evaluations);
 
         ResponseEntity<List<Evaluation>> response = evaluationController.getEvaluationMethods(subject.getTitle());
@@ -82,15 +82,15 @@ class EvaluationControllerTest {
     @Test
     void getEvaluationMethodByComponent() {
         Subject subject = new Subject( "Algebraic Foundations of Science", 6, 1, 2, "not gonna pass",
-                List.of(new Component( "Seminar", 14, new ArrayList<>(), false),
-                        new Component("Laboratory", 14, new ArrayList<>(), false)),
-                List.of(new Evaluation( "Seminar", 0.5F, "Test", false),
-                        new Evaluation("Laboratory", 0.5F, "Test", false))
-                , false);
+                List.of(new Component( "Seminar", 14, new ArrayList<>()),
+                        new Component("Laboratory", 14, new ArrayList<>())),
+                List.of(new Evaluation( "Seminar", 0.5F, "Test"),
+                        new Evaluation("Laboratory", 0.5F, "Test"))
+                );
         when(subjectService.getSubjectByTitle("Algebraic Foundations of Science")).thenReturn(Optional.of(subject));
         when(componentService.getComponentByType(subject.getTitle(), "Seminar"))
-                .thenReturn(Optional.of(new Component( "Seminar", 14, new ArrayList<>(), false)));
-        Evaluation evaluation = new Evaluation( "Seminar", 0.5F, "Test", false);
+                .thenReturn(Optional.of(new Component( "Seminar", 14, new ArrayList<>())));
+        Evaluation evaluation = new Evaluation( "Seminar", 0.5F, "Test");
         when(evaluationService.getEvaluationMethodByComponent(subject.getTitle(), "Seminar")).thenReturn(Optional.of(evaluation));
 
         ResponseEntity<Evaluation> response = evaluationController.getEvaluationMethodByComponent(subject.getTitle(), "Seminar");
@@ -115,11 +115,11 @@ class EvaluationControllerTest {
     @Test
     void getEvaluationMethodByComponentComponentNotFound(){
         Subject subject = new Subject( "Algebraic Foundations of Science", 6, 1, 2, "not gonna pass",
-                List.of(new Component( "Seminar", 14, new ArrayList<>(), false),
-                        new Component("Laboratory", 14, new ArrayList<>(), false)),
-                List.of(new Evaluation( "Seminar", 0.5F, "Test", false),
-                        new Evaluation("Laboratory", 0.5F, "Test", false))
-                , false);
+                List.of(new Component( "Seminar", 14, new ArrayList<>()),
+                        new Component("Laboratory", 14, new ArrayList<>())),
+                List.of(new Evaluation( "Seminar", 0.5F, "Test"),
+                        new Evaluation("Laboratory", 0.5F, "Test"))
+                );
         when(subjectService.getSubjectByTitle("Algebraic Foundations of Science")).thenReturn(Optional.of(subject));
         when(componentService.getComponentByType(subject.getTitle(), "Seminar")).thenReturn(Optional.empty());
 
@@ -131,14 +131,14 @@ class EvaluationControllerTest {
     @Test
     void getEvaluationMethodByComponentEvaluationNotFound(){
         Subject subject = new Subject( "Algebraic Foundations of Science", 6, 1, 2, "not gonna pass",
-                List.of(new Component( "Seminar", 14, new ArrayList<>(), false),
-                        new Component("Laboratory", 14, new ArrayList<>(), false)),
-                List.of(new Evaluation( "Seminar", 0.5F, "Test", false),
-                        new Evaluation("Laboratory", 0.5F, "Test", false))
-                , false);
+                List.of(new Component( "Seminar", 14, new ArrayList<>()),
+                        new Component("Laboratory", 14, new ArrayList<>())),
+                List.of(new Evaluation( "Seminar", 0.5F, "Test"),
+                        new Evaluation("Laboratory", 0.5F, "Test"))
+                );
         when(subjectService.getSubjectByTitle("Algebraic Foundations of Science")).thenReturn(Optional.of(subject));
         when(componentService.getComponentByType(subject.getTitle(), "Seminar"))
-                .thenReturn(Optional.of(new Component( "Seminar", 14, new ArrayList<>(), false)));
+                .thenReturn(Optional.of(new Component( "Seminar", 14, new ArrayList<>())));
         when(evaluationService.getEvaluationMethodByComponent(subject.getTitle(), "Seminar")).thenReturn(Optional.empty());
 
         String title = "Algebraic Foundations of Science";
@@ -149,15 +149,15 @@ class EvaluationControllerTest {
     @Test
     void addEvaluationSuccessful(){
         Subject subject = new Subject( "Algebraic Foundations of Science", 6, 1, 2, "not gonna pass",
-                List.of(new Component( "Seminar", 14, new ArrayList<>(), false),
-                        new Component("Laboratory", 14, new ArrayList<>(), false)),
-                List.of(new Evaluation( "Seminar", 0.5F, "Test", false))
-                , false);
+                List.of(new Component( "Seminar", 14, new ArrayList<>()),
+                        new Component("Laboratory", 14, new ArrayList<>())),
+                List.of(new Evaluation( "Seminar", 0.5F, "Test"))
+                );
         when(subjectService.getSubjectByTitle("Algebraic Foundations of Science")).thenReturn(Optional.of(subject));
-        Evaluation evaluation = new Evaluation("Seminar", 0.5F, "Exam", false);
+        Evaluation evaluation = new Evaluation("Seminar", 0.5F, "Exam");
 
         when(componentService.getComponentByType(subject.getTitle(), evaluation.getComponent()))
-                .thenReturn(Optional.of(new Component( "Seminar", 14, new ArrayList<>(), false)));
+                .thenReturn(Optional.of(new Component( "Seminar", 14, new ArrayList<>())));
 
         when(evaluationService.addEvaluationMethod(subject.getTitle(), evaluation)).thenReturn(1);
 
@@ -169,13 +169,14 @@ class EvaluationControllerTest {
     @Test
     void addEvaluationReturnsNotAcceptableForInvalidEval(){
         Subject subject = new Subject( "Algebraic Foundations of Science", 6, 1, 2, "not gonna pass",
-                List.of(new Component( "Seminar", 14, new ArrayList<>(), false),
-                        new Component("Laboratory", 14, new ArrayList<>(), false)),
-                List.of(new Evaluation( "Seminar", 0.5F, "Test", false))
-                        , false);
+                List.of(new Component( "Seminar", 14, new ArrayList<>()),
+                        new Component("Laboratory", 14, new ArrayList<>())),
+                List.of(new Evaluation( "Seminar", 0.5F, "Test"))
+                        );
         when(subjectService.getSubjectByTitle("Algebraic Foundations of Science")).thenReturn(Optional.of(subject));
-        Evaluation evaluation = new Evaluation("Course", 1.5F, "Exam", true);
-        when(componentService.getComponentByType(subject.getTitle(), evaluation.getComponent())).thenReturn(Optional.of(new Component( "Seminar", 14, new ArrayList<>(), false)));
+        Evaluation evaluation = new Evaluation("Course", 1.5F, "Exam");
+        evaluation.setDeleted(true);
+        when(componentService.getComponentByType(subject.getTitle(), evaluation.getComponent())).thenReturn(Optional.of(new Component( "Seminar", 14, new ArrayList<>())));
 
         String title = "Algebraic Foundations of Science";
         ResponseEntity<byte[]> response = evaluationController.addEvaluationMethod(title, evaluation);
@@ -185,7 +186,7 @@ class EvaluationControllerTest {
     void addEvaluationSubjectNotFound(){
         String title = "Algebraic Foundations of Science";
         when(subjectService.getSubjectByTitle(title)).thenReturn(Optional.empty());
-        Evaluation evaluation = new Evaluation("Laboratory", 0.5F, "Exam", false);
+        Evaluation evaluation = new Evaluation("Laboratory", 0.5F, "Exam");
 
         ResponseEntity<byte[]> response = evaluationController.addEvaluationMethod(title, evaluation);
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
@@ -195,12 +196,12 @@ class EvaluationControllerTest {
     @Test
     void addEvaluationComponentNotFound(){
         Subject subject = new Subject( "Algebraic Foundations of Science", 6, 1, 2, "not gonna pass",
-                List.of(new Component( "Seminar", 14, new ArrayList<>(), false),
-                        new Component("Laboratory", 14, new ArrayList<>(), false)),
-                List.of(new Evaluation( "Seminar", 0.5F, "Test", false))
-                , false);
+                List.of(new Component( "Seminar", 14, new ArrayList<>()),
+                        new Component("Laboratory", 14, new ArrayList<>())),
+                List.of(new Evaluation( "Seminar", 0.5F, "Test"))
+                );
         when(subjectService.getSubjectByTitle("Algebraic Foundations of Science")).thenReturn(Optional.of(subject));
-        Evaluation evaluation = new Evaluation("Laboratory", 0.5F, "Exam", false);
+        Evaluation evaluation = new Evaluation("Laboratory", 0.5F, "Exam");
         when(componentService.getComponentByType(subject.getTitle(), evaluation.getComponent())).thenReturn(Optional.empty());
 
         String title = "Algebraic Foundations of Science";
@@ -211,12 +212,12 @@ class EvaluationControllerTest {
     @Test
     void deleteEvaluationMethodByComponent(){
         Subject subject = new Subject( "Algebraic Foundations of Science", 6, 1, 2, "not gonna pass",
-                List.of(new Component( "Seminar", 14, new ArrayList<>(), false),
-                        new Component("Laboratory", 14, new ArrayList<>(), false)),
-                List.of(new Evaluation( "Seminar", 0.5F, "Test", false))
-                , false);
+                List.of(new Component( "Seminar", 14, new ArrayList<>()),
+                        new Component("Laboratory", 14, new ArrayList<>())),
+                List.of(new Evaluation( "Seminar", 0.5F, "Test"))
+                );
         when(subjectService.getSubjectByTitle("Algebraic Foundations of Science")).thenReturn(Optional.of(subject));
-        when(componentService.getComponentByType(subject.getTitle(), "Seminar")).thenReturn(Optional.of(new Component( "Seminar", 14, new ArrayList<>(), false)));
+        when(componentService.getComponentByType(subject.getTitle(), "Seminar")).thenReturn(Optional.of(new Component( "Seminar", 14, new ArrayList<>())));
         when(evaluationService.deleteEvaluationMethodByComponent(subject.getTitle(), "Seminar")).thenReturn(1);
 
         String title = "Algebraic Foundations of Science";
@@ -236,10 +237,10 @@ class EvaluationControllerTest {
     @Test
     void deleteEvaluationMethodByComponentComponentNotFound(){
         Subject subject = new Subject( "Algebraic Foundations of Science", 6, 1, 2, "not gonna pass",
-                List.of(new Component( "Seminar", 14, new ArrayList<>(), false),
-                        new Component("Laboratory", 14, new ArrayList<>(), false)),
-                List.of(new Evaluation( "Seminar", 0.5F, "Test", false))
-                , false);
+                List.of(new Component( "Seminar", 14, new ArrayList<>()),
+                        new Component("Laboratory", 14, new ArrayList<>())),
+                List.of(new Evaluation( "Seminar", 0.5F, "Test"))
+                );
         when(subjectService.getSubjectByTitle("Algebraic Foundations of Science")).thenReturn(Optional.of(subject));
         when(componentService.getComponentByType(subject.getTitle(), "Seminar")).thenReturn(Optional.empty());
 
@@ -251,11 +252,11 @@ class EvaluationControllerTest {
     @Test
     void deleteEvaluationMethodByComponentEvaluationNotFound(){
         Subject subject = new Subject( "Algebraic Foundations of Science", 6, 1, 2, "not gonna pass",
-                List.of(new Component( "Seminar", 14, new ArrayList<>(), false),
-                        new Component("Laboratory", 14, new ArrayList<>(), false)),
-                new ArrayList<>(), false);
+                List.of(new Component( "Seminar", 14, new ArrayList<>()),
+                        new Component("Laboratory", 14, new ArrayList<>())),
+                new ArrayList<>());
         when(subjectService.getSubjectByTitle("Algebraic Foundations of Science")).thenReturn(Optional.of(subject));
-        when(componentService.getComponentByType(subject.getTitle(), "Seminar")).thenReturn(Optional.of(new Component( "Seminar", 14, new ArrayList<>(), false)));
+        when(componentService.getComponentByType(subject.getTitle(), "Seminar")).thenReturn(Optional.of(new Component( "Seminar", 14, new ArrayList<>())));
 
         String title = "Algebraic Foundations of Science";
         ResponseEntity<byte[]> responseEntity = evaluationController.deleteEvaluationMethodByComponent(title, "Seminar");
@@ -265,13 +266,13 @@ class EvaluationControllerTest {
     @Test
     void updateEvaluationMethodByComponent(){
         Subject subject = new Subject( "Algebraic Foundations of Science", 6, 1, 2, "not gonna pass",
-                List.of(new Component( "Seminar", 14, new ArrayList<>(), false),
-                        new Component("Laboratory", 14, new ArrayList<>(), false)),
-                List.of(new Evaluation( "Seminar", 0.5F, "Test", false))
-                , false);
+                List.of(new Component( "Seminar", 14, new ArrayList<>()),
+                        new Component("Laboratory", 14, new ArrayList<>())),
+                List.of(new Evaluation( "Seminar", 0.5F, "Test"))
+                );
         when(subjectService.getSubjectByTitle("Algebraic Foundations of Science")).thenReturn(Optional.of(subject));
-        when(componentService.getComponentByType(subject.getTitle(), "Seminar")).thenReturn(Optional.of(new Component( "Seminar", 14, new ArrayList<>(), false)));
-        Evaluation evaluation = new Evaluation( "Seminar", 0.5F, "Exam", false);
+        when(componentService.getComponentByType(subject.getTitle(), "Seminar")).thenReturn(Optional.of(new Component( "Seminar", 14, new ArrayList<>())));
+        Evaluation evaluation = new Evaluation( "Seminar", 0.5F, "Exam");
         when(evaluationService.updateEvaluationMethodByComponent(subject.getTitle(), "Seminar", evaluation)).thenReturn(1);
 
         String title = "Algebraic Foundations of Science";
@@ -283,7 +284,7 @@ class EvaluationControllerTest {
     void updateEvaluationMethodByComponentSubjectNotFound(){
         String title = "Algebraic Foundations of Science";
         when(subjectService.getSubjectByTitle(title)).thenReturn(Optional.empty());
-        Evaluation evaluation = new Evaluation( "Seminar", 0.5F, "Exam", false);
+        Evaluation evaluation = new Evaluation( "Seminar", 0.5F, "Exam");
 
         ResponseEntity<byte[]> responseEntity = evaluationController.updateEvaluationMethodByComponent(title, "Seminar", evaluation);
         assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
@@ -292,13 +293,13 @@ class EvaluationControllerTest {
     @Test
     void updateEvaluationMethodByComponentComponentNotFound(){
         Subject subject = new Subject( "Algebraic Foundations of Science", 6, 1, 2, "not gonna pass",
-                List.of(new Component( "Seminar", 14, new ArrayList<>(), false),
-                        new Component("Laboratory", 14, new ArrayList<>(), false)),
-                List.of(new Evaluation( "Seminar", 0.5F, "Test", false))
-                , false);
+                List.of(new Component( "Seminar", 14, new ArrayList<>()),
+                        new Component("Laboratory", 14, new ArrayList<>())),
+                List.of(new Evaluation( "Seminar", 0.5F, "Test"))
+                );
         when(subjectService.getSubjectByTitle("Algebraic Foundations of Science")).thenReturn(Optional.of(subject));
         when(componentService.getComponentByType(subject.getTitle(), "Seminar")).thenReturn(Optional.empty());
-        Evaluation evaluation = new Evaluation( "Seminar", 0.5F, "Exam", false);
+        Evaluation evaluation = new Evaluation( "Seminar", 0.5F, "Exam");
 
         String title = "Algebraic Foundations of Science";
         ResponseEntity<byte[]> responseEntity = evaluationController.updateEvaluationMethodByComponent(title, "Seminar", evaluation);
@@ -308,12 +309,12 @@ class EvaluationControllerTest {
     @Test
     void updateEvaluationMethodByComponentEvaluationNotFound(){
         Subject subject = new Subject( "Algebraic Foundations of Science", 6, 1, 2, "not gonna pass",
-                List.of(new Component( "Seminar", 14, new ArrayList<>(), false),
-                        new Component("Laboratory", 14, new ArrayList<>(), false)),
-                new ArrayList<>(), false);
+                List.of(new Component( "Seminar", 14, new ArrayList<>()),
+                        new Component("Laboratory", 14, new ArrayList<>())),
+                new ArrayList<>());
         when(subjectService.getSubjectByTitle("Algebraic Foundations of Science")).thenReturn(Optional.of(subject));
-        when(componentService.getComponentByType(subject.getTitle(), "Seminar")).thenReturn(Optional.of(new Component( "Seminar", 14, new ArrayList<>(), false)));
-        Evaluation evaluation = new Evaluation( "Seminar", 0.5F, "Exam", false);
+        when(componentService.getComponentByType(subject.getTitle(), "Seminar")).thenReturn(Optional.of(new Component( "Seminar", 14, new ArrayList<>())));
+        Evaluation evaluation = new Evaluation( "Seminar", 0.5F, "Exam");
 
         String title = "Algebraic Foundations of Science";
         ResponseEntity<byte[]> responseEntity = evaluationController.updateEvaluationMethodByComponent(title, "Seminar", evaluation);

@@ -47,7 +47,7 @@ class CatalogStudentsControllerTest {
     List<Grade> grades = new ArrayList<>();
     @BeforeEach
     void setUp(){
-        subject = new Subject("Mocked", 6, 2, 3, null, null,null,false);
+        subject = new Subject("Mocked", 6, 2, 3, null, null,null);
         student = new Student(
                 UUID.randomUUID(),
                 "Florin",

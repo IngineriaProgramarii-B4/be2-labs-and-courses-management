@@ -43,7 +43,6 @@ class ResourceTest {
         resource.setTitle("Physics_romania.png");
         resource.setLocation("savedResources/Physics_romania.png");
         resource.setType("image/png");
-        resource.setDeleted(false);
-        assertEquals("Resource{title='Physics_romania.png', location='savedResources/Physics_romania.png', type='image/png', isDeleted=false}", resource.toString());
+        assertEquals("Resource{title='Physics_romania.png', location='savedResources/Physics_romania.png', type='image/png'}", resource.toString());
     }
 }

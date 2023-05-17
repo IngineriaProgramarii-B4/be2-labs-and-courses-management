@@ -41,12 +41,10 @@ class EvaluationTest {
     void testToString() {
         evaluation.setComponent("Course");
         evaluation.setValue(0.5f);
-        evaluation.setDeleted(false);
 
         String expected = "Evaluation{" +
                 "component='Course', " +
-                "value=0.5, " +
-                "isDeleted=false" +
+                "value=0.5" +
                 "}";
         assertEquals(expected, evaluation.toString());
     }
