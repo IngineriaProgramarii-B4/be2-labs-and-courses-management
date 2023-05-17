@@ -44,32 +44,32 @@ class GradeServiceTest {
                 4,
                 "123FAKE92929",
                 new HashSet<>(Arrays.asList(new Subject())));
-//        Subject subject = new Subject(69, "Mocked", 6, 2, 3, null, null,null,false);
-//        grade = new Grade(7, subject, "12.02.1996");
+        String subject = "IP";
+        grade = new Grade(7, subject, "12.02.1996");
     }
 
-//    @Test
-//    void canGetGradeById() {
-//        when(gradeRepository.getGradeById(grade.getId())).thenReturn(Optional.of(grade));
-//        assertEquals(Optional.of(grade), gradeRepository.getGradeById((grade.getId())));
-//        // given existing grade
-//        Optional<Grade> get = Optional.ofNullable(gradeService.getGradeById(grade.getId()));
-//
-//        //then
-//
-//        ArgumentCaptor<Grade> gradeArgumentCaptor = ArgumentCaptor.forClass(Grade.class);
-//        gradeRepository.save(gradeArgumentCaptor.capture());
-//
-//        verify(gradeRepository).save(gradeArgumentCaptor.capture());
-//
-//        Optional<Grade> captured = Optional.ofNullable(gradeArgumentCaptor.getValue());
-//
-//        assertNotNull(get);
-//        assertEquals(get, captured);
-//
-//        // given not existing grade
-//        assertNull(gradeService.getGradeById(UUID.randomUUID()));
-//    }
+    @Test
+    void canGetGradeById() {
+        when(gradeRepository.getGradeById(grade.getId())).thenReturn(Optional.of(grade));
+        assertEquals(Optional.of(grade), gradeRepository.getGradeById((grade.getId())));
+        // given existing grade
+        Optional<Grade> get = Optional.ofNullable(gradeService.getGradeById(grade.getId()));
+
+        //then
+
+        ArgumentCaptor<Grade> gradeArgumentCaptor = ArgumentCaptor.forClass(Grade.class);
+        gradeRepository.save(grade);
+
+        verify(gradeRepository).save(gradeArgumentCaptor.capture());
+
+        Optional<Grade> captured = Optional.ofNullable(gradeArgumentCaptor.getValue());
+
+        assertNotNull(get);
+        assertEquals(get, captured);
+
+        // given not existing grade
+        assertNull(gradeService.getGradeById(UUID.randomUUID()));
+    }
 
     @Test
     void canGetGradesTest() {
