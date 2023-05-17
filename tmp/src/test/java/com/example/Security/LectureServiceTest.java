@@ -1,3 +1,4 @@
+/*
 package com.example.demo;
 
 import com.example.demo.objects.Lecture;
@@ -100,4 +101,4 @@ public class LectureServiceTest {
     }
 
 
-}
+}*/

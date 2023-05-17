@@ -124,6 +124,7 @@ class SubjectServiceTest {
     @Test
     void validateSubjectTestIsDeleted() {
         Subject subject = new Subject("Maths", 5, 1, 2, "description", new ArrayList<>(), new ArrayList<>());
+        subject.setDeleted(true);
         boolean result = subjectService.validateSubject(subject);
         assertFalse(result);
     }
