@@ -61,6 +61,12 @@ public class StudentsService {
         Student student = studentsRepository.findStudentById(id);
         if (student == null)
             return null;
+        /* Stergem notele studentului: */
+        List<Grade> grades = student.getGrades();
+        for(Grade grade : grades) {
+            grade.setIsDeleted(true);
+        }
+
         return (Student) student.setIsDeleted(true);
     }
 
