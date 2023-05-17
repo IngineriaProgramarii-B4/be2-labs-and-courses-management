@@ -4,21 +4,20 @@ import com.example.security.objects.Student;
 import com.example.security.objects.User;
 import com.example.security.repositories.UsersRepository;
 import com.example.security.services.UsersService;
-import org.junit.AfterClass;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.nullable;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 
 
@@ -47,6 +46,7 @@ class UsersServiceTest {
                 null
         );
     }
+
     @Test
     void getUsersByParamsIdTest() {
 

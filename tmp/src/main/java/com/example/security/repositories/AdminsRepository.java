@@ -32,4 +32,8 @@ public interface AdminsRepository extends JpaRepository<Admin, UUID> {
     Optional<Admin> findById(UUID id);
 
     Admin findByRegistrationNumber(String registrationNumber);
+
+    @Modifying
+    @Query("delete from Admin a where a=?1")
+    void delete(Admin admin);
 }

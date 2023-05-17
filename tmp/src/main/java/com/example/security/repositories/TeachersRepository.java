@@ -1,5 +1,6 @@
 package com.example.security.repositories;
 
+import com.example.security.objects.Student;
 import com.example.security.objects.Teacher;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -32,4 +33,7 @@ public interface TeachersRepository extends JpaRepository<Teacher, UUID> {
 
     Boolean existsByEmail(String email);
     Teacher findByRegistrationNumber(String id);
+    @Modifying
+    @Query("delete from Teacher a where a=?1")
+    void delete(Teacher teacher);
 }

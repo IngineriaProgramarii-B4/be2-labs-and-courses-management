@@ -4,15 +4,16 @@ import com.example.security.objects.Student;
 import com.example.subject.model.Subject;
 import org.junit.jupiter.api.Test;
 
-import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 
-
 class StudentTest {
+
     @Test
-    void testToString() {
+    void testToString()
+    {
         //
         //Given
         //
@@ -23,10 +24,11 @@ class StudentTest {
         //
         student.setFirstname("testFirstname");
         student.setLastname("testLastname");
+
         //
         //Then
         //
-        assertEquals("Student{enrolledCourses=[], year=0, semester=0, grupa='null', maxGradeId=0, grades=[], id=null, firstname='testFirstname', lastname='testLastname', email='null', username='null', password='null', registrationNumber='null'}", student.toString());
+        assertEquals("Student{enrolledCourses=[], year=0, semester=0, grupa='null', grades=[], id=null, firstname='testFirstname', lastname='testLastname', email='null', username='null', password='null', registrationNumber='null'}", student.toString());
 
     }
 
@@ -36,22 +38,23 @@ class StudentTest {
         //Given
         //
         Student student = new Student();
-        Set<Subject> courses = new HashSet<>();
-        Subject subject = new Subject();
-        courses.add(subject);
+        Subject course = new Subject("SO", 5, 2, 2, "materia SO", List.of(), List.of(), false);
+
         //
         //When
         //
-        student.addEnrolledCourse(subject);
+        student.addEnrolledCourse(course);
+
         //
         //Then
         //
-        assertEquals(student.getEnrolledCourses(), courses);
+        assertEquals(student.getEnrolledCourses(), Set.of(course));
 
     }
 
     @Test
-    void testHashCode() {
+    void testHashCode()
+    {
         //
         //Given
         //

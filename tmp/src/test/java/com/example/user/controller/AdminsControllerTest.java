@@ -1,15 +1,12 @@
 package com.example.user.controller;
 
 import com.example.security.objects.Admin;
-import com.example.security.repositories.AdminsRepository;
 import com.example.security.services.AdminsService;
 import com.example.user.controllers.AdminsController;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.AfterClass;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -23,7 +20,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -36,8 +33,6 @@ class AdminsControllerTest {
 
     @MockBean
     private AdminsService adminsService;
-    @Mock
-    private AdminsRepository adminsRepository;
 
     private Admin admin1;
 
@@ -45,18 +40,14 @@ class AdminsControllerTest {
     public void setup() {
 
         admin1 = new Admin(
-                UUID.randomUUID(),
+                UUID.fromString("a03ae2ce-f4a3-11ed-a05b-0242ac120003"),
                 "Cuzic",
                 "Diana",
                 "diana.cuzic@gmail.com",
                 "dianacuzic",
                 "P1",
                 "Secretariat",
-                "36fbe822-f24f-11ed-a05b-0242ac120003");
-    }
-    @AfterClass
-    public void clean() {
-        adminsRepository.delete(admin1);
+                "1221");
     }
 
     @Test
