@@ -70,4 +70,16 @@ public class AdminServiceTest {
 
         adminService.updateAdmin(nonExistingRegistrationNumber, newPassword);
     }
+    @Test
+    public void updateAdminSuccess() {
+        String newPassword = "newPassword";
+
+        when(adminsRepository.findByRegistrationNumber(admin.getRegistrationNumber())).thenReturn(admin);
+        when(passwordEncoder.encode(newPassword)).thenReturn("encodedNewPassword");
+
+        adminService.updateAdmin(admin.getRegistrationNumber(), newPassword);
+
+        verify(adminsRepository, times(1)).save(admin);
+        assertEquals("encodedNewPassword", admin.getPassword());
+    }
 }
