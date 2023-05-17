@@ -40,7 +40,7 @@ public class DBObject {
         return isDeleted;
     }
     
-        public boolean isDeleted() {
+    public boolean isDeleted() {
         return isDeleted;
     }
 
