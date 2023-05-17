@@ -70,7 +70,7 @@ class UsersRepositoryTest {
         //
         //Given
         //
-        String email = "nonexistent@mail.com";
+        String email = "nonexistent@gmail.com";
 
         //
         //When

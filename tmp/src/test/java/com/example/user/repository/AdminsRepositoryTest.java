@@ -16,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+
 class AdminsRepositoryTest {
 
     @Autowired
@@ -62,7 +63,7 @@ class AdminsRepositoryTest {
                 null,
                 null
         );
-        //
+
         //Then
         //
         assertEquals(true, result.containsAll(expected));

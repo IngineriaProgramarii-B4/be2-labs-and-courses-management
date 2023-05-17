@@ -11,8 +11,9 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
+
+import static org.junit.Assert.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AdminServiceTest {
@@ -41,8 +42,6 @@ public class AdminServiceTest {
         verify(adminsRepository, times(1)).save(admin);
     }
 
-
-
     @Test(expected = StudentNotFoundException.class)
     public void updateAdminNotFound() {
         String newPassword = "newPassword";
@@ -61,6 +60,24 @@ public class AdminServiceTest {
 
         assertEquals(admin, foundAdmin);
     }
+
+    @Test
+    public void testUpdateAdmin() {
+        String registrationNumber = "1"; // Update the registration number here
+        String newPassword = "newPassword";
+
+        Admin existingAdmin = new Admin();
+        existingAdmin.setRegistrationNumber(registrationNumber);
+
+        when(adminsRepository.findByRegistrationNumber(registrationNumber)).thenReturn(existingAdmin);
+        when(passwordEncoder.encode(newPassword)).thenReturn("encodedPassword");
+
+        adminService.updateAdmin(registrationNumber, newPassword);
+
+        verify(adminsRepository, times(1)).save(existingAdmin);
+        assertEquals("encodedPassword", existingAdmin.getPassword());
+    }
+
     @Test(expected = StudentNotFoundException.class)
     public void testUpdateAdmin_ThrowsException() {
         String nonExistingRegistrationNumber = "1234";

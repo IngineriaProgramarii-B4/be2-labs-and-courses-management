@@ -1,12 +1,10 @@
 package com.example.catalog.models;
 
 import com.example.security.objects.DBObject;
-import com.example.subject.model.Subject;
 import jakarta.persistence.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
-import java.util.Date;
 import java.util.UUID;
 
 // <-------------------------------- FROM CATALOG ----------------------------------> //
