@@ -41,13 +41,13 @@ class CatalogStudentsControllerTest {
     @MockBean
     private StudentsService studentsService;
     private Student student;
-    private Subject subject;
+    private String subject;
     private Grade grade;
     List<Student> students = new ArrayList<>();
     List<Grade> grades = new ArrayList<>();
     @BeforeEach
     void setUp(){
-        subject = new Subject("Mocked", 6, 2, 3, null, null,null);
+        subject = "IP";
         student = new Student(
                 UUID.randomUUID(),
                 "Florin",
@@ -58,7 +58,7 @@ class CatalogStudentsControllerTest {
                 4,
                 "123FAKE92929",
                 new HashSet<>(Arrays.asList(new Subject())));
-        grade = new Grade( 7, subject, new Date());
+        grade = new Grade( 7, subject, "12.12.2012");
 
         student.addGrade(grade);
         students.add(student);
@@ -124,7 +124,7 @@ class CatalogStudentsControllerTest {
         when(studentsService.getStudentById(student.getId())).thenReturn(student);
 
         // Test the case where the Student object is present
-        MvcResult gradesList = mvc.perform(get("/api/v1/students/{id}/grades",  student.getId(), subject.getTitle())
+        MvcResult gradesList = mvc.perform(get("/api/v1/students/{id}/grades",  student.getId(), subject)
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -146,7 +146,7 @@ class CatalogStudentsControllerTest {
         when(studentsService.getStudentById(student.getId())).thenReturn(null);
 
         // Test the case where the Student object is not present
-        MvcResult nullStudentResult = mvc.perform(get("/api/v1/students/{id}/grades",  student.getId(), subject.getTitle())
+        MvcResult nullStudentResult = mvc.perform(get("/api/v1/students/{id}/grades",  student.getId(), subject)
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isNotFound())
@@ -191,7 +191,7 @@ class CatalogStudentsControllerTest {
         // Assert
         assertNotNull(gradeResponse);
         assertEquals(grade.getId(), gradeResponse.getId());
-        assertTrue(result.getResponse().getContentAsString().contains(subject.getTitle()));
+        assertTrue(result.getResponse().getContentAsString().contains(subject));
     }
 
     @Test
@@ -250,7 +250,7 @@ class CatalogStudentsControllerTest {
     @Test
     void createGradeTest() throws Exception {
         //GradeId pus in postGradeResult inainte ca metoda Student.addGrade() sa aloce un ID.
-        Grade gradeForPost = new Grade(10, subject, new Date());
+        Grade gradeForPost = new Grade(10, subject, "12.12.2012");
         gradeForPost.setId(UUID.randomUUID());
 
         // Non-existent student ID
@@ -284,7 +284,7 @@ class CatalogStudentsControllerTest {
         Grade gradeResponse = objectMapper.readValue(postGradeResult.getResponse().getContentAsString(), Grade.class);
 
         assertNotNull(gradeResponse);
-        assertEquals(gradeResponse.getSubject().getTitle(), gradeForPost.getSubject().getTitle());
+        assertEquals(gradeResponse.getSubject(), gradeForPost.getSubject());
         assertEquals(gradeResponse.getValue(), gradeForPost.getValue());
 
         // given null grade
@@ -384,10 +384,10 @@ class CatalogStudentsControllerTest {
         when(studentsService.getStudentById(student.getId())).thenReturn(student);
         when(studentsService.getGradeById(student.getId(), grade.getId())).thenReturn(grade);
 
-        Date evalDateTest = new Date();
+        String evalDateTest = "12.12.2012";
         Integer valueTest = 3;
 
-        when(studentsService.updateGrade(eq(student.getId()), any(Integer.class), any(Date.class), eq(grade.getId()))).thenAnswer((Answer<Grade>) invocationOnMock -> {
+        when(studentsService.updateGrade(eq(student.getId()), any(Integer.class), anyString(), eq(grade.getId()))).thenAnswer((Answer<Grade>) invocationOnMock -> {
             Grade toUpdate = student.getGradeById(grade.getId());
             toUpdate.setEvaluationDate(evalDateTest);
             toUpdate.setValue(valueTest);

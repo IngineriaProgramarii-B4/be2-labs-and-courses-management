@@ -34,7 +34,7 @@ class CatalogStudentsServiceTest {
     @Mock
     StudentsRepository studentsRepository;
 
-    private Subject subject;
+    private String subject;
     private Student student;
     private Grade grade;
     @BeforeEach
@@ -49,8 +49,8 @@ class CatalogStudentsServiceTest {
                 4,
                 "123FAKE92929",
                 new HashSet<>(Arrays.asList(new Subject())));
-        subject = new Subject("Mocked", 6, 2, 3, null, null,null);
-        grade = new Grade(7, subject, new Date());
+        subject = "IP";
+        grade = new Grade(7, subject, "12.12.2012");
 
         studentsService.saveStudent(student);
 
@@ -211,7 +211,7 @@ class CatalogStudentsServiceTest {
         given(studentsService.getStudentById(student.getId()))
                 .willReturn(student);
         studentsService.addGrade(student.getId(), grade);
-        Date date = new Date();
+        String date = "12.12.2012";
         // when
         Grade updated = studentsService.updateGrade(studentsService.getStudentById(student.getId()).getId(), 6, null, grade.getId());
 
@@ -297,7 +297,7 @@ class CatalogStudentsServiceTest {
 
     @Test
     void testToString() {
-        Grade gradeToString = new Grade(7, subject, new Date());
+        Grade gradeToString = new Grade(7, subject, "12.12.2012");
 
         // expected output
         String expectedOutput = gradeToString.toString();
