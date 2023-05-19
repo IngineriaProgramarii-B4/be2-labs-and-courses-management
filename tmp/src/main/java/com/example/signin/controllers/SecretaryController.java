@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 @CrossOrigin(origins = "http://localhost:3000")
@@ -51,7 +52,9 @@ private final RoleRepository roleRepository;
     @PostMapping("/list")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<String> addUsers(@RequestBody List<SecretaryRequestDto> secretaryRequestDtoList) {
-        for (SecretaryRequestDto secretaryRequestDto : secretaryRequestDtoList) {
+        List<Credentials> credentialsToAdd = new ArrayList<>();
+        for (int i = 0; i < secretaryRequestDtoList.size() - 1; i++) {
+            SecretaryRequestDto secretaryRequestDto = secretaryRequestDtoList.get(i);
             if (credentialsRepository.existsById(secretaryRequestDto.getRegistrationNumber())) {
                 return new ResponseEntity<>("User " + secretaryRequestDto.getRegistrationNumber() + " is already in the database!", HttpStatus.BAD_REQUEST);
             }
@@ -60,12 +63,17 @@ private final RoleRepository roleRepository;
             credentials.setFirstname(secretaryRequestDto.getFirstname());
             credentials.setLastname(secretaryRequestDto.getLastname());
             Optional<Role> roleOptional = roleRepository.findByName(secretaryRequestDto.getRole());
+            System.out.println(secretaryRequestDto.getRegistrationNumber());
+            System.out.println(secretaryRequestDto.getRole());
             if (roleOptional.isPresent()) {
                 credentials.getRoles().add(roleOptional.get());
-                credentialsRepository.save(credentials);
+                credentialsToAdd.add(credentials);
             } else {
                 return new ResponseEntity<>("Role " + secretaryRequestDto.getRole() + " not valid!", HttpStatus.BAD_REQUEST);
             }
+        }
+        for (Credentials credentials : credentialsToAdd) {
+            credentialsRepository.save(credentials);
         }
         return new ResponseEntity<>("Users added succesfully!", HttpStatus.CREATED);
     }

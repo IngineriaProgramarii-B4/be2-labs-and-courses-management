@@ -40,7 +40,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/v1/auth/**").permitAll()
                 .requestMatchers("/api/v1/demo-controller/student").hasAuthority("STUDENT")
                 .requestMatchers("/api/v1/demo-controller/teacher").hasAuthority("TEACHER")
-                .requestMatchers("/api/v1/secretary").hasAuthority("ADMIN")
+                .requestMatchers("/api/v1/secretary/**").hasAuthority("ADMIN")
                 .requestMatchers("/swagger-ui.html#/").permitAll()
                 .requestMatchers("/api/v1/**").permitAll()
                 .requestMatchers("/index.html").permitAll()
