@@ -1,0 +1,20 @@
+<settings>
+    <pluginGroups>
+        <pluginGroup>org.sonarsource.scanner.maven</pluginGroup>
+    </pluginGroups>
+    <profiles>
+        <profile>
+            <id>sonar</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <sonar.host.url>
+                    http://localhost:9000/
+                </sonar.host.url>
+                <sonar.token>sqp_65b6ce73dd634fdd02fd2734c9414853e47d4fce
+                </sonar.token>
+            </properties>
+        </profile>
+    </profiles>
+</settings>

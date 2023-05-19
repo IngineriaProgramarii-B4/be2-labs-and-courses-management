@@ -63,7 +63,7 @@ class SubjectTest {
     @Test
     void setDeleted() {
         subject.setDeleted(true);
-        assertTrue(subject.isDeleted());
+        assertTrue(subject.getIsDeleted());
     }
 
     @Test
@@ -101,7 +101,7 @@ class SubjectTest {
 
         subject.softDeleteComponent(component);
         assertEquals(1, subject.getComponentList().size());
-        assertTrue(subject.getComponentList().get(0).isDeleted());
+        assertTrue(subject.getComponentList().get(0).getIsDeleted());
     }
 
     @Test
@@ -139,7 +139,7 @@ class SubjectTest {
 
         subject.softDeleteEvaluation(evaluation);
         assertEquals(1, subject.getEvaluationList().size());
-        assertTrue(subject.getEvaluationList().get(0).isDeleted());
+        assertTrue(subject.getEvaluationList().get(0).getIsDeleted());
     }
 
     @Test

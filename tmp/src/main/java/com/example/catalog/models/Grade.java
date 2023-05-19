@@ -34,7 +34,6 @@ public class Grade extends DBObject {
 
     private String evaluationDate;
 
-    private boolean deleted=false;
     public Grade(){}
 
 
@@ -84,12 +83,18 @@ public class Grade extends DBObject {
                 '}';
     }
 
-    public boolean isDeleted(){
-        return deleted;
+    public Grade setDeleted(){
+        super.setIsDeleted(true);
+        return this;
     }
 
-    public Grade setDeleted(){
-        deleted=true;
-        return this;
+    @Override
+    public boolean equals(Object o) {
+        return super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 }

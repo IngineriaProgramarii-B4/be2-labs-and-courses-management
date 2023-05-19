@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/demo-controller")
 public class Demo {
     private final JWTGenerator jwtGenerator;
+    private static final String BEARER="Bearer ";
+    private static final String ERROR ="Token expired or invalid";
 
     public Demo(JWTGenerator jwtGenerator) {
         this.jwtGenerator = jwtGenerator;
@@ -24,30 +26,30 @@ public class Demo {
 
     public ResponseEntity<String> sayStudent(HttpServletRequest request) {
         String authorizationHeader = request.getHeader("Authorization");
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            String token = authorizationHeader.substring("Bearer ".length());
+        if (authorizationHeader != null && authorizationHeader.startsWith(BEARER)) {
+            String token = authorizationHeader.substring(BEARER.length());
             System.out.println(token);
             if(jwtGenerator.validateToken(token))
                 return ResponseEntity.ok("This is a STUDENT page");
             else
-                return new ResponseEntity<>("Token expired or invalid", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(ERROR, HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>("Token expired or invalid", HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(ERROR, HttpStatus.BAD_REQUEST);
     }
 
     @GetMapping("/teacher")
     @PreAuthorize("hasAuthority('TEACHER')")
     public ResponseEntity<String> sayTeacher(HttpServletRequest request) {
         String authorizationHeader = request.getHeader("Authorization");
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            String token = authorizationHeader.substring("Bearer ".length());
+        if (authorizationHeader != null && authorizationHeader.startsWith(BEARER)) {
+            String token = authorizationHeader.substring(BEARER.length());
             System.out.println(token);
             if(jwtGenerator.validateToken(token))
                 return ResponseEntity.ok("This is a TEACHER page");
             else
-            return new ResponseEntity<>("Token expired or invalid", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(ERROR, HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>("Token expired or invalid", HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(ERROR, HttpStatus.BAD_REQUEST);
 
     }
 

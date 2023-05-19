@@ -7,8 +7,6 @@ import org.springframework.stereotype.Repository;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -28,7 +26,7 @@ public class SubjectDataAccessService implements CourseDao{
     private EvaluationRepo evaluationRepo;
     
     private static final String DATA_FORMAT = "dd/MM/yyyy HH:mm:ss";
-    private static final SimpleDateFormat formatter = new SimpleDateFormat(DATA_FORMAT);
+    private final SimpleDateFormat formatter = new SimpleDateFormat(DATA_FORMAT);
     private Date formatDateTime() {
         Date date = new Date();
         try {

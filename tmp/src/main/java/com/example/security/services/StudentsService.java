@@ -194,13 +194,12 @@ public class StudentsService {
         }
 
         if (evaluationDate != null && !evaluationDate.equals(grade.getEvaluationDate())) {
-//            grade.setEvaluationDate(evaluationDate);
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
             try {
                 LocalDate.parse(evaluationDate, formatter);
                 grade.setEvaluationDate(evaluationDate);
             } catch (DateTimeParseException exception) {
-
+                throw new IllegalStateException("The date doesn't match the required format. "+exception);
             }
         }
 

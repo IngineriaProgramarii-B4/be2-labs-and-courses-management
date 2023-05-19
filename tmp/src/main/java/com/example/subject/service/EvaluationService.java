@@ -25,13 +25,13 @@ public class EvaluationService {
     public boolean validateEval(String title, Evaluation evaluation){
         double sum = 0.;
         for(Evaluation eval : courseDao.getEvaluationMethods(title)) {
-            if(!eval.getComponent().equals(evaluation.getComponent()) && !eval.isDeleted()) {
+            if(!eval.getComponent().equals(evaluation.getComponent()) && !eval.getIsDeleted()) {
                 sum += Math.floor(eval.getValue() * 100) / 100;
                 sum = Math.floor(sum * 100) / 100;
             }
         }
         double finalSum = Math.floor((sum + evaluation.getValue()) * 100) / 100;
-        if(finalSum > 1.0 || evaluation.isDeleted())
+        if(finalSum > 1.0 || evaluation.getIsDeleted())
             return false;
         for(Component comp : courseDao.getComponents(title))
             if(comp.getType().equals(evaluation.getComponent()))

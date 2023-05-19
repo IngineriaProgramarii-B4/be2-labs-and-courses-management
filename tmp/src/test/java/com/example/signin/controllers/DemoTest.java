@@ -13,7 +13,7 @@ import org.springframework.http.HttpStatus;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-public class DemoTest {
+class DemoTest {
 
     @InjectMocks
     Demo demo;
@@ -30,7 +30,7 @@ public class DemoTest {
     }
 
     @Test
-    public void testSayStudent() {
+    void testSayStudent() {
         String authHeader = "Bearer validToken";
         when(request.getHeader("Authorization")).thenReturn(authHeader);
         when(jwtGenerator.validateToken("validToken")).thenReturn(true);
@@ -42,7 +42,7 @@ public class DemoTest {
     }
 
     @Test
-    public void testSayStudentWithInvalidToken() {
+    void testSayStudentWithInvalidToken() {
         String authHeader = "Bearer invalidToken";
         when(request.getHeader("Authorization")).thenReturn(authHeader);
         when(jwtGenerator.validateToken("invalidToken")).thenReturn(false);
@@ -54,7 +54,7 @@ public class DemoTest {
     }
 
     @Test
-    public void testSayTeacher() {
+    void testSayTeacher() {
         String authHeader = "Bearer validToken";
         when(request.getHeader("Authorization")).thenReturn(authHeader);
         when(jwtGenerator.validateToken("validToken")).thenReturn(true);
@@ -66,7 +66,7 @@ public class DemoTest {
     }
 
     @Test
-    public void testSayTeacherWithInvalidToken() {
+    void testSayTeacherWithInvalidToken() {
         String authHeader = "Bearer invalidToken";
         when(request.getHeader("Authorization")).thenReturn(authHeader);
         when(jwtGenerator.validateToken("invalidToken")).thenReturn(false);
@@ -77,7 +77,7 @@ public class DemoTest {
         assertEquals("Token expired or invalid", response.getBody());
     }
     @Test
-    public void testSayStudentNoAuthorizationHeader() {
+    void testSayStudentNoAuthorizationHeader() {
         when(request.getHeader("Authorization")).thenReturn(null);
 
         ResponseEntity<String> response = demo.sayStudent(request);
@@ -87,7 +87,7 @@ public class DemoTest {
     }
 
     @Test
-    public void testSayStudentInvalidAuthorizationHeader() {
+    void testSayStudentInvalidAuthorizationHeader() {
         when(request.getHeader("Authorization")).thenReturn("InvalidHeader");
 
         ResponseEntity<String> response = demo.sayStudent(request);
@@ -97,7 +97,7 @@ public class DemoTest {
     }
 
     @Test
-    public void testSayTeacherNoAuthorizationHeader() {
+    void testSayTeacherNoAuthorizationHeader() {
         when(request.getHeader("Authorization")).thenReturn(null);
 
         ResponseEntity<String> response = demo.sayTeacher(request);
@@ -107,7 +107,7 @@ public class DemoTest {
     }
 
     @Test
-    public void testSayTeacherInvalidAuthorizationHeader() {
+    void testSayTeacherInvalidAuthorizationHeader() {
         when(request.getHeader("Authorization")).thenReturn("InvalidHeader");
 
         ResponseEntity<String> response = demo.sayTeacher(request);

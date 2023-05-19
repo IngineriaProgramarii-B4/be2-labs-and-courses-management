@@ -23,7 +23,7 @@ class ComponentTest {
         assertEquals("Physics_romania.png", component.getResources().get(0).getTitle());
         assertEquals("savedResources/Physics_romania.png", component.getResources().get(0).getLocation());
         assertEquals("image/png", component.getResources().get(0).getType());
-        assertFalse(component.getResources().get(0).isDeleted());
+        assertFalse(component.getResources().get(0).getIsDeleted());
     }
 
     @Test
@@ -35,7 +35,7 @@ class ComponentTest {
     @Test
     void setDeleted() {
         component.setDeleted(true);
-        assertTrue(component.isDeleted());
+        assertTrue(component.getIsDeleted());
     }
 
     @Test
@@ -45,7 +45,7 @@ class ComponentTest {
         assertEquals("Physics_romania.png", component.getResources().get(0).getTitle());
         assertEquals("savedResources/Physics_romania.png", component.getResources().get(0).getLocation());
         assertEquals("image/png", component.getResources().get(0).getType());
-        assertFalse(component.getResources().get(0).isDeleted());
+        assertFalse(component.getResources().get(0).getIsDeleted());
     }
 
     @Test
@@ -56,7 +56,7 @@ class ComponentTest {
         assertEquals("Physics_romania.png", component.getResources().get(0).getTitle());
         assertEquals("savedResources/Physics_romania.png", component.getResources().get(0).getLocation());
         assertEquals("image/png", component.getResources().get(0).getType());
-        assertFalse(component.getResources().get(0).isDeleted());
+        assertFalse(component.getResources().get(0).getIsDeleted());
         component.removeResource(resource);
         assertEquals(0, component.getResources().size());
     }
@@ -69,13 +69,13 @@ class ComponentTest {
         assertEquals("Physics_romania.png", component.getResources().get(0).getTitle());
         assertEquals("savedResources/Physics_romania.png", component.getResources().get(0).getLocation());
         assertEquals("image/png", component.getResources().get(0).getType());
-        assertFalse(component.getResources().get(0).isDeleted());
+        assertFalse(component.getResources().get(0).getIsDeleted());
         component.softDeleteResource(resource);
         assertEquals(1, component.getResources().size());
         assertEquals("Physics_romania.png", component.getResources().get(0).getTitle());
         assertEquals("savedResources/Physics_romania.png", component.getResources().get(0).getLocation());
         assertEquals("image/png", component.getResources().get(0).getType());
-        assertTrue(component.getResources().get(0).isDeleted());
+        assertTrue(component.getResources().get(0).getIsDeleted());
     }
 
     @Test

@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class TokenValidationAspectTest {
+class TokenValidationAspectTest {
     @Mock
     private JWTGenerator jwtGenerator;
     @Mock
@@ -32,12 +32,12 @@ public class TokenValidationAspectTest {
     }
 
     @Test
-    public void validateToken_throwsException_whenTokenNotFound() {
+    void validateToken_throwsException_whenTokenNotFound() {
         assertThrows(RuntimeException.class, () -> tokenValidationAspect.validateToken(joinPoint));
     }
 
     @Test
-    public void validateToken_throwsException_whenTokenInvalid() {
+    void validateToken_throwsException_whenTokenInvalid() {
         String token = "invalidToken";
         request.addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + token);
         when(jwtGenerator.validateToken(token)).thenReturn(false);
@@ -46,7 +46,7 @@ public class TokenValidationAspectTest {
     }
 
     @Test
-    public void validateToken_doesNotThrowException_whenTokenIsValid() throws Throwable {
+    void validateToken_doesNotThrowException_whenTokenIsValid() throws Throwable {
         String token = "validToken";
         request.addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + token);
         when(jwtGenerator.validateToken(token)).thenReturn(true);
