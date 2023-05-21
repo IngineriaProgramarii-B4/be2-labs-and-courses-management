@@ -27,7 +27,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception
     {    // Disabling CSRF protection is safe here since the application uses JWT for authentication and is stateless
 
-        http.cors().and().csrf()
+        http.csrf()
                 .disable()
                 .exceptionHandling()
                 .authenticationEntryPoint(authEntryPoint)

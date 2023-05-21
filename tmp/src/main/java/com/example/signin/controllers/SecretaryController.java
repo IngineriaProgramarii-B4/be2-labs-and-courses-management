@@ -53,7 +53,7 @@ private final RoleRepository roleRepository;
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<String> addUsers(@RequestBody List<SecretaryRequestDto> secretaryRequestDtoList) {
         List<Credentials> credentialsToAdd = new ArrayList<>();
-        for (int i = 0; i < secretaryRequestDtoList.size() - 1; i++) {
+        for (int i = 0; i < secretaryRequestDtoList.size() ; i++) {
             SecretaryRequestDto secretaryRequestDto = secretaryRequestDtoList.get(i);
             if (credentialsRepository.existsById(secretaryRequestDto.getRegistrationNumber())) {
                 return new ResponseEntity<>("User " + secretaryRequestDto.getRegistrationNumber() + " is already in the database!", HttpStatus.BAD_REQUEST);
