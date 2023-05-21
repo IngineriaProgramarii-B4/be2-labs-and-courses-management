@@ -38,7 +38,7 @@ class StudentTest {
         //Given
         //
         Student student = new Student();
-        Subject course = new Subject();
+        Subject course = new Subject("SO", 5, 2, 2, "materia SO", List.of(), List.of());
 
         //
         //When
