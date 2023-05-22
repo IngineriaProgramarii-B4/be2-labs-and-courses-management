@@ -39,10 +39,6 @@ public class DBObject {
     public boolean getIsDeleted() {
         return isDeleted;
     }
-    
-    public boolean isDeleted() {
-        return isDeleted;
-    }
 
     public void setDeleted(boolean deleted) {
         isDeleted = deleted;

@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class SecurityConfigTest {
+class SecurityConfigTest {
 
     @Mock
     private JwtAuthEntryPoint authEntryPoint;
@@ -32,7 +32,7 @@ public class SecurityConfigTest {
 
 
     @Test
-    public void testAuthenticationManager() throws Exception {
+    void testAuthenticationManager() throws Exception {
         AuthenticationManager authenticationManager = mock(AuthenticationManager.class);
         when(authenticationConfiguration.getAuthenticationManager()).thenReturn(authenticationManager);
 

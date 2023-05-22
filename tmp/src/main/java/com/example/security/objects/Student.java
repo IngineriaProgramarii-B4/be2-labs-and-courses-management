@@ -3,8 +3,6 @@ package com.example.security.objects;
 import com.example.catalog.models.Grade;
 import com.example.subject.model.Subject;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -143,7 +141,7 @@ public class Student extends User {
     public List<Grade> getGrades() {
         List<Grade> gradesList = new ArrayList<>();
         for (Grade grade : this.grades) {
-            if (!grade.isDeleted()) {
+            if (!grade.getIsDeleted()) {
                 gradesList.add(grade);
             }
         }

@@ -28,7 +28,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @AutoConfigureMockMvc(addFilters = false)
-public class CatalogTeachersServiceTest {
+class CatalogTeachersServiceTest {
     @InjectMocks
     TeachersService teachersService;
     @Mock

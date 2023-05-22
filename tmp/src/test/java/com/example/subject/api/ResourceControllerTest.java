@@ -67,7 +67,7 @@ class ResourceControllerTest {
         assertEquals(resource.getTitle(), result.get(0).getTitle());
         assertEquals(resource.getLocation(), result.get(0).getLocation());
         assertEquals(resource.getType(), result.get(0).getType());
-        assertEquals(resource.isDeleted(), result.get(0).isDeleted());
+        assertEquals(resource.getIsDeleted(), result.get(0).getIsDeleted());
     }
 
     @Test
@@ -111,7 +111,7 @@ class ResourceControllerTest {
         assertEquals(resource.getTitle(), result.getTitle());
         assertEquals(resource.getLocation(), result.getLocation());
         assertEquals(resource.getType(), result.getType());
-        assertEquals(resource.isDeleted(), result.isDeleted());
+        assertEquals(resource.getIsDeleted(), result.getIsDeleted());
 
     }
 

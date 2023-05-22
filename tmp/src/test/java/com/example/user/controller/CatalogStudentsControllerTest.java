@@ -8,7 +8,6 @@ import com.example.subject.service.SubjectService;
 import com.example.user.controllers.StudentsController;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,11 +17,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.*;
 
@@ -308,8 +304,7 @@ class CatalogStudentsControllerTest {
 
         when(studentsService.getStudentById(student.getId())).thenReturn(student);
         when(studentsService.deleteGrade(student.getId(), grade.getId())).thenAnswer((Answer<Grade>) invocationOnMock -> {
-            grade.setDeleted();
-            return grade;
+           return grade.setDeleted();
         });
 
         MvcResult deleteGradeResult = mvc.perform(delete("/api/v1/students/{id}/grades/{gradeId}", student.getId(), grade.getId())
@@ -324,7 +319,7 @@ class CatalogStudentsControllerTest {
 
         assertNotNull(gradeResponse);
         assertEquals(gradeResponse.getId(), grade.getId());
-        assertTrue(grade.isDeleted());
+        assertTrue(gradeResponse.getIsDeleted());
     }
 
     @Test
@@ -341,7 +336,7 @@ class CatalogStudentsControllerTest {
                 .andExpect(status().isNotFound())
                 .andReturn();
 
-        assertEquals(deleteGradeResult.getResponse().getContentAsString(), "");
+        assertEquals( "",deleteGradeResult.getResponse().getContentAsString());
     }
 
     @Test

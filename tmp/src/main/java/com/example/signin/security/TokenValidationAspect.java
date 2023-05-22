@@ -5,7 +5,6 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -37,10 +36,10 @@ public class TokenValidationAspect {
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             String token = authorizationHeader.substring("Bearer ".length());
             if (!jwtGenerator.validateToken(token)) {
-                throw new RuntimeException("Token expired or invalid");
+                throw new IllegalStateException("Token expired or invalid");
             }
         } else {
-            throw new RuntimeException("Token not found");
+            throw new IllegalStateException("Token not found");
         }
     }
 }

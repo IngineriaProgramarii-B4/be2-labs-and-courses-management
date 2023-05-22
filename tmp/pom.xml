@@ -18,7 +18,7 @@
         <sonar.host.url>http://localhost:9000/</sonar.host.url>
         <sonar.token>sqp_ebacd29ae77929c8d6df4373b3b6bcd7a1c7604f
         </sonar.token>
-        <sonar.projectKey>uni-manager</sonar.projectKey>
+        <sonar.projectKey>retry-integration</sonar.projectKey>
     </properties>
     <dependencies>
         <dependency>

@@ -35,7 +35,7 @@ class ResourceTest {
     @Test
     void setDeleted() {
         resource.setDeleted(false);
-        assertFalse(resource.isDeleted());
+        assertFalse(resource.getIsDeleted());
     }
 
     @Test
