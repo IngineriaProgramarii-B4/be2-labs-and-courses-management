@@ -56,7 +56,7 @@ class CatalogStudentsServiceTest {
 
     }
     @Test
-    public void canGetAllStudents() {
+    void canGetAllStudents() {
         // given
         given(studentsRepository.findStudentsByParams(
                 nullable(UUID.class),
@@ -77,7 +77,7 @@ class CatalogStudentsServiceTest {
     }
 
     @Test
-    public void canGetStudentById() {
+    void canGetStudentById() {
         // given
 
         when(studentsRepository.findStudentById(student.getId())).thenReturn(student);
@@ -101,7 +101,7 @@ class CatalogStudentsServiceTest {
         assertNull(studentsService.getStudentById(UUID.randomUUID()));
     }
     @Test
-    public void canSaveStudent() {
+    void canSaveStudent() {
         // given
         ArgumentCaptor<Student> studentArgumentCaptor = ArgumentCaptor.forClass(Student.class);
         verify(studentsRepository).save(studentArgumentCaptor.capture());
@@ -114,7 +114,7 @@ class CatalogStudentsServiceTest {
         assertNull(shouldBeNull);
     }
     @Test
-    public void canDeleteStudent() {
+    void canDeleteStudent() {
         // given
         when(studentsRepository.findStudentById(student.getId())).thenReturn(student);
         // when
@@ -129,7 +129,7 @@ class CatalogStudentsServiceTest {
     }
 
     @Test
-    public void canAddGrade() {
+    void canAddGrade() {
         // given
         when(studentsRepository.findById(student.getId())).thenReturn(Optional.of(student));
         assertEquals(Optional.of(student), studentsRepository.findById(student.getId()));
@@ -144,7 +144,7 @@ class CatalogStudentsServiceTest {
     }
 
     @Test
-    public void canDeleteGrade() {
+    void canDeleteGrade() {
 
         // given
 
@@ -162,7 +162,7 @@ class CatalogStudentsServiceTest {
         // when
         studentsService.deleteGrade(studentsService.getStudentById(student.getId()).getId(), grade.getId());
         // then
-        assertTrue(grade.isDeleted());
+        assertTrue(grade.getIsDeleted());
 
         // given not existing grade
         try {
@@ -175,7 +175,7 @@ class CatalogStudentsServiceTest {
     }
 
     @Test
-    public void canGetGradeById() {
+    void canGetGradeById() {
 
         // given
         when(studentsRepository.findById(student.getId())).thenReturn(Optional.of(student));
@@ -202,7 +202,7 @@ class CatalogStudentsServiceTest {
     }
 
     @Test
-    public void canUpdateGrade() {
+    void canUpdateGrade() {
 
         // given
         when(studentsRepository.findById(student.getId())).thenReturn(Optional.of(student));
@@ -258,13 +258,16 @@ class CatalogStudentsServiceTest {
         Grade updatedNullValue = studentsService.updateGrade(student.getId(), null, null, grade.getId());
         assertEquals(grade, updatedNullValue);
 
+        UUID idForGrade = grade.getId();
+        UUID idForStudent = student.getId();
+
         // when updating with invalid value
         assertThrows(IllegalStateException.class,
-                () -> studentsService.updateGrade(student.getId(), 0, null, grade.getId()));
+                () -> studentsService.updateGrade(idForStudent, 0, null, idForGrade));
 
         // when updating with value outside of range
         assertThrows(IllegalStateException.class,
-                () -> studentsService.updateGrade(student.getId(), 11, null, grade.getId()));
+                () -> studentsService.updateGrade(idForStudent, 11, null, idForGrade));
 
         // when updating with a valid value
         Grade updatedValue = studentsService.updateGrade(student.getId(), 8, null, grade.getId());

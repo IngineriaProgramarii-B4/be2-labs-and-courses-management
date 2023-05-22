@@ -6,10 +6,10 @@ import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class PasswordResetTokenTest {
+class PasswordResetTokenTest {
 
     @Test
-    public void testTokenCreation() {
+    void testTokenCreation() {
         String expectedToken = "testToken";
         Credentials credentials = new Credentials();
         credentials.setUserId("testUserId");
@@ -22,7 +22,7 @@ public class PasswordResetTokenTest {
     }
 
     @Test
-    public void testExpirationTimeCalculation() {
+    void testExpirationTimeCalculation() {
         String expectedToken = "testToken";
 
         PasswordResetToken passwordResetToken = new PasswordResetToken(expectedToken);
@@ -36,7 +36,7 @@ public class PasswordResetTokenTest {
         assertTrue(diffInMinutes >= 9 && diffInMinutes <= 11);
     }
     @Test
-    public void testSetTokenIdAndGetTokenId() {
+    void testSetTokenIdAndGetTokenId() {
         Long expectedTokenId = 1L;
 
         PasswordResetToken passwordResetToken = new PasswordResetToken();

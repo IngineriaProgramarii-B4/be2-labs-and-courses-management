@@ -34,7 +34,7 @@ class EvaluationTest {
     @Test
     void setDeleted() {
         evaluation.setDeleted(true);
-        assertTrue(evaluation.isDeleted());
+        assertTrue(evaluation.getIsDeleted());
     }
 
     @Test

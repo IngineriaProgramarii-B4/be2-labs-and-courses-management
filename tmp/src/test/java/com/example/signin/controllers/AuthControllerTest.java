@@ -50,7 +50,7 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
-public class AuthControllerTest {
+class AuthControllerTest {
 
 
     @Mock
@@ -125,7 +125,7 @@ public class AuthControllerTest {
     }
 
     @Test
-    public void testLogin() {
+    void testLogin() {
         // Arrange
         LoginRequestBody loginRequestBody = new LoginRequestBody();
         loginRequestBody.setEmail("test@example.com");
@@ -154,7 +154,7 @@ public class AuthControllerTest {
         assertEquals(200, result.getStatusCodeValue());
     }
     @Test
-    public void testRegister_withEmailAlreadyInUse() {
+    void testRegister_withEmailAlreadyInUse() {
         // Arrange
         RegisterRequestBody registerRequestBody = new RegisterRequestBody();
         registerRequestBody.setEmail("test@example.com");
@@ -171,7 +171,7 @@ public class AuthControllerTest {
         assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
     }
     @Test
-    public void testForgotPassword_userNotFound() {
+    void testForgotPassword_userNotFound() {
         // Arrange
         ForgotPasswordRequestBody forgotPasswordRequestBody = new ForgotPasswordRequestBody();
         forgotPasswordRequestBody.setEmail("test@example.com");
@@ -187,7 +187,7 @@ public class AuthControllerTest {
     }
 
     @Test
-    public void testForgotPassword_userFoundAndEmailSent() {
+    void testForgotPassword_userFoundAndEmailSent() {
         // Arrange
         ForgotPasswordRequestBody forgotPasswordRequestBody = new ForgotPasswordRequestBody();
         forgotPasswordRequestBody.setEmail("test@example.com");
@@ -207,7 +207,7 @@ public class AuthControllerTest {
         assertEquals(HttpStatus.OK, result.getStatusCode());
     }
     @Test
-    public void registerTest() {
+    void registerTest() {
         RegisterRequestBody registerRequestBody = new RegisterRequestBody();
         registerRequestBody.setEmail("test@test.com");
         registerRequestBody.setPassword("password");
@@ -238,7 +238,7 @@ public class AuthControllerTest {
     }
 
     @Test
-    public void testRegister_withUserAlreadyRegistered() {
+    void testRegister_withUserAlreadyRegistered() {
         // Arrange
         RegisterRequestBody registerRequestBody = new RegisterRequestBody();
         registerRequestBody.setEmail("test@example.com");
@@ -262,7 +262,7 @@ public class AuthControllerTest {
         assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
     }
     @Test
-    public void testRegister_withSaveError() {
+    void testRegister_withSaveError() {
         // Arrange
         RegisterRequestBody registerRequestBody = new RegisterRequestBody();
         registerRequestBody.setEmail("test@example.com");

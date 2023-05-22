@@ -71,4 +71,14 @@ public class Evaluation extends DBObject {
                 ", value=" + value +
                 '}';
     }
+
+    @Override
+    public boolean equals(Object o) {
+        return super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
 }

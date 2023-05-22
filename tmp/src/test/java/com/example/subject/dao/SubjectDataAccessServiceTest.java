@@ -104,12 +104,12 @@ class SubjectDataAccessServiceTest {
 
         Resource oldImage = subject.getImage();
         assertNotNull(oldImage);
-        assertTrue(oldImage.isDeleted());
+        assertTrue(oldImage.getIsDeleted());
         assertEquals("/path/to/DELETED_Test Subject_image.jpg", oldImage.getLocation());
 
         subject = subjectRepo.findSubjectByTitle(subject.getTitle()).orElse(null);
         assertNotNull(subject);
-        assertTrue(subject.isDeleted());
+        assertTrue(subject.getIsDeleted());
         assertEquals(oldImage, subject.getImage());
     }
 
@@ -316,7 +316,7 @@ class SubjectDataAccessServiceTest {
 
         Optional<Component> deletedComponent = componentRepo.findBySubjectTitleAndType(title, type);
         assertTrue(deletedComponent.isPresent());
-        assertTrue(deletedComponent.get().isDeleted());
+        assertTrue(deletedComponent.get().getIsDeleted());
         Optional<Subject> updatedSubject = subjectRepo.findSubjectByTitle(title);
         assertTrue(updatedSubject.isPresent());
     }

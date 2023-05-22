@@ -81,4 +81,14 @@ public class Resource extends DBObject {
                 ", type='" + type + '\'' +
                 '}';
     }
+
+    @Override
+    public boolean equals(Object o) {
+        return super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
 }

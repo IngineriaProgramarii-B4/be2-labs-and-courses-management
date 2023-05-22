@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class SecurityConfigTest {
+class SecurityConfigTest {
 
     @Mock
     private JwtAuthEntryPoint authEntryPoint;
@@ -40,7 +40,7 @@ public class SecurityConfigTest {
 
 
     @Test
-    public void testPasswordEncoder() {
+    void testPasswordEncoder() {
         PasswordEncoder passwordEncoder = securityConfig.passwordEncoder();
         assertTrue(passwordEncoder instanceof BCryptPasswordEncoder);
     }

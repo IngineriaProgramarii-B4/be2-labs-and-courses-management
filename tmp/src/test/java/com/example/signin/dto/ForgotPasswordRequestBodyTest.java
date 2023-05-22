@@ -3,10 +3,10 @@ import com.example.signin.security.ForgotPasswordRequestBody;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class ForgotPasswordRequestBodyTest {
+class ForgotPasswordRequestBodyTest {
 
     @Test
-    public void testGetEmail() {
+    void testGetEmail() {
         String email = "test@example.com";
         ForgotPasswordRequestBody requestBody = new ForgotPasswordRequestBody();
         requestBody.setEmail(email);
@@ -17,7 +17,7 @@ public class ForgotPasswordRequestBodyTest {
     }
 
     @Test
-    public void testSetEmail() {
+    void testSetEmail() {
         String email = "test@example.com";
         ForgotPasswordRequestBody requestBody = new ForgotPasswordRequestBody();
 
