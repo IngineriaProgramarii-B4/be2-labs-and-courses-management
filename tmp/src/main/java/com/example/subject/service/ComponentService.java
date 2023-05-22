@@ -1,5 +1,6 @@
 package com.example.subject.service;
 
+import com.example.firebase.FirebaseStorageStrategy;
 import com.example.subject.dao.CourseDao;
 import com.example.subject.model.Component;
 import com.example.subject.model.Evaluation;
@@ -18,10 +19,13 @@ import java.util.Optional;
 @Transactional
 public class ComponentService {
     private final CourseDao courseDao;
+    private final FirebaseStorageStrategy firebaseStorageStrategy;
+
 
     @Autowired
-    public ComponentService(@Qualifier("postgres") CourseDao courseDao) {
+    public ComponentService(@Qualifier("postgres") CourseDao courseDao, FirebaseStorageStrategy firebaseStorageStrategy) {
         this.courseDao = courseDao;
+        this.firebaseStorageStrategy = firebaseStorageStrategy;
     }
 
     public boolean validateComponent(String title, Component component) {
@@ -65,7 +69,7 @@ public class ComponentService {
     }
 
     public int deleteComponentByType(String title, String type) {
-        ResourceService resourceService = new ResourceService(courseDao);
+        ResourceService resourceService = new ResourceService(courseDao, firebaseStorageStrategy);
 
         if(!validateType(type))
             return 0;

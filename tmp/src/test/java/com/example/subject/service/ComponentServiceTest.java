@@ -1,5 +1,6 @@
 package com.example.subject.service;
 
+import com.example.firebase.FirebaseStorageStrategy;
 import com.example.subject.dao.CourseDao;
 import com.example.subject.model.Component;
 import com.example.subject.model.Evaluation;
@@ -24,11 +25,14 @@ class ComponentServiceTest {
     @Mock
     private CourseDao courseDao;
 
+    @Mock
+    private FirebaseStorageStrategy firebaseStorageStrategy;
+
     private ComponentService componentService;
 
     @BeforeEach
     void setUp() {
-        componentService = new ComponentService(courseDao);
+        componentService = new ComponentService(courseDao, firebaseStorageStrategy);
     }
 
     @Test

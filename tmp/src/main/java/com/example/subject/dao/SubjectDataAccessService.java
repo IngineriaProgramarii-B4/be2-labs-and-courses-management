@@ -2,6 +2,7 @@ package com.example.subject.dao;
 
 import com.example.subject.model.*;
 import com.example.subject.repository.*;
+import jakarta.xml.bind.SchemaOutputResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -73,10 +74,7 @@ public class SubjectDataAccessService implements CourseDao{
         Resource oldImage = optionalSubject.get().getImage();
         if (oldImage != null) {
             String oldImageLocation = oldImage.getLocation(); //RESOURCE_PATH/Subject_image.jpg
-            String oldImageLocationUpdated = oldImageLocation.substring(
-                    0,
-                    oldImageLocation.lastIndexOf("/") + 1
-            ) + "DELETED_" + title + "_" + oldImage.getTitle();
+            String oldImageLocationUpdated = "DELETED/" + oldImageLocation;
             oldImage.setLocation(oldImageLocationUpdated);
             oldImage.setDeleted(true);
             oldImage.setUpdatedAt(formatDateTime());
@@ -97,20 +95,17 @@ public class SubjectDataAccessService implements CourseDao{
         if(subjectToUpdate == null)
             return 0;
 
-
         if (!subjectToUpdate.getTitle().equals(subject.getTitle())) {
             subjectToUpdate.setTitle(subject.getTitle());
 
             //updating resources:
             for (Component component : subjectToUpdate.getComponentList()) {
+                System.out.println("component: " + component);
                 for (Resource resource : component.getResources()) {
                     component.removeResource(resource);
 
                     String resLocation = resource.getLocation();
-                    String newResLocation = resLocation.substring(
-                            0,
-                            resLocation.lastIndexOf("/") + 1
-                    ) + subject.getTitle() + "_" + component.getType() + "_" + resource.getTitle();
+                    String newResLocation = subject.getTitle() + "/" + component.getType() + "/" + resource.getTitle();
                     resource.setLocation(newResLocation);
                     //resource location: RESOURCE_PATH/OldSubjectTitle_Component_Resource.txt ->
                     // -> RESOURCE_PATH/NewSubjectTitle_Component_Resource.txt
@@ -123,11 +118,7 @@ public class SubjectDataAccessService implements CourseDao{
 
         Resource oldImage = subjectToUpdate.getImage();
         if (oldImage != null) {
-            String locationOfOldImage = oldImage.getLocation(); //RESOURCE_PATH/OldSubjectTitle_image.jpg
-            String locationOfOldImageUpdated = locationOfOldImage.substring(
-                    0,
-                    locationOfOldImage.lastIndexOf("/") + 1
-            ) + subject.getTitle() + "_" + oldImage.getTitle();
+            String locationOfOldImageUpdated = subject.getTitle() + "/" + oldImage.getTitle();
 
             oldImage.setLocation(locationOfOldImageUpdated);
             resourceRepo.save(oldImage);
@@ -152,10 +143,7 @@ public class SubjectDataAccessService implements CourseDao{
         Resource oldImage = subjectToUpdate.getImage();
         if (oldImage != null) {
             String oldImageLocation = oldImage.getLocation(); //RESOURCE_PATH/Subject_image.jpg
-            String oldImageLocationUpdated = oldImageLocation.substring(
-                    0,
-                    oldImageLocation.lastIndexOf("/") + 1
-            ) + "OUTDATED_" + title + "_" + oldImage.getTitle();
+            String oldImageLocationUpdated = "OUTDATED/" + oldImageLocation;
 
             oldImage.setLocation(oldImageLocationUpdated);
 
@@ -273,10 +261,7 @@ public class SubjectDataAccessService implements CourseDao{
             return 0;
 
         resourceToDelete.setDeleted(true);
-        resourceToDelete.setLocation(resourceToDelete.getLocation().substring(
-                0,
-                resourceToDelete.getLocation().lastIndexOf("/") + 1
-        ) + "DELETED_" + subjectTitle + "_" + componentType + "_" + resourceTitle);
+        resourceToDelete.setLocation("DELETED/" + subjectTitle + "/" + componentType + "/" + resourceTitle);
         resourceToDelete.setUpdatedAt(formatDateTime());
         resourceRepo.save(resourceToDelete);
 
