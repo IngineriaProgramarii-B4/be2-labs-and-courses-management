@@ -136,7 +136,7 @@ public class AuthController {
             e.printStackTrace();
             return new ResponseEntity<>("Error when saving user!", HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return new ResponseEntity<>("User registered success!", HttpStatus.OK);
+        return new ResponseEntity<>("User registered success!", HttpStatus.CREATED);
     }
 
     @PostMapping("/sendMail")
