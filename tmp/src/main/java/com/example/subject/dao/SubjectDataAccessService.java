@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -99,19 +100,19 @@ public class SubjectDataAccessService implements CourseDao{
             subjectToUpdate.setTitle(subject.getTitle());
 
             //updating resources:
+            List<Resource> updatedResources = new ArrayList<>();
             for (Component component : subjectToUpdate.getComponentList()) {
-                System.out.println("component: " + component);
                 for (Resource resource : component.getResources()) {
-                    component.removeResource(resource);
+                    if (!component.getIsDeleted() && !resource.getIsDeleted()) {
+                        String resLocation = resource.getLocation();
+                        String newResLocation = subject.getTitle() + "/" + component.getType() + "/" + resource.getTitle();
+                        resource.setLocation(newResLocation);
 
-                    String resLocation = resource.getLocation();
-                    String newResLocation = subject.getTitle() + "/" + component.getType() + "/" + resource.getTitle();
-                    resource.setLocation(newResLocation);
-                    //resource location: RESOURCE_PATH/OldSubjectTitle_Component_Resource.txt ->
-                    // -> RESOURCE_PATH/NewSubjectTitle_Component_Resource.txt
-                    component.addResource(resource);
-                    resourceRepo.save(resource);
+                        resourceRepo.save(resource);
+                        updatedResources.add(resource);
+                    }
                 }
+                component.setResources(updatedResources);
                 componentRepo.save(component);
             }
         }
