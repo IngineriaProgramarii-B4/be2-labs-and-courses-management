@@ -33,7 +33,12 @@ public class PasswordResetTokenService {
         return "valid";
     }
     public Optional<Credentials> findUserByPasswordToken(String passwordResetToken) {
-        return Optional.ofNullable(passwordResetTokenRepository.findByToken(passwordResetToken).getCredentials());
+        PasswordResetToken passwordResetTokenObj = passwordResetTokenRepository.findByToken(passwordResetToken);
+        if (passwordResetTokenObj != null) {
+            return Optional.ofNullable(passwordResetTokenObj.getCredentials());
+        } else {
+            return Optional.empty();
+        }
     }
 
     public PasswordResetToken findPasswordResetToken(String token){

@@ -1,7 +1,6 @@
 package com.example.security.repositories;
 
 import com.example.security.objects.Admin;
-import com.example.security.objects.Teacher;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -33,4 +32,8 @@ public interface AdminsRepository extends JpaRepository<Admin, UUID> {
     Optional<Admin> findById(UUID id);
 
     Admin findByRegistrationNumber(String registrationNumber);
+
+    @Modifying
+    @Query("delete from Admin a where a=?1")
+    void delete(Admin admin);
 }

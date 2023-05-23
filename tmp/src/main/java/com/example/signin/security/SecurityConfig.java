@@ -27,7 +27,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception
     {    // Disabling CSRF protection is safe here since the application uses JWT for authentication and is stateless
 
-        http.csrf()
+        http.cors().and().csrf()
                 .disable()
                 .exceptionHandling()
                 .authenticationEntryPoint(authEntryPoint)
@@ -40,6 +40,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/v1/auth/**").permitAll()
                 .requestMatchers("/api/v1/demo-controller/student").hasAuthority("STUDENT")
                 .requestMatchers("/api/v1/demo-controller/teacher").hasAuthority("TEACHER")
+                .requestMatchers("/api/v1/secretary/**").hasAuthority("ADMIN")
                 .requestMatchers("/swagger-ui.html#/").permitAll()
                 .requestMatchers("/api/v1/**").permitAll()
                 .requestMatchers("/index.html").permitAll()
@@ -57,7 +58,7 @@ public class SecurityConfig {
         return authenticationConfiguration.getAuthenticationManager();
     }
     @Bean
-    PasswordEncoder passwordEncoder()
+    public PasswordEncoder passwordEncoder()
     {
         return new BCryptPasswordEncoder();
     }

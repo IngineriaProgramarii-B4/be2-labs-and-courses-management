@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
@@ -19,11 +20,12 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(AdminsController.class)
+@AutoConfigureMockMvc(addFilters = false)
 class AdminsControllerTest {
 
     @Autowired
@@ -38,14 +40,14 @@ class AdminsControllerTest {
     public void setup() {
 
         admin1 = new Admin(
-                UUID.randomUUID(),
+                UUID.fromString("a03ae2ce-f4a3-11ed-a05b-0242ac120003"),
                 "Cuzic",
                 "Diana",
                 "diana.cuzic@gmail.com",
                 "dianacuzic",
                 "P1",
                 "Secretariat",
-                "36fbe822-f24f-11ed-a05b-0242ac120003");
+                "1221");
     }
 
     @Test

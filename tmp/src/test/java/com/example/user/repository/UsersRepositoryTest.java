@@ -3,15 +3,16 @@ package com.example.user.repository;
 import com.example.security.objects.Student;
 import com.example.security.objects.User;
 import com.example.security.repositories.UsersRepository;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -20,35 +21,44 @@ class UsersRepositoryTest {
     @Autowired
     private UsersRepository usersRepository;
 
+    Student student = new Student(
+            "testName",
+            "testSurname",
+            "testemail@mail.com",
+            "testUser",
+            1,
+            1,
+            "testRegistrationNumber",
+            null
+    );
+
+    @BeforeEach
+    public void setup() {
+        usersRepository.save(student);
+    }
+
+    @AfterEach
+    public void cleanup() {
+        usersRepository.delete(student);
+    }
+
     @Test
-    @DirtiesContext
     void findUsersByParamsEmailExistsTest() {
         //
         //Given
         //
-        Student student = new Student(
-                "testName",
-                "testSurname",
-                "testemail@mail.com",
-                "testUser",
-                1,
-                1,
-                "testRegistrationNumber",
-                null
-        );
+        String email = "testemail@mail.com";
 
-        usersRepository.save(student);
         //
         //When
         //
-        String email = "testemail@mail.com";
-
         List<User> result = usersRepository.findUsersByParams(
                 null,
                 null,
                 null,
                 email,
                 null);
+
         //
         //Then
         //
@@ -60,7 +70,8 @@ class UsersRepositoryTest {
         //
         //Given
         //
-        String email = "testemail@ail.com";
+        String email = "nonexistent@gmail.com";
+
         //
         //When
         //
@@ -70,6 +81,7 @@ class UsersRepositoryTest {
                 null,
                 email,
                 null);
+
         //
         //Then
         //
@@ -77,34 +89,22 @@ class UsersRepositoryTest {
     }
 
     @Test
-    @DirtiesContext
     void findUsersByParamsUsernameExistsTest() {
         //
         //Given
         //
-        Student student = new Student(
-                "testName",
-                "testSurname",
-                "testemail@mail.com",
-                "testUser",
-                1,
-                1,
-                "testRegistrationNumber",
-                null
-        );
+        String username = "testUser";
 
-        usersRepository.save(student);
         //
         //When
         //
-        String username = "testUser";
-
         List<User> result = usersRepository.findUsersByParams(
                 null,
                 null,
                 null,
                 null,
                 username);
+
         //
         //Then
         //
@@ -116,7 +116,8 @@ class UsersRepositoryTest {
         //
         //Given
         //
-        String username = "tesUser";
+        String username = "nonexistentUsername";
+
         //
         //When
         //
@@ -126,6 +127,7 @@ class UsersRepositoryTest {
                 null,
                 null,
                 username);
+
         //
         //Then
         //

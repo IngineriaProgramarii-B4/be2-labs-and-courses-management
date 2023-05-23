@@ -4,8 +4,10 @@ import com.example.subject.model.*;
 import com.example.subject.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,10 +26,16 @@ public class SubjectDataAccessService implements CourseDao{
     private EvaluationRepo evaluationRepo;
     
     private static final String DATA_FORMAT = "dd/MM/yyyy HH:mm:ss";
-    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATA_FORMAT);
-    private LocalDateTime formatDateTime(){
-        LocalDateTime dateTime = LocalDateTime.now();
-        return LocalDateTime.parse(formatter.format(dateTime), formatter);
+    private final SimpleDateFormat formatter = new SimpleDateFormat(DATA_FORMAT);
+    private Date formatDateTime() {
+        Date date = new Date();
+        try {
+            String formattedDateTime = formatter.format(new Date());
+            date = formatter.parse(formattedDateTime);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return date;
     }
 
     // SUBJECTS

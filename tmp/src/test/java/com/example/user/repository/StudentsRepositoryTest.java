@@ -2,45 +2,53 @@ package com.example.user.repository;
 
 import com.example.security.objects.Student;
 import com.example.security.repositories.StudentsRepository;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class StudentsRepositoryTest {
+
     @Autowired
     private StudentsRepository studentsRepository;
 
+    private Student student = new Student(
+            "testName",
+            "testSurename",
+            "testemail@mail.com",
+            "testUser",
+            1,
+            1,
+            "testRegistrationNumber",
+            null
+    );
+
+    @BeforeEach
+    public void setup() {
+        studentsRepository.save(student);
+    }
+
+    @AfterEach
+    public void cleanup() {
+        studentsRepository.delete(student);
+    }
+
     @Test
-    @DirtiesContext
     void findStudentsByParamsEmailExistsTest() {
         //
         //Given
         //
-        Student student = new Student(
-                "testName",
-                "testSurename",
-                "testemail@mail.com",
-                "testUser",
-                1,
-                1,
-                "testRegistrationNumber",
-                null
-        );
+        String email = "testemail@mail.com";
 
-        studentsRepository.save(student);
         //
         //When
         //
-        String email = "testemail@mail.com";
-
         List<Student> result = studentsRepository.findStudentsByParams(
                 null,
                 null,
@@ -51,6 +59,7 @@ class StudentsRepositoryTest {
                 0,
                 null
         );
+
         //
         //Then
         //
@@ -62,7 +71,8 @@ class StudentsRepositoryTest {
         //
         //Given
         //
-        String email = "testmail@mail.com";
+        String email = "nonexistent@mail.com";
+
         //
         //When
         //
@@ -76,6 +86,7 @@ class StudentsRepositoryTest {
                 0,
                 null
         );
+
         //
         //Then
         //
@@ -88,23 +99,11 @@ class StudentsRepositoryTest {
         //
         //Given
         //
-        Student student = new Student(
-                "testName",
-                "testSurname",
-                "testemail@mail.com",
-                "testUser",
-                1,
-                1,
-                "testRegistrationNumber",
-                null
-        );
+        String username = "testUser";
 
-        studentsRepository.save(student);
         //
         //When
         //
-        String username = "testUser";
-
         List<Student> result = studentsRepository.findStudentsByParams(
                 null,
                 null,
@@ -115,6 +114,7 @@ class StudentsRepositoryTest {
                 0,
                 null
         );
+
         //
         //Then
         //
@@ -126,7 +126,8 @@ class StudentsRepositoryTest {
         //
         //Given
         //
-        String username = "testemail@mail.com";
+        String username = "nonexisetntUsername";
+
         //
         //When
         //
@@ -140,6 +141,7 @@ class StudentsRepositoryTest {
                 0,
                 null
         );
+
         //
         //Then
         //
@@ -152,23 +154,11 @@ class StudentsRepositoryTest {
         //
         //Given
         //
-        Student student = new Student(
-                "testName",
-                "testSurname",
-                "testemail@mail.com",
-                "testUser",
-                1,
-                1,
-                "testRegistrationNumber",
-                null
-        );
+        String regisNr = "testRegistrationNumber";
 
-        studentsRepository.save(student);
         //
         //When
         //
-        String regisNr = "testRegistrationNumber";
-
         List<Student> result = studentsRepository.findStudentsByParams(
                 null,
                 null,
@@ -179,6 +169,7 @@ class StudentsRepositoryTest {
                 1,
                 regisNr
         );
+
         //
         //Then
         //
@@ -190,7 +181,8 @@ class StudentsRepositoryTest {
         //
         //Given
         //
-        String regisNr = "testRgistrationNumber";
+        String regisNr = "nonexistentRegistrationNumber";
+
         //
         //When
         //
@@ -204,6 +196,7 @@ class StudentsRepositoryTest {
                 1,
                 regisNr
         );
+
         //
         //Then
         //

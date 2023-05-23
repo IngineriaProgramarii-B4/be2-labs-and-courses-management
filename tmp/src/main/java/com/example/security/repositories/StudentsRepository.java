@@ -1,5 +1,4 @@
 package com.example.security.repositories;
-
 import com.example.security.objects.Student;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -36,5 +35,8 @@ public interface StudentsRepository extends JpaRepository<Student, UUID> {
 
     Student findByEmail(String email);
     Boolean existsByEmail(String email);
+    @Modifying
+    @Query("delete from Student a where a=?1")
+    void delete(Student student);
 
 }

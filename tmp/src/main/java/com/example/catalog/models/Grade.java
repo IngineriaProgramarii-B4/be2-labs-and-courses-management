@@ -1,19 +1,17 @@
 package com.example.catalog.models;
 
 import com.example.security.objects.DBObject;
-import com.example.subject.model.Subject;
 import jakarta.persistence.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
-import java.util.Date;
 import java.util.UUID;
 
 // <-------------------------------- FROM CATALOG ----------------------------------> //
 
 @Entity
-@SQLDelete(sql="UPDATE Grade SET deleted = true WHERE id=?")
-@Where(clause = "deleted=false")
+@SQLDelete(sql="UPDATE Grade SET is_deleted = true WHERE id=?")
+@Where(clause = "is_deleted=false")
 public class Grade extends DBObject {
     @Id
     @SequenceGenerator(
@@ -31,16 +29,15 @@ public class Grade extends DBObject {
     private int value;
 
     //CascadeType.MERGE : copiaza obiectul intr-un obiect cu acelasi identificator
-    @ManyToOne(cascade = {CascadeType.MERGE})
-    private Subject subject;
+//    @ManyToOne(cascade = {CascadeType.MERGE})
+    private String subject;
 
-    private Date evaluationDate;
+    private String evaluationDate;
 
-    private boolean deleted=false;
     public Grade(){}
 
 
-    public Grade(int value, Subject subject, Date evaluationDate) {
+    public Grade(int value, String subject, String evaluationDate) {
         this.value = value;
         this.subject = subject;
         this.evaluationDate = evaluationDate;
@@ -60,19 +57,19 @@ public class Grade extends DBObject {
         this.value = value;
     }
 
-    public Subject getSubject() {
+    public String getSubject() {
         return subject;
     }
 
-    public void setSubject(Subject subject) {
+    public void setSubject(String subject) {
         this.subject = subject;
     }
 
-    public Date getEvaluationDate() {
+    public String getEvaluationDate() {
         return evaluationDate;
     }
 
-    public void setEvaluationDate(Date evaluationDate) {
+    public void setEvaluationDate(String evaluationDate) {
         this.evaluationDate = evaluationDate;
     }
 
@@ -86,12 +83,18 @@ public class Grade extends DBObject {
                 '}';
     }
 
-    public boolean isDeleted(){
-        return deleted;
+    public Grade setDeleted(){
+        super.setIsDeleted(true);
+        return this;
     }
 
-    public Grade setDeleted(){
-        deleted=true;
-        return this;
+    @Override
+    public boolean equals(Object o) {
+        return super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 }

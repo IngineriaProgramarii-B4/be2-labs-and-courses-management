@@ -3,8 +3,6 @@ package com.example.security.objects;
 import com.example.signin.model.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Pattern;
 
 import java.util.ArrayList;
@@ -43,6 +41,9 @@ public class User extends DBObject {
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;
+        //Encrypting the email first
+//        PasswordEncoder emailEncoder = new BCryptPasswordEncoder();
+//        this.email = emailEncoder.encode(email);
         this.username = username;
     }
 
@@ -51,6 +52,9 @@ public class User extends DBObject {
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;
+        //Encrypting the email first
+//        PasswordEncoder emailEncoder = new BCryptPasswordEncoder();
+//        this.email = emailEncoder.encode(email);
         this.username = username;
         this.registrationNumber = registrationNumber;
     }
@@ -60,6 +64,9 @@ public class User extends DBObject {
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;
+        //Encrypting the email first
+//        PasswordEncoder emailEncoder = new BCryptPasswordEncoder();
+//        this.email = emailEncoder.encode(email);
         this.username = username;
     }
 
@@ -93,6 +100,9 @@ public class User extends DBObject {
 
     public void setEmail(String email) {
         this.email = email;
+        //Encrypting the email first
+//        PasswordEncoder emailEncoder = new BCryptPasswordEncoder();
+//        this.email = emailEncoder.encode(email);
     }
 
     public String getUsername() {
@@ -138,12 +148,20 @@ public class User extends DBObject {
     }
 
     @Override
-    public int hashCode() {
-        return super.hashCode();
+    public boolean equals(Object user) {
+
+        if (this == user)
+            return true;
+
+        if (user == null || getClass() != user.getClass())
+            return false;
+
+        User user1 = (User) user;
+        return Objects.equals(id, user1.id) && Objects.equals(firstname, user1.firstname) && Objects.equals(lastname, user1.lastname) && Objects.equals(email, user1.email) && Objects.equals(username, user1.username);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        return super.equals(obj);
+    public int hashCode() {
+        return Objects.hash(id, firstname, lastname, email, username);
     }
 }

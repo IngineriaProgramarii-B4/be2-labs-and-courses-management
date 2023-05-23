@@ -2,49 +2,55 @@ package com.example.user.repository;
 
 import com.example.security.objects.Teacher;
 import com.example.security.repositories.TeachersRepository;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.List;
-import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-
 class TeachersRepositoryTest {
 
     @Autowired
     private TeachersRepository teachersRepository;
 
+    private Teacher teacher = new Teacher(
+            "testName",
+            "testSurname",
+            "testemail@mail.com",
+            "testUser",
+            "testOffice",
+            "1234",
+            null,
+            "testTitle"
+    );
+
+    @BeforeEach
+    public void setup() {
+        teachersRepository.save(teacher);
+    }
+
+    @AfterEach
+    public void cleanup() {
+        teachersRepository.delete(teacher);
+    }
+
     @Test
-    @DirtiesContext
     void findTeachersByParamsEmailExistsTest() {
         //
         //Given
         //
-        Teacher teacher = new Teacher(
-                UUID.randomUUID(),
-                "testName",
-                "testSurname",
-                "testemail@mail.com",
-                "testUser",
-                "testOffice",
-                null,
-                "testTitle",
-                "708ba4d2-f250-11ed-a05b-0242ac120003"
-        );
+        String email = "testemail@mail.com";
 
-        teachersRepository.save(teacher);
         //
         //When
         //
-        String email = "testemail@mail.com";
-
         List<Teacher> result = teachersRepository.findTeachersByParams(
                 null,
                 null,
@@ -54,6 +60,7 @@ class TeachersRepositoryTest {
                 null,
                 null
         );
+
         //
         //Then
         //
@@ -65,7 +72,8 @@ class TeachersRepositoryTest {
         //
         //Given
         //
-        String email = "testemail@gmail.com";
+        String email = "nonexistent@gmail.com";
+
         //
         //When
         //
@@ -78,38 +86,23 @@ class TeachersRepositoryTest {
                 null,
                 null
         );
+
         //
         //Then
         //
         assertTrue(result.isEmpty());
     }
 
-
-
     @Test
-    @DirtiesContext
     void findTeachersByParamsUsernameExistsTest() {
         //
         //Given
         //
-        Teacher teacher = new Teacher(
-                UUID.randomUUID(),
-                "testName",
-                "testSurname",
-                "testemail@mail.com",
-                "testUser",
-                "testOffice",
-                null,
-                "testTitle",
-                "708ba4d2-f250-11ed-a05b-0242ac120003"
-        );
+        String username = "testUser";
 
-        teachersRepository.save(teacher);
         //
         //When
         //
-        String username = "testUser";
-
         List<Teacher> result = teachersRepository.findTeachersByParams(
                 null,
                 null,
@@ -119,6 +112,7 @@ class TeachersRepositoryTest {
                 null,
                 null
         );
+
         //
         //Then
         //
@@ -130,7 +124,8 @@ class TeachersRepositoryTest {
         //
         //Given
         //
-        String username = "testUsr";
+        String username = "nonexistentUsername";
+
         //
         //When
         //
@@ -143,6 +138,7 @@ class TeachersRepositoryTest {
                 null,
                 null
         );
+
         //
         //Then
         //

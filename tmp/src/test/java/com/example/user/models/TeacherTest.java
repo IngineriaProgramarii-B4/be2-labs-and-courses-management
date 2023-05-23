@@ -3,12 +3,12 @@ package com.example.user.models;
 import com.example.security.objects.Teacher;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.*;
 
 class TeacherTest {
     @Test
-    void testToString() {
+    void testToString()
+    {
         //
         //Given
         //
@@ -19,17 +19,16 @@ class TeacherTest {
         teacher.setFirstname("testFirstname");
         teacher.setLastname("testLastname");
         teacher.setTitle("testTitle");
-
-        System.out.println(teacher);
         //
         //Then
         //
-        assertEquals("Teacher{firstname='testFirstname', lastname='testLastname', email='null', username='null', password='null', registrationNumber='null', type=0}", teacher.toString());
+        assertEquals( "Teacher{taughtSubjects=[], title='testTitle', office='null', id=null, firstname='testFirstname', lastname='testLastname', email='null', username='null', password='null', registrationNumber='null'}", teacher.toString());
 
     }
 
     @Test
-    void testHashCode() {
+    void testHashCode()
+    {
         //
         //Given
         //

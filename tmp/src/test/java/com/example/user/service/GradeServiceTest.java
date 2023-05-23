@@ -43,8 +43,10 @@ class GradeServiceTest {
                 4,
                 "123FAKE92929",
                 new HashSet<>(Arrays.asList(new Subject())));
-        Subject subject = new Subject("Mocked", 6, 2, 3, null, null,null,false);
-        grade = new Grade(7, subject, new Date());
+
+        String subject = "IP";
+        grade = new Grade(7, subject, "12.02.1996");
+
     }
 
     @Test
@@ -57,6 +59,7 @@ class GradeServiceTest {
         //then
 
         ArgumentCaptor<Grade> gradeArgumentCaptor = ArgumentCaptor.forClass(Grade.class);
+
         gradeRepository.save(get.get());
 
         verify(gradeRepository).save(gradeArgumentCaptor.capture());

@@ -1,7 +1,6 @@
 package com.example.signin.service;
 
-import com.example.security.objects.User;
-import com.example.security.repositories.UsersRepository;
+
 import com.example.signin.exception.StudentNotFoundException;
 import com.example.signin.model.Credentials;
 import com.example.signin.repository.CredentialsRepository;

@@ -2,54 +2,58 @@ package com.example.user.repository;
 
 import com.example.security.objects.Admin;
 import com.example.security.repositories.AdminsRepository;
-import org.checkerframework.checker.units.qual.A;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.List;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+
 class AdminsRepositoryTest {
+
     @Autowired
     private AdminsRepository adminsRepository;
 
-    @Test
-    @DirtiesContext
-    void findAdminsByParamsEmailExistsTest() {
+    private final Admin admin = new Admin(
+            "testName",
+            "testSurname",
+            "testemail@mail.com",
+            "testUser",
+            "testOffice",
+            "testDepartment",
+            "234"
+    );
 
+    @BeforeEach
+    public void setup() {
+        adminsRepository.save(admin);
+    }
+
+    @AfterEach
+    public void cleanup() {
+        adminsRepository.delete(admin);
+    }
+
+    @Test
+    void findAdminsByParamsEmailExistsTest() {
         //
         //Given
         //
-        Admin admin = new Admin(
-                UUID.randomUUID(),
-                "testName",
-                "testSurname",
-                "testemail@mail.com",
-                "testUser",
-                "testOffice",
-                "testDepartment",
-                "747f61f6-f24f-11ed-a05b-0242ac120003"
-        );
+        String email = "testemail@mail.com";
 
         List<Admin> expected = List.of(admin);
-
-        adminsRepository.save(admin);
 
         //
         //When
         //
-        String email = "testemail@mail.com";
-
         List<Admin> result = adminsRepository.findAdminsByParams(
                 null,
                 null,
@@ -59,13 +63,10 @@ class AdminsRepositoryTest {
                 null,
                 null
         );
-        adminsRepository.delete(admin);
 
-        //
         //Then
         //
         assertEquals(true, result.containsAll(expected));
-
     }
 
     @Test
@@ -73,7 +74,8 @@ class AdminsRepositoryTest {
         //
         //Given
         //
-        String email = "testmail@mail.com";
+        String email = "nonexistent@mail.com";
+
         //
         //When
         //
@@ -86,6 +88,7 @@ class AdminsRepositoryTest {
                 null,
                 null
         );
+
         //
         //Then
         //
@@ -93,28 +96,15 @@ class AdminsRepositoryTest {
     }
 
     @Test
-    @DirtiesContext
     void findAdminsByParamsUsernameExistsTest() {
         //
         //Given
         //
-        Admin admin = new Admin(
-                UUID.randomUUID(),
-                "testName",
-                "testSurname",
-                "testemail@mail.com",
-                "testUser",
-                "testOffice",
-                "testDepartment",
-                "747f61f6-f24f-11ed-a05b-0242ac120003"
-
-        );
-
-        adminsRepository.save(admin);
-
-        //When
         String username = "testUser";
 
+        //
+        //When
+        //
         List<Admin> result = adminsRepository.findAdminsByParams(
                 null,
                 null,
@@ -125,16 +115,22 @@ class AdminsRepositoryTest {
                 null
         );
 
+        //
         //Then
+        //
         assertTrue(result.contains(admin));
     }
 
     @Test
     void findAdminsByParamsUsernameNonexistentTest() {
-
+        //
         //Given
-        String username = "testUsef";
+        //
+        String username = "nonexistentUsername";
+
+        //
         //When
+        //
         List<Admin> result = adminsRepository.findAdminsByParams(
                 null,
                 null,
@@ -145,7 +141,9 @@ class AdminsRepositoryTest {
                 null
         );
 
+        //
         //Then
+        //
         assertTrue(result.isEmpty());
     }
 }

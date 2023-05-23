@@ -34,7 +34,7 @@ public class SubjectService {
     }
 
     public boolean validateSubject(Subject subject){
-        if(subject.getTitle().isEmpty() || subject.isDeleted())
+        if(subject.getTitle().isEmpty() || subject.getIsDeleted())
             return false;
         List<Subject> subjects = getAllSubjects();
         for(Subject subject1 : subjects)
@@ -180,7 +180,7 @@ public class SubjectService {
         String fileName = title + "_" + image.getOriginalFilename();
         String filePath = RESOURCE_PATH + fileName;
         String fileType = image.getContentType();
-        Resource resource = new Resource(image.getOriginalFilename(), filePath, fileType, false);
+        Resource resource = new Resource(image.getOriginalFilename(), filePath, fileType);
         if(courseDao.saveImageToSubject(title, resource) == 0)
             return 0;
         try {

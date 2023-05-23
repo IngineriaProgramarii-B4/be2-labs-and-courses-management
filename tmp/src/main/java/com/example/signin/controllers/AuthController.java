@@ -99,7 +99,6 @@ public class AuthController {
 
                     List<Role> roles = credentials.getRoles();
                     int role =  roles.get(0).getId();
-                    System.out.println(role);
                     if(role == 1){
                         Admin adminAuth = new Admin();
                         adminAuth.setRegistrationNumber(credentials.getUserId());
@@ -137,7 +136,7 @@ public class AuthController {
             e.printStackTrace();
             return new ResponseEntity<>("Error when saving user!", HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return new ResponseEntity<>("User registered success!", HttpStatus.OK);
+        return new ResponseEntity<>("User registered success!", HttpStatus.CREATED);
     }
 
     @PostMapping("/sendMail")

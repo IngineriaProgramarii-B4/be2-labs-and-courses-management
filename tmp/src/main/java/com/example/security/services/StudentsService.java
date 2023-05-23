@@ -3,19 +3,15 @@ package com.example.security.services;
 import com.example.catalog.models.Grade;
 import com.example.security.objects.Student;
 import com.example.security.repositories.StudentsRepository;
+import com.example.subject.model.Subject;
 import jakarta.transaction.Transactional;
-import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
-import static java.lang.Long.parseLong;
 
 @Service
 public class StudentsService {
@@ -49,7 +45,6 @@ public class StudentsService {
         if (params.containsKey(semesterKey) && (!params.get(semesterKey).equals(""))) {
             semester = Integer.parseInt((String) params.get(semesterKey));
         }
-
         return studentsRepository.findStudentsByParams(id, firstname, lastname, email, username, year, semester, registrationNumber);
     }
 
@@ -65,6 +60,12 @@ public class StudentsService {
         Student student = studentsRepository.findStudentById(id);
         if (student == null)
             return null;
+        /* Stergem notele studentului: */
+        List<Grade> grades = student.getGrades();
+        for(Grade grade : grades) {
+            grade.setIsDeleted(true);
+        }
+
         return (Student) student.setIsDeleted(true);
     }
 
@@ -74,7 +75,20 @@ public class StudentsService {
         studentsRepository.updateStudent(id, student.getFirstname(), student.getLastname(), student.getEmail(), student.getUsername(), student.getYear(), student.getSemester(), student.getRegistrationNumber());
     }
 
-//
+    public Set<Student> getStudentByEnrolledCourse(String course) {
+        List<Student> allStudents = studentsRepository.findStudentsByParams(null, null, null, null, null, 0, 0, null);
+        Set<Student> searchedStudents = new HashSet<>();
+        for(Student st : allStudents) {
+            for(Subject c: st.getEnrolledCourses()) {
+                if(c.getTitle().equals(course)) {
+                    searchedStudents.add(st);
+                }
+            }
+        }
+        return searchedStudents;
+    }
+
+
 //    public void updateStudents(){x
 //        students=studentRepository.findAll();
 //    }
@@ -156,7 +170,7 @@ public class StudentsService {
         }
     }
     @Transactional
-    public Grade updateGrade(UUID id, Integer value, Date evaluationDate, UUID gradeId) {
+    public Grade updateGrade(UUID id, Integer value, String evaluationDate, UUID gradeId) {
         Student student = studentsRepository.findStudentById(id);
 
         if (student == null) {
@@ -174,14 +188,13 @@ public class StudentsService {
         }
 
         if (evaluationDate != null && !evaluationDate.equals(grade.getEvaluationDate())) {
-            grade.setEvaluationDate(evaluationDate);
-//            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-//            try {
-//                LocalDate.parse(evaluationDate, formatter);
-//                grade.setEvaluationDate(evaluationDate);
-//            } catch (DateTimeParseException exception) {
-//
-//            }
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+            try {
+                LocalDate.parse(evaluationDate, formatter);
+                grade.setEvaluationDate(evaluationDate);
+            } catch (DateTimeParseException exception) {
+                throw new IllegalStateException("The date doesn't match the required format. "+exception);
+            }
         }
 
         return grade;

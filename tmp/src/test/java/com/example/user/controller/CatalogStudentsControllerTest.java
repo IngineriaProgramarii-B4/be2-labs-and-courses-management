@@ -4,10 +4,10 @@ import com.example.catalog.models.Grade;
 import com.example.security.objects.Student;
 import com.example.security.services.StudentsService;
 import com.example.subject.model.Subject;
+import com.example.subject.service.SubjectService;
 import com.example.user.controllers.StudentsController;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,11 +17,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.*;
 
@@ -40,14 +37,16 @@ class CatalogStudentsControllerTest {
     private ObjectMapper objectMapper;
     @MockBean
     private StudentsService studentsService;
+    @MockBean
+    private SubjectService subjectService;
     private Student student;
-    private Subject subject;
+    private String subject;
     private Grade grade;
     List<Student> students = new ArrayList<>();
     List<Grade> grades = new ArrayList<>();
     @BeforeEach
     void setUp(){
-        subject = new Subject("Mocked", 6, 2, 3, null, null,null,false);
+        subject = "IP";
         student = new Student(
                 UUID.randomUUID(),
                 "Florin",
@@ -57,8 +56,8 @@ class CatalogStudentsControllerTest {
                 2,
                 4,
                 "123FAKE92929",
-                new HashSet<>(Arrays.asList(new Subject())));
-        grade = new Grade( 7, subject, new Date());
+                new HashSet<>(List.of(new Subject())));
+        grade = new Grade( 7, subject, "12.12.2012");
 
         student.addGrade(grade);
         students.add(student);
@@ -143,7 +142,8 @@ class CatalogStudentsControllerTest {
 
         // Test the case where the Student object is present
         // Act
-        MvcResult gradesList = mvc.perform(get("/api/v1/students/{id}/grades",  student.getId(), subject.getTitle())
+
+        MvcResult gradesList = mvc.perform(get("/api/v1/students/{id}/grades",  student.getId(), subject)
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -170,7 +170,7 @@ class CatalogStudentsControllerTest {
 
         // Test the case where the Student object is not present
         // Act
-        MvcResult nullStudentResult = mvc.perform(get("/api/v1/students/{id}/grades",  student.getId(), subject.getTitle())
+        MvcResult nullStudentResult = mvc.perform(get("/api/v1/students/{id}/grades",  student.getId(), subject)
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isNotFound())
@@ -201,7 +201,7 @@ class CatalogStudentsControllerTest {
     }
 
     @Test
-    void TestGetGradeByIdReturnsGradeWhenStudentAndGradeExist() throws Exception {
+    void givenValidStudentAndGrade_whenGetGradeById_thenReturnsSameGrade() throws Exception {
         // Arrange
         UUID studentId = student.getId();
         UUID gradeId = grade.getId();
@@ -217,7 +217,7 @@ class CatalogStudentsControllerTest {
         // Assert
         assertNotNull(gradeResponse);
         assertEquals(grade.getId(), gradeResponse.getId());
-        assertTrue(result.getResponse().getContentAsString().contains(subject.getTitle()));
+        assertTrue(result.getResponse().getContentAsString().contains(subject));
     }
 
     @Test
@@ -276,9 +276,12 @@ class CatalogStudentsControllerTest {
     @Test
     void givenGrade_whenSaveGrade_thenReturnsSameGrade() throws Exception {
         // Arrange
-        Grade gradeForPost = new Grade(10, subject, new Date());
+        Subject subjectForPost = new Subject(subject, 2, 1, 3, null, null, null);
+        Grade gradeForPost = new Grade(10, subject, "12.12.2003");
         gradeForPost.setId(UUID.randomUUID());
         when(studentsService.getStudentById(student.getId())).thenReturn(student);
+        when(subjectService.getSubjectByTitle(grade.getSubject())).thenReturn(Optional.of(subjectForPost));
+
         when(studentsService.addGrade(eq(student.getId()), any(Grade.class))).thenAnswer((Answer<Grade>) invocationOnMock -> {
             student.addGrade(gradeForPost);
             return gradeForPost;
@@ -298,7 +301,7 @@ class CatalogStudentsControllerTest {
 
         // Assert
         assertNotNull(gradeResponse);
-        assertEquals(gradeResponse.getSubject().getTitle(), gradeForPost.getSubject().getTitle());
+        assertEquals(gradeResponse.getSubject(), gradeForPost.getSubject());
         assertEquals(gradeResponse.getValue(), gradeForPost.getValue());
     }
     @Test
@@ -307,12 +310,12 @@ class CatalogStudentsControllerTest {
         // Non-existent student ID
         UUID nonExistentStudentId = UUID.randomUUID();
         when(studentsService.getStudentById(nonExistentStudentId)).thenReturn(null);
-        Grade gradeForPost = new Grade(10, subject, new Date());
+        Grade gradeForPost = new Grade(10, subject, "12.12.2003");
         gradeForPost.setId(UUID.randomUUID());
 
         // Posting grade for a non-existent student
         // Act
-        MvcResult postGradeResultNotFound = mvc.perform(post("/api/v1/students/{id}/grades", nonExistentStudentId)
+        mvc.perform(post("/api/v1/students/{id}/grades", nonExistentStudentId)
                         .content(asJsonString(gradeForPost))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -325,7 +328,7 @@ class CatalogStudentsControllerTest {
     @Test
     void givenNullGrade_whenSaveGrade_thenReturnsNotFound() throws Exception {
         // Arrange
-        Grade gradeForPost = new Grade(10, subject, new Date());
+        Grade gradeForPost = new Grade(10, subject, "12.12.2003");
         gradeForPost.setId(UUID.randomUUID());
         when(studentsService.getStudentById(student.getId())).thenReturn(student);
         when(studentsService.addGrade(eq(student.getId()), any(Grade.class))).thenAnswer((Answer<Grade>) invocationOnMock -> {
@@ -347,10 +350,7 @@ class CatalogStudentsControllerTest {
 
         // Arrange
         when(studentsService.getStudentById(student.getId())).thenReturn(student);
-        when(studentsService.deleteGrade(student.getId(), grade.getId())).thenAnswer((Answer<Grade>) invocationOnMock -> {
-            grade.setDeleted();
-            return grade;
-        });
+        when(studentsService.deleteGrade(student.getId(), grade.getId())).thenAnswer((Answer<Grade>) invocationOnMock -> grade.setDeleted());
 
         // Act
         MvcResult deleteGradeResult = mvc.perform(delete("/api/v1/students/{id}/grades/{gradeId}", student.getId(), grade.getId())
@@ -366,7 +366,7 @@ class CatalogStudentsControllerTest {
         // Assert
         assertNotNull(gradeResponse);
         assertEquals(gradeResponse.getId(), grade.getId());
-        assertTrue(grade.isDeleted());
+        assertTrue(gradeResponse.getIsDeleted());
     }
 
     @Test
@@ -386,7 +386,8 @@ class CatalogStudentsControllerTest {
                 .andReturn();
 
         // Assert
-        assertEquals(deleteGradeResult.getResponse().getContentAsString(), "");
+        assertEquals( "",deleteGradeResult.getResponse().getContentAsString());
+
     }
 
     @Test
@@ -435,10 +436,10 @@ class CatalogStudentsControllerTest {
         when(studentsService.getStudentById(student.getId())).thenReturn(student);
         when(studentsService.getGradeById(student.getId(), grade.getId())).thenReturn(grade);
 
-        Date evalDateTest = new Date();
-        Integer valueTest = 3;
+        String evalDateTest = "12.12.2012";
+        int valueTest = 3;
 
-        when(studentsService.updateGrade(eq(student.getId()), any(Integer.class), any(Date.class), eq(grade.getId()))).thenAnswer((Answer<Grade>) invocationOnMock -> {
+        when(studentsService.updateGrade(eq(student.getId()), any(Integer.class), anyString(), eq(grade.getId()))).thenAnswer((Answer<Grade>) invocationOnMock -> {
             Grade toUpdate = student.getGradeById(grade.getId());
             toUpdate.setEvaluationDate(evalDateTest);
             toUpdate.setValue(valueTest);

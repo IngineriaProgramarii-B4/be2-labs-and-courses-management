@@ -1,13 +1,14 @@
 package com.example.subject.model;
 
+import com.example.security.objects.DBObject;
 import jakarta.persistence.*;
 import org.hibernate.annotations.GenericGenerator;
-import java.time.LocalDateTime;
+
 import java.util.UUID;
 
 @Entity
 @Table(name = "resource")
-public class Resource {
+public class Resource extends DBObject {
     @Id
     @GenericGenerator(
             name = "resource_sequence",
@@ -29,17 +30,11 @@ public class Resource {
             unique = true
     )
     private String location;
-    @Column(name="created_at", nullable = false)
-    private LocalDateTime createdAt;
-    @Column(name="updated_at", nullable = false)
-    private LocalDateTime updatedAt;
     @Column(
             name = "type",
             nullable = false
     )
     private String type;
-    @Column(name = "is_deleted", nullable = false)
-    private boolean isDeleted;
 
     //constructor
 
@@ -48,12 +43,11 @@ public class Resource {
 
     }
 
-    public Resource(String title, String location, String type, boolean isDeleted) {
+    public Resource(String title, String location, String type) {
         this.id = UUID.randomUUID();
         this.title = title;
         this.location = location;
         this.type = type;
-        this.isDeleted = isDeleted;
     }
 
     //setters
@@ -67,9 +61,6 @@ public class Resource {
     public void setType(String type) {
         this.type = type;
     }
-    public void setDeleted(boolean deleted) {
-        isDeleted = deleted;
-    }
 
     //getters
     public String getTitle() {
@@ -81,16 +72,6 @@ public class Resource {
     public String getType() {
         return type;
     }
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public boolean isDeleted() {
-        return isDeleted;
-    }
 
     @Override
     public String toString() {
@@ -98,7 +79,16 @@ public class Resource {
                 "title='" + title + '\'' +
                 ", location='" + location + '\'' +
                 ", type='" + type + '\'' +
-                ", isDeleted=" + isDeleted +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 }

@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
@@ -37,7 +38,7 @@ class ReminderServiceTest {
     @BeforeEach
     public void setup() {
         tempStudent = new Student(
-//                UUID.randomUUID(),
+                UUID.randomUUID(),
                 "Organized",
                 "Student",
                 "ilovereminders@yahoo.com",
@@ -101,12 +102,12 @@ class ReminderServiceTest {
     @Test
     void removeReminderTest() {
         //When
-        doNothing().when(remindersRepository).deleteById(reminder1.getId());
+        doNothing().when(remindersRepository).remove(reminder1.getId());
 
         remindersService.removeReminder(reminder1.getId());
 
         //Then
-        verify(remindersRepository, times(1)).deleteById(reminder1.getId());
+        verify(remindersRepository, times(1)).remove(reminder1.getId());
     }
 
     @Test

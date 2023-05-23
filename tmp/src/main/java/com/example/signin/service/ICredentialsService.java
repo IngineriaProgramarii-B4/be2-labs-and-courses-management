@@ -1,7 +1,6 @@
 package com.example.signin.service;
 
 
-import com.example.security.objects.User;
 import com.example.signin.model.Credentials;
 
 public interface ICredentialsService {

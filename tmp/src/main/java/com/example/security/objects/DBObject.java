@@ -1,6 +1,5 @@
 package com.example.security.objects;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
 
 import java.util.Date;
@@ -41,6 +40,9 @@ public class DBObject {
         return isDeleted;
     }
 
+    public void setDeleted(boolean deleted) {
+        isDeleted = deleted;
+    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

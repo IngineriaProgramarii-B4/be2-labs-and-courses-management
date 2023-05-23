@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 
 class UserTest {
@@ -171,7 +172,7 @@ class UserTest {
         //
         assertNotEquals(student, student2);
     }
-//
+
 //    @Test
 //    void testEqualsToNullParams6()
 //    {
@@ -183,7 +184,7 @@ class UserTest {
 //        //
 //        //When
 //        //
-//        student.setType(3);
+//        student.s(3);
 //
 //        //
 //        //Then

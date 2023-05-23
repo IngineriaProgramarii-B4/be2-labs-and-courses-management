@@ -3,6 +3,7 @@ package com.example.user.controllers;
 import com.example.catalog.models.Grade;
 import com.example.security.objects.Student;
 import com.example.security.services.StudentsService;
+import com.example.subject.service.SubjectService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -10,7 +11,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -24,10 +24,11 @@ import java.util.*;
 @RequestMapping("api/v1/")
 public class StudentsController {
     private final StudentsService studentsService;
-
+    private final SubjectService subjectService;
     @Autowired
-    public StudentsController(StudentsService studentsService) {
+    public StudentsController(StudentsService studentsService, SubjectService subjectService) {
         this.studentsService = studentsService;
+        this.subjectService = subjectService;
     }
 
     @Operation(summary = "Get a list of students based on 0 or more filters passed as queries. The format is property_from_student_schema=value.")
@@ -88,6 +89,15 @@ public class StudentsController {
                     content = @Content
             )
     })
+    @GetMapping("/students/enrolledCourse/{course}")
+    public ResponseEntity<Set<Student>> getStudentsByCourse(@PathVariable String course) {
+        Set<Student> students = studentsService.getStudentByEnrolledCourse(course);
+        if(students.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(students, HttpStatus.OK);
+    }
+
     @GetMapping("/students/{id}")
     public ResponseEntity<Student> getStudentById(@PathVariable("id") String id) {
         Student student = studentsService.getStudentById(UUID.fromString(id));
@@ -203,7 +213,8 @@ public class StudentsController {
     @Nullable
     public ResponseEntity<Grade> addGrade(@PathVariable UUID id, @RequestBody Grade grade) {
         Optional <Student> students = Optional.ofNullable(studentsService.getStudentById(id));
-        if (students.isPresent()) {
+        if (students.isPresent()
+                && subjectService.getSubjectByTitle(grade.getSubject()).isPresent()) {
             studentsService.addGrade(id, grade);
             return new ResponseEntity<>(grade, HttpStatus.CREATED);
         } else {
@@ -239,9 +250,8 @@ public class StudentsController {
     })
     @Nullable
     @PutMapping("students/{id}/grades/{gradeId}")
-    public ResponseEntity<Grade> updateGradeValue(@PathVariable("id") UUID id, @PathVariable("gradeId") UUID gradeId, @RequestParam(required = false) @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss") long evaluationDateMs, @RequestParam(required = false) Integer value){
+    public ResponseEntity<Grade> updateGradeValue(@PathVariable("id") UUID id, @PathVariable("gradeId") UUID gradeId,@RequestParam(required = false) String evaluationDate,@RequestParam(required = false) Integer value){
         Optional<Student> student = Optional.ofNullable(studentsService.getStudentById(id));
-        Date evaluationDate = new Date(evaluationDateMs);
         if (student.isPresent()) {
             Optional<Grade> grade = Optional.ofNullable(studentsService.getGradeById(id, gradeId));
             if (grade.isPresent()){

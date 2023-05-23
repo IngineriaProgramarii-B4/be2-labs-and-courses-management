@@ -1,6 +1,7 @@
 package com.example.user.models;
 
 import com.example.security.objects.Admin;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -25,7 +26,7 @@ class AdminTest{
         //
         //Then
         //
-        assertEquals("Admin{department='null', office='null', id=, firstname='testFirstName', lastname='setLastname', email='null', username='null'}",admin.toString());
+        assertEquals("Admin{department='null', office='null', id=null, firstname='testFirstName', lastname='setLastname', email='null', username='null', password='null', registrationNumber='null'}",admin.toString());
 
     }
     @Test

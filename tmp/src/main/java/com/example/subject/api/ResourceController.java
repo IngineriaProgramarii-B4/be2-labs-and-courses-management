@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
@@ -38,38 +39,40 @@ public class ResourceController {
     }
 
     @GetMapping
-    public List<Resource> getResources(@PathVariable("subjectTitle") String title,
+    public ResponseEntity<List<Resource>> getResources(@PathVariable("subjectTitle") String title,
                                        @PathVariable("componentType") String type) {
         if(subjectService.getSubjectByTitle(title).isEmpty())
-            throw new ResponseStatusException(NOT_FOUND, SUBJECT_ERROR);
+            return ResponseEntity.status(NOT_FOUND).body(null);
         if(componentService.getComponentByType(title, type).isEmpty())
-            throw new ResponseStatusException(NOT_FOUND, COMPONENT_ERROR);
-        return resourceService.getResources(title, type);
+            return ResponseEntity.status(NOT_FOUND).body(null);
+        return ResponseEntity.status(OK).body(resourceService.getResources(title, type));
     }
 
     @GetMapping(path = "title={resourceTitle}")
-    public Resource getResourceByTitle(@PathVariable("subjectTitle") String title,
+    public ResponseEntity<Resource> getResourceByTitle(@PathVariable("subjectTitle") String title,
                                        @PathVariable("componentType") String type,
                                        @PathVariable("resourceTitle") String resourceTitle) {
         if(subjectService.getSubjectByTitle(title).isEmpty())
-            throw new ResponseStatusException(NOT_FOUND, SUBJECT_ERROR);
+            return ResponseEntity.status(NOT_FOUND).body(null);
         if(componentService.getComponentByType(title, type).isEmpty())
-            throw new ResponseStatusException(NOT_FOUND, COMPONENT_ERROR);
+            return ResponseEntity.status(NOT_FOUND).body(null);
         return resourceService.getResourceByTitle(title, type, resourceTitle)
-                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, RESOURCE_ERROR));
+                .map(resource -> ResponseEntity.status(OK).body(resource))
+                .orElseGet(() -> ResponseEntity.status(NOT_FOUND).body(null));
     }
 
     @PostMapping
-    public void addResourceFile(@PathVariable("subjectTitle") String title,
+    @PreAuthorize("hasAuthority('TEACHER') || hasAuthority('ADMIN')")
+    public ResponseEntity<byte[]> addResourceFile(@PathVariable("subjectTitle") String title,
                                 @PathVariable("componentType") String type,
                                 @RequestParam("file") MultipartFile file) {
         if(subjectService.getSubjectByTitle(title).isEmpty())
-            throw new ResponseStatusException(NOT_FOUND, SUBJECT_ERROR);
+            return ResponseEntity.status(NOT_FOUND).body(SUBJECT_ERROR.getBytes());
         if(componentService.getComponentByType(title, type).isEmpty())
-            throw new ResponseStatusException(NOT_FOUND, COMPONENT_ERROR);
+            return ResponseEntity.status(NOT_FOUND).body(COMPONENT_ERROR.getBytes());
         if(resourceService.addResource(file, title, type) == 0)
-            throw new ResponseStatusException(NOT_FOUND, RESOURCE_ERROR);
-        throw new ResponseStatusException(CREATED, "Resource added successfully");
+            return ResponseEntity.status(NOT_FOUND).body(RESOURCE_ERROR.getBytes());
+        return ResponseEntity.status(CREATED).body("Resource added successfully".getBytes());
     }
 
     @GetMapping("/file={resourceTitle}")
@@ -95,15 +98,16 @@ public class ResourceController {
     }
 
     @DeleteMapping(path = "title={resourceTitle}")
-    public void deleteResourceByTitle(@PathVariable("subjectTitle") String title,
+    @PreAuthorize("hasAuthority('TEACHER') || hasAuthority('ADMIN')")
+    public ResponseEntity<byte[]> deleteResourceByTitle(@PathVariable("subjectTitle") String title,
                                       @PathVariable("componentType") String type,
                                       @PathVariable("resourceTitle") String resourceTitle) {
         if(subjectService.getSubjectByTitle(title).isEmpty())
-            throw new ResponseStatusException(NOT_FOUND, SUBJECT_ERROR);
+            return ResponseEntity.status(NOT_FOUND).body(SUBJECT_ERROR.getBytes());
         if(componentService.getComponentByType(title, type).isEmpty())
-            throw new ResponseStatusException(NOT_FOUND, COMPONENT_ERROR);
+            return ResponseEntity.status(NOT_FOUND).body(COMPONENT_ERROR.getBytes());
         if(resourceService.deleteResourceByTitle(title, type, resourceTitle) == 0)
-            throw new ResponseStatusException(NOT_FOUND, RESOURCE_ERROR);
-        throw new ResponseStatusException(NO_CONTENT, "Resource deleted successfully");
+            return ResponseEntity.status(NOT_FOUND).body(RESOURCE_ERROR.getBytes());
+        return ResponseEntity.status(NO_CONTENT).body("Resource deleted successfully".getBytes());
     }
 }

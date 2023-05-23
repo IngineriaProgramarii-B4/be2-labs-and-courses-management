@@ -1,57 +1,31 @@
 package com.example.user.controller;
-
 import com.example.security.objects.Student;
-import com.example.security.repositories.AdminsRepository;
-import com.example.security.repositories.StudentsRepository;
-import com.example.security.repositories.TeachersRepository;
-import com.example.security.repositories.UsersRepository;
 import com.example.security.services.StudentsService;
-import com.example.security.services.UsersService;
-import com.example.signin.controllers.AuthController;
-import com.example.signin.dto.LoginRequestBody;
-import com.example.signin.model.Credentials;
-import com.example.signin.model.Role;
-import com.example.signin.repository.CredentialsRepository;
-import com.example.signin.security.EmailService;
-import com.example.signin.security.JWTGenerator;
-import com.example.signin.service.AdminService;
-import com.example.signin.service.CredentialsService;
-import com.example.signin.service.StudentService;
-import com.example.signin.service.TeacherService;
-import com.example.signin.repository.RoleRepository;
-import com.example.subject.model.Subject;
+import com.example.subject.service.SubjectService;
 import com.example.user.controllers.StudentsController;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.http.HttpServletRequest;
-import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.*;
 
-import static org.hamcrest.Matchers.any;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
 @WebMvcTest(StudentsController.class)
+@AutoConfigureMockMvc(addFilters = false)
 class StudentsControllerTest {
 
     @Autowired
@@ -59,41 +33,43 @@ class StudentsControllerTest {
 
     @MockBean
     private StudentsService studentsService;
+    @MockBean
+    private SubjectService subjectService;
 
     private Student stud1, stud2, stud3;
 
     @BeforeEach
     public void setup() {
         stud1 = new Student(
-                UUID.randomUUID(),
+                UUID.fromString("a838ae68-f4b0-11ed-a05b-0242ac120003"),
                 "Florin",
                 "Rotaru",
                 "florin.eugen@uaic.ro",
                 "florin02",
                 2,
                 4,
-                "123e4567-e89b-12d3-a456-426614174000",
-                new HashSet<>(Arrays.asList(new Subject())));
+                "123FAKE92929",
+                null);
         stud2 = new Student(
-                UUID.randomUUID(),
+                UUID.fromString("c6a41a36-f4b0-11ed-a05b-0242ac120003"),
                 "Antip",
                 "Andrei",
                 "andrei.antip@uaic.ro",
                 "andreiul",
                 1,
                 2,
-                "a498dcec-f24e-11ed-a05b-0242ac120003",
-                new HashSet<>(Arrays.asList(new Subject())));
+                "123BOSS135",
+                null);
         stud3 = new Student(
-                UUID.randomUUID(),
+                UUID.fromString("caa30a3e-f4b0-11ed-a05b-0242ac120003"),
                 "Olariu",
                 "Andreea",
                 "andreea.olariu@uaic.ro",
                 "andreea.olariu",
                 2,
                 1,
-                "af695692-f24e-11ed-a05b-0242ac120003",
-                new HashSet<>(Arrays.asList(new Subject())));
+                "12300000GSGVGDS1",
+                null);
     }
 
     @Test
@@ -105,22 +81,25 @@ class StudentsControllerTest {
 
         Map<String, Object> args = Collections.emptyMap();
 
+        //When
         when(studentsService.getStudentsByParams(args)).thenReturn(listStudents);
 
         MvcResult mvcResult = mockMvc.perform(get(url)).andExpect(status().isOk()).andReturn();
 
         String result = mvcResult.getResponse().getContentAsString();
 
+        //Then
         String expected = null;
 
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             expected = objectMapper.writeValueAsString(listStudents);
-        } catch (JsonProcessingException e) {
+
+        } catch(JsonProcessingException e) {
             e.printStackTrace();
         }
 
-        assertEquals(result, expected);
+        assertEquals(expected, result);
     }
 
     @Test
@@ -137,8 +116,7 @@ class StudentsControllerTest {
         //When
         when(studentsService.getStudentsByParams(args)).thenReturn(listStudents);
 
-        MvcResult mvcResult = mockMvc.perform(get(url))
-                .andExpect(status().isOk()).andReturn();
+        MvcResult mvcResult = mockMvc.perform(get(url)).andExpect(status().isOk()).andReturn();
 
         String result = mvcResult.getResponse().getContentAsString();
 
@@ -148,7 +126,7 @@ class StudentsControllerTest {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             expected = objectMapper.writeValueAsString(listStudents);
-        } catch (JsonProcessingException e) {
+        } catch(JsonProcessingException e) {
             e.printStackTrace();
         }
 
@@ -226,5 +204,4 @@ class StudentsControllerTest {
 
         return objectMapper.writeValueAsString(student);
     }
-
 }

@@ -12,14 +12,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.nullable;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
@@ -39,15 +36,14 @@ class TeachersServiceTest {
     @BeforeEach
     public void setup() {
         teacher = new Teacher(
-                UUID.randomUUID(),
                 "FirstnameTest",
                 "LastnameTest",
                 "EmailTest@gmail.com",
                 "UsernameTest",
                 "OfficeTest",
+                "12345",
                 null,
-                "TitleTest",
-                "8e93c300-f251-11ed-a05b-0242ac120003"
+                "TitleTest"
         );
     }
 

@@ -2,6 +2,7 @@ package com.example.security.repositories;
 
 import com.example.security.objects.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -18,4 +19,8 @@ public interface UsersRepository extends JpaRepository<User, UUID> {
     Boolean existsByEmail(String email);
     User findByRegistrationNumber(String id);
     Boolean existsByRegistrationNumber(String id);
+
+    @Modifying
+    @Query("delete from User a where a=?1")
+    void delete(User user);
 }

@@ -1,11 +1,8 @@
 package com.example.security.objects;
 
 import com.example.catalog.models.Grade;
-import com.example.security.objects.User;
 import com.example.subject.model.Subject;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -94,15 +91,6 @@ public class Student extends User {
     public void setSemester(int semester) {
         this.semester = semester;
     }
-
-    public String getRegistrationNumber() {
-        return registrationNumber;
-    }
-
-    public void setRegistrationNumber(String registrationNumber) {
-        this.registrationNumber = registrationNumber;
-    }
-
     public void addEnrolledCourse(Subject course) {
         enrolledCourses.add(course);
     }
@@ -110,6 +98,8 @@ public class Student extends User {
     public String getGrupa() {
         return grupa;
     }
+
+
 
 
     @Override
@@ -151,7 +141,7 @@ public class Student extends User {
     public List<Grade> getGrades() {
         List<Grade> gradesList = new ArrayList<>();
         for (Grade grade : this.grades) {
-            if (!grade.isDeleted()) {
+            if (!grade.getIsDeleted()) {
                 gradesList.add(grade);
             }
         }
@@ -160,7 +150,7 @@ public class Student extends User {
 
     public Grade getGradeById(UUID id) {
         for (Grade grade : this.getGrades()) {
-            if (grade.getId() == id) {
+            if (grade.getId().equals(id)) {
                 return grade;
             }
         }
@@ -170,7 +160,7 @@ public class Student extends User {
     public List<Grade> getGradesBySubject(String subject) {
         List<Grade> gradesList = new ArrayList<>();
         for (Grade grade : this.getGrades()) {
-            if (grade.getSubject().getTitle().equals(subject)) {
+            if (grade.getSubject().equals(subject)) {
                 gradesList.add(grade);
             }
         }

@@ -5,8 +5,6 @@ import com.example.security.repositories.TeachersRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -41,6 +39,14 @@ public class TeachersService {
 
     public void saveTeacher(Teacher teacher) {
         teachersRepository.save(teacher);
+    }
+
+    @Transactional
+    public Teacher deleteTeacher(UUID id) {
+        Teacher teacher = teachersRepository.findTeacherById(id);
+        if (teacher == null)
+            return null;
+        return (Teacher) teacher.setIsDeleted(true);
     }
 
     @Transactional
