@@ -24,7 +24,6 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 class GradeServiceTest {
-
     @InjectMocks
     GradeService gradeService;
     @Mock
@@ -44,12 +43,12 @@ class GradeServiceTest {
                 4,
                 "123FAKE92929",
                 new HashSet<>(Arrays.asList(new Subject())));
-//        Subject subject = new Subject(69, "Mocked", 6, 2, 3, null, null,null,false);
-//        grade = new Grade(7, subject, "12.02.1996");
+        Subject subject = new Subject("Mocked", 6, 2, 3, null, null,null,false);
+        grade = new Grade(7, subject, new Date());
     }
 
     @Test
-    void canGetGradeById() {
+    void givenValidGradeId_whenGetGradeById_thenReturnsGrade() {
         when(gradeRepository.getGradeById(grade.getId())).thenReturn(Optional.of(grade));
         assertEquals(Optional.of(grade), gradeRepository.getGradeById((grade.getId())));
         // given existing grade
@@ -58,7 +57,7 @@ class GradeServiceTest {
         //then
 
         ArgumentCaptor<Grade> gradeArgumentCaptor = ArgumentCaptor.forClass(Grade.class);
-        gradeRepository.save(gradeArgumentCaptor.capture());
+        gradeRepository.save(get.get());
 
         verify(gradeRepository).save(gradeArgumentCaptor.capture());
 
