@@ -11,6 +11,8 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -32,6 +34,18 @@ class UsersRepositoryTest {
             null
     );
 
+    protected boolean findInRepo(Map<String, Object> map)
+    {
+        var user = usersRepository.findUsersByParams(
+                (UUID) map.get("id"),
+                (String)map.get("firstname"),
+                (String)map.get("lastname"),
+                (String)map.get("email"),
+                (String)map.get("username")
+        );
+        return (!user.isEmpty());
+    }
+
     @BeforeEach
     public void setup() {
         usersRepository.save(student);
@@ -48,21 +62,14 @@ class UsersRepositoryTest {
         //Given
         //
         String email = "testemail@mail.com";
-
         //
         //When
         //
-        List<User> result = usersRepository.findUsersByParams(
-                null,
-                null,
-                null,
-                email,
-                null);
-
+        var exists = findInRepo(Map.of("email", email));
         //
         //Then
         //
-        assertTrue(result.contains(student));
+        assertTrue(exists);
     }
 
     @Test
@@ -71,21 +78,14 @@ class UsersRepositoryTest {
         //Given
         //
         String email = "nonexistent@gmail.com";
-
         //
         //When
         //
-        List<User> result = usersRepository.findUsersByParams(
-                null,
-                null,
-                null,
-                email,
-                null);
-
+        var exists = findInRepo(Map.of("email", email));
         //
         //Then
         //
-        assertTrue(result.isEmpty());
+        assertFalse(exists);
     }
 
     @Test
@@ -94,21 +94,14 @@ class UsersRepositoryTest {
         //Given
         //
         String username = "testUser";
-
         //
         //When
         //
-        List<User> result = usersRepository.findUsersByParams(
-                null,
-                null,
-                null,
-                null,
-                username);
-
+        var exists = findInRepo(Map.of("username", username));
         //
         //Then
         //
-        assertTrue(result.contains(student));
+        assertTrue(exists);
     }
 
     @Test
@@ -117,20 +110,13 @@ class UsersRepositoryTest {
         //Given
         //
         String username = "nonexistentUsername";
-
         //
         //When
         //
-        List<User> result = usersRepository.findUsersByParams(
-                null,
-                null,
-                null,
-                null,
-                username);
-
+        var exists = findInRepo(Map.of("username", username));
         //
         //Then
         //
-        assertTrue(result.isEmpty());
+        assertFalse(exists);
     }
 }

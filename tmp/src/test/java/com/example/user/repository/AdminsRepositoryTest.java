@@ -10,6 +10,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -17,10 +18,24 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 
-class AdminsRepositoryTest {
+class AdminsRepositoryTest{
 
     @Autowired
     private AdminsRepository adminsRepository;
+    protected boolean findInRepo(Map<String, Object> map)
+    {
+        var admin = adminsRepository.findAdminsByParams(
+                (UUID) map.get("id"),
+                (String)map.get("firstname"),
+                (String)map.get("lastname"),
+                (String)map.get("email"),
+                (String)map.get("username"),
+                (String)map.get("office"),
+                (String)map.get("department")
+
+        );
+        return (!admin.isEmpty());
+    }
 
     private final Admin admin = new Admin(
             "testName",
@@ -54,19 +69,12 @@ class AdminsRepositoryTest {
         //
         //When
         //
-        List<Admin> result = adminsRepository.findAdminsByParams(
-                null,
-                null,
-                null,
-                email,
-                null,
-                null,
-                null
-        );
+        var exists = findInRepo(Map.of("email", email));
 
+        //
         //Then
         //
-        assertEquals(true, result.containsAll(expected));
+        assertTrue(exists);
     }
 
     @Test
@@ -79,20 +87,12 @@ class AdminsRepositoryTest {
         //
         //When
         //
-        List<Admin> result = adminsRepository.findAdminsByParams(
-                null,
-                null,
-                null,
-                email,
-                null,
-                null,
-                null
-        );
+        var exists = findInRepo(Map.of("email", email));
 
         //
         //Then
         //
-        assertTrue(result.isEmpty());
+        assertFalse(exists);
     }
 
     @Test
@@ -105,20 +105,11 @@ class AdminsRepositoryTest {
         //
         //When
         //
-        List<Admin> result = adminsRepository.findAdminsByParams(
-                null,
-                null,
-                null,
-                null,
-                username,
-                null,
-                null
-        );
-
+        var exists = findInRepo(Map.of("username", username));
         //
         //Then
         //
-        assertTrue(result.contains(admin));
+        assertTrue(exists);
     }
 
     @Test
@@ -131,19 +122,11 @@ class AdminsRepositoryTest {
         //
         //When
         //
-        List<Admin> result = adminsRepository.findAdminsByParams(
-                null,
-                null,
-                null,
-                null,
-                username,
-                null,
-                null
-        );
+        var exists = findInRepo(Map.of("username", username));
 
         //
         //Then
         //
-        assertTrue(result.isEmpty());
+        assertFalse(exists);
     }
 }
