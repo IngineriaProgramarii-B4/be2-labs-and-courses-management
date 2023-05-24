@@ -10,8 +10,8 @@ import java.util.UUID;
 // <-------------------------------- FROM CATALOG ----------------------------------> //
 
 @Entity
-@SQLDelete(sql="UPDATE Grade SET deleted = true WHERE id=?")
-@Where(clause = "deleted=false")
+@SQLDelete(sql="UPDATE Grade SET is_deleted = true WHERE id=?")
+@Where(clause = "is_deleted=false")
 public class Grade extends DBObject {
     @Id
     @SequenceGenerator(
