@@ -16,69 +16,71 @@ class StudentServiceTest {
     private StudentsRepository studentRepository;
     private PasswordEncoder passwordEncoder;
     private StudentService studentService;
+    private Student student;
+    private final String REGISTRATIONNUMBER="123";
+    private final String NEWPASSWORD="newPassword";
 
     @BeforeEach
     void setUp() {
         studentRepository = mock(StudentsRepository.class);
         passwordEncoder = mock(PasswordEncoder.class);
         studentService = new StudentService(studentRepository, passwordEncoder);
+
+        student = new Student();
+        student.setRegistrationNumber(REGISTRATIONNUMBER);
+
+
     }
 
     @Test
     void testAddStudent() {
-        Student student = new Student();
-        student.setRegistrationNumber("123");
-
+        // Act
         when(studentRepository.save(student)).thenReturn(student);
 
         studentService.addStudent(student);
 
+        // Assert
         verify(studentRepository, times(1)).save(student);
     }
 
     @Test
     void testUpdateStudent() {
-        String registrationNumber = "123";
-        String newPassword = "newPassword";
-        Student student = new Student();
-        student.setRegistrationNumber(registrationNumber);
+        // Arrange
         student.setPassword("oldPassword");
 
-        when(studentRepository.findByRegistrationNumber(registrationNumber)).thenReturn(student);
-        when(passwordEncoder.encode(newPassword)).thenReturn("encodedNewPassword");
+        // Act
+        when(studentRepository.findByRegistrationNumber(REGISTRATIONNUMBER)).thenReturn(student);
+        when(passwordEncoder.encode(NEWPASSWORD)).thenReturn("encodedNewPassword");
 
-        assertThrows(StudentNotFoundException.class, () -> studentService.updateStudent(registrationNumber, newPassword));
+        // Assert
+        assertThrows(StudentNotFoundException.class, () -> studentService.updateStudent(REGISTRATIONNUMBER, NEWPASSWORD));
 
-        verify(studentRepository, times(1)).findByRegistrationNumber(registrationNumber);
-        verify(passwordEncoder, times(1)).encode(newPassword);
+        verify(studentRepository, times(1)).findByRegistrationNumber(REGISTRATIONNUMBER);
+        verify(passwordEncoder, times(1)).encode(NEWPASSWORD);
     }
 
     @Test
     void testGetStudentByRegistrationNumber() {
-        String registrationNumber = "123";
-        Student student = new Student();
-        student.setRegistrationNumber(registrationNumber);
+        // Act
+        when(studentRepository.findByRegistrationNumber(REGISTRATIONNUMBER)).thenReturn(student);
 
-        when(studentRepository.findByRegistrationNumber(registrationNumber)).thenReturn(student);
+        Student found = studentService.getStudentByRegistrationNumber(REGISTRATIONNUMBER);
 
-        Student found = studentService.getStudentByRegistrationNumber(registrationNumber);
-
+        // Assert
         assertEquals(found, student);
-        verify(studentRepository, times(1)).findByRegistrationNumber(registrationNumber);
+        verify(studentRepository, times(1)).findByRegistrationNumber(REGISTRATIONNUMBER);
     }
+
     @Test
     void testUpdateStudent_WhenStudentNotFound() {
-        String registrationNumber = "123";
+        // Act
+        when(studentRepository.findByRegistrationNumber(REGISTRATIONNUMBER)).thenReturn(null);
 
-        String newPassword = "newPassword";
+        // Assert
+        assertThrows(StudentNotFoundException.class, () -> studentService.updateStudent(REGISTRATIONNUMBER, NEWPASSWORD));
 
-        when(studentRepository.findByRegistrationNumber(registrationNumber)).thenReturn(null);
-
-        assertThrows(StudentNotFoundException.class, () -> studentService.updateStudent(registrationNumber, newPassword));
-
-        verify(studentRepository, times(1)).findByRegistrationNumber(registrationNumber);
+        verify(studentRepository, times(1)).findByRegistrationNumber(REGISTRATIONNUMBER);
         verifyNoMoreInteractions(passwordEncoder);
         verifyNoMoreInteractions(studentRepository);
     }
-
 }

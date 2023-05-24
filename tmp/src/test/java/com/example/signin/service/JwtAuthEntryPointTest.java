@@ -30,10 +30,12 @@ class JwtAuthEntryPointTest {
 
     @Test
     void commence_shouldSendUnauthorizedError() throws IOException, ServletException {
+        // Act
         when(authException.getMessage()).thenReturn("Unauthorized");
 
         authEntryPoint.commence(request, response, authException);
 
+        // Assert
         verify(response).sendError(HttpServletResponse.SC_UNAUTHORIZED, authException.getMessage());
     }
 }

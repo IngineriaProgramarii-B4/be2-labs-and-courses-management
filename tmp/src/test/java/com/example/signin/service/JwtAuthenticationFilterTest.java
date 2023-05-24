@@ -42,60 +42,64 @@ class JwtAuthenticationFilterTest {
     @Mock
     private FilterChain filterChain;
 
-    private String token;
-
-    @BeforeEach
-    public void setUp() {
-        token = "sampleToken";
-    }
+    private final String TOKEN="sampleToken";
 
     @Test
     void testDoFilterInternal() throws ServletException, IOException {
+        // Arrange
         String email = "test@example.com";
 
-        when(request.getHeader("Authorization")).thenReturn("Bearer " + token);
-        when(tokenGenerator.validateToken(token)).thenReturn(true);
-        when(tokenGenerator.getEmailFromJWT(token)).thenReturn(email);
+        // Act
+        when(request.getHeader("Authorization")).thenReturn("Bearer " + TOKEN);
+        when(tokenGenerator.validateToken(TOKEN)).thenReturn(true);
+        when(tokenGenerator.getEmailFromJWT(TOKEN)).thenReturn(email);
 
         UserDetails userDetails = mock(UserDetails.class);
         when(customUserDetailsService.loadUserByUsername(email)).thenReturn(userDetails);
 
         jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
 
-        verify(tokenGenerator).validateToken(token);
-        verify(tokenGenerator).getEmailFromJWT(token);
+        // Assert
+        verify(tokenGenerator).validateToken(TOKEN);
+        verify(tokenGenerator).getEmailFromJWT(TOKEN);
         verify(customUserDetailsService).loadUserByUsername(email);
         verify(filterChain).doFilter(request, response);
     }
     @Test
     void testDoFilterInternal_invalidToken() throws ServletException, IOException {
-        when(request.getHeader("Authorization")).thenReturn("Bearer " + token);
-        when(tokenGenerator.validateToken(token)).thenReturn(false);
+        // Act
+        when(request.getHeader("Authorization")).thenReturn("Bearer " + TOKEN);
+        when(tokenGenerator.validateToken(TOKEN)).thenReturn(false);
 
         jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
 
-        verify(tokenGenerator).validateToken(token);
-        verify(tokenGenerator, never()).getEmailFromJWT(token);
+        // Assert
+        verify(tokenGenerator).validateToken(TOKEN);
+        verify(tokenGenerator, never()).getEmailFromJWT(TOKEN);
         verify(customUserDetailsService, never()).loadUserByUsername(any());
         verify(filterChain).doFilter(request, response);
     }
     @Test
     void testDoFilterInternal_noBearerToken() throws ServletException, IOException {
-        when(request.getHeader("Authorization")).thenReturn(token);
+        // Act
+        when(request.getHeader("Authorization")).thenReturn(TOKEN);
 
         jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
 
-        verify(tokenGenerator, never()).validateToken(token);
-        verify(tokenGenerator, never()).getEmailFromJWT(token);
+        // Assert
+        verify(tokenGenerator, never()).validateToken(TOKEN);
+        verify(tokenGenerator, never()).getEmailFromJWT(TOKEN);
         verify(customUserDetailsService, never()).loadUserByUsername(any());
         verify(filterChain).doFilter(request, response);
     }
     @Test
     void testDoFilterInternal_nullToken() throws ServletException, IOException {
+        // Act
         when(request.getHeader("Authorization")).thenReturn(null);
 
         jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
 
+        // Assert
         verify(tokenGenerator, never()).validateToken(any());
         verify(tokenGenerator, never()).getEmailFromJWT(any());
         verify(customUserDetailsService, never()).loadUserByUsername(any());

@@ -95,7 +95,11 @@ public class AuthController {
                 } else {
                     credentials.setEmail(registerRequestBody.getEmail());
                     credentials.setPassword(passwordEncoder.encode(registerRequestBody.getPassword()));
-                    credentialsRepository.save(credentials);
+                    try {
+                        credentialsRepository.save(credentials);
+                    } catch (Exception e) {
+                        return new ResponseEntity<>("Error when saving user!", HttpStatus.INTERNAL_SERVER_ERROR);
+                    }
 
                     List<Role> roles = credentials.getRoles();
                     int role =  roles.get(0).getId();

@@ -17,7 +17,6 @@ import static org.junit.Assert.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AdminServiceTest {
-
     @Mock
     private AdminsRepository adminsRepository;
 
@@ -29,6 +28,11 @@ public class AdminServiceTest {
 
     private Admin admin;
 
+    private final String NEWPASSWORD="newPassword";
+    private final String REGISTRATIONNUMBER="1";
+    private final String NONEXISTINGREGISTRATIONNUMBER="1";
+    private final String UNKNOWNREGNUMBER="1";
+
     @Before
     public void setUp() {
         admin = new Admin();
@@ -38,53 +42,57 @@ public class AdminServiceTest {
 
     @Test
     public void addAdmin() {
+        // Arrange
         adminService.addAdmin(admin);
+        // Assert
         verify(adminsRepository, times(1)).save(admin);
     }
 
     @Test(expected = StudentNotFoundException.class)
     public void updateAdminNotFound() {
-        String newPassword = "newPassword";
-        String unknownRegNumber = "unknown";
+        // Act
+        when(adminsRepository.findByRegistrationNumber(UNKNOWNREGNUMBER)).thenReturn(null);
 
-        when(adminsRepository.findByRegistrationNumber(unknownRegNumber)).thenReturn(null);
-
-        adminService.updateAdmin(unknownRegNumber, newPassword);
+        // Assert
+        adminService.updateAdmin(UNKNOWNREGNUMBER, NEWPASSWORD);
     }
 
     @Test
     public void getAdminByRegistrationNumber() {
+        // Act
         when(adminsRepository.findByRegistrationNumber(admin.getRegistrationNumber())).thenReturn(admin);
 
         Admin foundAdmin = adminService.getAdminByRegistrationNumber(admin.getRegistrationNumber());
 
+        // Assert
         assertEquals(admin, foundAdmin);
     }
 
     @Test
     public void testUpdateAdmin() {
-        String registrationNumber = "1"; // Update the registration number here
-        String newPassword = "newPassword";
 
+        // Arrange
         Admin existingAdmin = new Admin();
-        existingAdmin.setRegistrationNumber(registrationNumber);
+        existingAdmin.setRegistrationNumber(REGISTRATIONNUMBER);
 
-        when(adminsRepository.findByRegistrationNumber(registrationNumber)).thenReturn(existingAdmin);
-        when(passwordEncoder.encode(newPassword)).thenReturn("encodedPassword");
+        // Act
+        when(adminsRepository.findByRegistrationNumber(REGISTRATIONNUMBER)).thenReturn(existingAdmin);
+        when(passwordEncoder.encode(NEWPASSWORD)).thenReturn("encodedPassword");
 
-        adminService.updateAdmin(registrationNumber, newPassword);
+        adminService.updateAdmin(REGISTRATIONNUMBER, NEWPASSWORD);
 
+        // Assert
         verify(adminsRepository, times(1)).save(existingAdmin);
         assertEquals("encodedPassword", existingAdmin.getPassword());
     }
 
     @Test(expected = StudentNotFoundException.class)
     public void testUpdateAdmin_ThrowsException() {
-        String nonExistingRegistrationNumber = "1234";
-        String newPassword = "newPassword";
 
-        when(adminsRepository.findByRegistrationNumber(nonExistingRegistrationNumber)).thenReturn(null);
+        // Act
+        when(adminsRepository.findByRegistrationNumber(NONEXISTINGREGISTRATIONNUMBER)).thenReturn(null);
 
-        adminService.updateAdmin(nonExistingRegistrationNumber, newPassword);
+        // Assert
+        adminService.updateAdmin(NONEXISTINGREGISTRATIONNUMBER, NEWPASSWORD);
     }
 }
