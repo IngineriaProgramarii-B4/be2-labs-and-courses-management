@@ -34,7 +34,7 @@ public class SubjectService {
     }
 
     public boolean validateSubject(Subject subject){
-        if(subject.getTitle().isEmpty() || subject.isDeleted())
+        if(subject.getTitle().isEmpty() || subject.getIsDeleted())
             return false;
         List<Subject> subjects = getAllSubjects();
         for(Subject subject1 : subjects)

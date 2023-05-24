@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import com.example.signin.model.Role;
+
 import java.util.ArrayList;
 import java.util.List;
 

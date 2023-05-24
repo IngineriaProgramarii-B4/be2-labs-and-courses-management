@@ -18,7 +18,7 @@
         <sonar.host.url>http://localhost:9000/</sonar.host.url>
         <sonar.token>sqp_ebacd29ae77929c8d6df4373b3b6bcd7a1c7604f
         </sonar.token>
-        <sonar.projectKey>uni-manager</sonar.projectKey>
+        <sonar.projectKey>retry-integration</sonar.projectKey>
     </properties>
     <dependencies>
         <dependency>
@@ -86,10 +86,7 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId>
-        </dependency>
+
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-api</artifactId>

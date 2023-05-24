@@ -16,14 +16,15 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 
+import java.time.format.DateTimeParseException;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
@@ -48,15 +49,16 @@ class CatalogStudentsServiceTest {
                 2,
                 4,
                 "123FAKE92929",
-                new HashSet<>(Arrays.asList(new Subject())));
+                new HashSet<>(List.of(new Subject())));
         subject = "IP";
         grade = new Grade(7, subject, "12.12.2012");
+
 
         studentsService.saveStudent(student);
 
     }
     @Test
-    public void canGetAllStudents() {
+    void canGetAllStudents() {
         // given
         given(studentsRepository.findStudentsByParams(
                 nullable(UUID.class),
@@ -77,31 +79,29 @@ class CatalogStudentsServiceTest {
     }
 
     @Test
-    public void canGetStudentById() {
+    public void givenValidStudentId_whenGetStudentById_thenReturnsWantedStudent() {
         // given
-
-        when(studentsRepository.findStudentById(student.getId())).thenReturn(student);
-        assertEquals(Optional.of(student).get(), studentsRepository.findStudentById(student.getId()));
+        given(studentsService.getStudentById(student.getId())).willReturn(student);
 
         // when
         Optional<Student> get = Optional.ofNullable(studentsService.getStudentById(student.getId()));
 
         //then
         ArgumentCaptor<Student> studentArgumentCaptor = ArgumentCaptor.forClass(Student.class);
-
-        // Verify that save() method is called with the expected argument
         verify(studentsRepository).save(studentArgumentCaptor.capture());
-
         Optional<Student> captured = Optional.of(studentArgumentCaptor.getValue());
 
         assertNotNull(get);
         assertEquals(get, captured);
+    }
 
+    @Test
+    public void givenInvalidStudentId_whenGetStudentById_thenReturnsNull(){
         // given not existing student
         assertNull(studentsService.getStudentById(UUID.randomUUID()));
     }
     @Test
-    public void canSaveStudent() {
+    void canSaveStudent() {
         // given
         ArgumentCaptor<Student> studentArgumentCaptor = ArgumentCaptor.forClass(Student.class);
         verify(studentsRepository).save(studentArgumentCaptor.capture());
@@ -114,57 +114,58 @@ class CatalogStudentsServiceTest {
         assertNull(shouldBeNull);
     }
     @Test
-    public void canDeleteStudent() {
+    public void givenValidStudentId_whenSaveStudent_thenReturnsSameStudent() {
         // given
-        when(studentsRepository.findStudentById(student.getId())).thenReturn(student);
+        given(studentsService.getStudentById(student.getId())).willReturn(student);
         // when
         Student deleted = studentsService.deleteStudent(student.getId());
-
         // then
         assertTrue(deleted.getIsDeleted());
+    }
 
-        // given not existing student
-        Student shouldBeNull = studentsService.deleteStudent(UUID.randomUUID());
+    @Test
+    public void givenInvalidStudentId_whenSaveStudent_thenReturnsNull() {
+        // given
+        Student mocked = new Student(UUID.randomUUID(), null, null, null, null, 0, 0, null, null);
+        // when
+        Student shouldBeNull = studentsService.deleteStudent(mocked.getId());
+        // then
         assertNull(shouldBeNull);
     }
 
     @Test
-    public void canAddGrade() {
-        // given
-        when(studentsRepository.findById(student.getId())).thenReturn(Optional.of(student));
-        assertEquals(Optional.of(student), studentsRepository.findById(student.getId()));
+    public void givenGrade_whenAddGrade_thenReturnsSameGrade() {
 
-        given(studentsService.getStudentById(student.getId()))
-                .willReturn(student);
+        // given
+        given(studentsService.getStudentById(student.getId())).willReturn(student);
 
         // when
         Grade added = studentsService.addGrade(studentsService.getStudentById(student.getId()).getId(), grade);
+
         // then
         assertEquals(added, grade);
     }
 
     @Test
-    public void canDeleteGrade() {
+    public void givenValidGradeId_whenDeleteGrade_thenGradeIsDeleted() {
 
         // given
-
-        when(studentsRepository.findById(student.getId())).thenReturn(Optional.of(student));
-        assertEquals(Optional.of(student), studentsRepository.findById(student.getId()));
-
-
         given(studentsService.getStudentById(student.getId()))
                 .willReturn(student);
-//        given(studentsService.addGrade(student.getId(), grade))
-//                .willReturn(grade);
 
         studentsService.addGrade(student.getId(), grade);
 
         // when
         studentsService.deleteGrade(studentsService.getStudentById(student.getId()).getId(), grade.getId());
         // then
-        assertTrue(grade.isDeleted());
+        assertTrue(grade.getIsDeleted());
+    }
+    @Test
+    public void givenInvalidGradeId_whenDeleteGrade_thenThrowNullException() {
 
         // given not existing grade
+        given(studentsService.getStudentById(student.getId()))
+                .willReturn(student);
         try {
             studentsService.deleteGrade(studentsService.getStudentById(student.getId()).getId(), UUID.randomUUID());
         }
@@ -175,24 +176,27 @@ class CatalogStudentsServiceTest {
     }
 
     @Test
-    public void canGetGradeById() {
+    public void givenValidGradeId_whenGetGradeById_thenReturnsSameGrade() {
 
         // given
-        when(studentsRepository.findById(student.getId())).thenReturn(Optional.of(student));
-        assertEquals(Optional.of(student), studentsRepository.findById(student.getId()));
-
         given(studentsService.getStudentById(student.getId()))
                 .willReturn(student);
-
         studentsService.addGrade(student.getId(), grade);
+
         // when
         Grade returned = studentsService.getGradeById(studentsService.getStudentById(student.getId()).getId(), grade.getId());
 
         // then
         assertEquals(returned, grade);
 
+    }
+    @Test
+    public void givenInvalidGradeId_whenGetGradeById_thenThrowIllegalStateException(){
         // given not existing grade
+        given(studentsService.getStudentById(student.getId()))
+                .willReturn(student);
         try {
+            // when
             studentsService.getGradeById(studentsService.getStudentById(student.getId()).getId(), UUID.randomUUID());
         }
         // then
@@ -200,52 +204,49 @@ class CatalogStudentsServiceTest {
             System.out.println(e);
         }
     }
-
     @Test
-    public void canUpdateGrade() {
 
+    public void givenValidGradeId_whenUpdateGrade_thenReturnUpdatedGrade() {
         // given
-        when(studentsRepository.findById(student.getId())).thenReturn(Optional.of(student));
-        assertEquals(Optional.of(student), studentsRepository.findById(student.getId()));
-
         given(studentsService.getStudentById(student.getId()))
                 .willReturn(student);
         studentsService.addGrade(student.getId(), grade);
-        String date = "12.12.2012";
+
         // when
         Grade updated = studentsService.updateGrade(studentsService.getStudentById(student.getId()).getId(), 6, null, grade.getId());
-
+        // then
         assertEquals(updated, grade);
-
-        // given not existing student
-        Student shouldBeNull = studentsService.deleteStudent(UUID.randomUUID());
-        assertNull(shouldBeNull);
-
+    }
+    @Test
+    public void givenInvalidGradeValue_whenUpdateGrade_thenThrowIllegalStateException() {
+        given(studentsService.getStudentById(student.getId()))
+                .willReturn(student);
         try {
             // given invalid grade
             studentsService.updateGrade(studentsService.getStudentById(student.getId()).getId(), 0, null, grade.getId());
-
         }
         // then
         catch (IllegalStateException e) {
             System.out.println(e);
-
-            // given invalid eval date
-
-            studentsService.updateGrade(studentsService.getStudentById(student.getId()).getId(), 3, date, grade.getId());
-
-            // then should be changed to default value
-            assertEquals(date.toString(), grade.getEvaluationDate().toString());
         }
+    }
+    @Test
+    public void givenInvalidGradeDate_whenUpdateGrade_thenReturnDefaultDateValue() {
+        // given
+        given(studentsService.getStudentById(student.getId()))
+                .willReturn(student);
+        String date = "12.12.2012";
+        studentsService.addGrade(student.getId(), grade);
+        // when
+        studentsService.updateGrade(studentsService.getStudentById(student.getId()).getId(), 3, null, grade.getId());
+
+        // then should be changed to default value
+        assertEquals(date, grade.getEvaluationDate());
     }
 
     @Test
     void canUpdateGradeTest() {
-
         // given
-        when(studentsRepository.findById(student.getId())).thenReturn(Optional.of(student));
-        assertEquals(Optional.of(student), studentsRepository.findById(student.getId()));
-
         given(studentsService.getStudentById(student.getId()))
                 .willReturn(student);
         studentsService.addGrade(student.getId(), grade);
@@ -258,41 +259,42 @@ class CatalogStudentsServiceTest {
         Grade updatedNullValue = studentsService.updateGrade(student.getId(), null, null, grade.getId());
         assertEquals(grade, updatedNullValue);
 
+        UUID idForGrade = grade.getId();
+        UUID idForStudent = student.getId();
+
         // when updating with invalid value
         assertThrows(IllegalStateException.class,
-                () -> studentsService.updateGrade(student.getId(), 0, null, grade.getId()));
+                () -> studentsService.updateGrade(idForStudent, 0, null, idForGrade));
 
         // when updating with value outside of range
         assertThrows(IllegalStateException.class,
-                () -> studentsService.updateGrade(student.getId(), 11, null, grade.getId()));
+                () -> studentsService.updateGrade(idForStudent, 11, null, idForGrade));
 
         // when updating with a valid value
         Grade updatedValue = studentsService.updateGrade(student.getId(), 8, null, grade.getId());
         assertEquals(8, updatedValue.getValue());
 
-//        // when updating with invalid evaluation date
-//        Grade updatedInvalidDate = studentsService.updateGrade(student.getId(), 8, "invalid date", grade.getId());
-//        assertEquals("01.01.1980", updatedInvalidDate.getEvaluationDate());
+        // when updating with invalid evaluation date
+        assertThrows(IllegalStateException.class,
+                () ->  studentsService.updateGrade(student.getId(), 8, "invalid date", grade.getId()));
 
         // when updating with valid evaluation date
-//        Grade updatedValidDate = studentsService.updateGrade(student.getId(), 8, "10.05.2023", grade.getId());
-//        assertEquals("10.05.2023", updatedValidDate.getEvaluationDate());
-//
-//        // when updating with the same evaluation date
-//        Grade updatedSameDate = studentsService.updateGrade(student.getId(), 8, "05.11.2022", grade.getId());
-//        assertEquals("05.11.2022", updatedSameDate.getEvaluationDate());
-//
-//        // when updating with null value and different evaluation date
-//        Grade updatedNullValueAndDate = studentsService.updateGrade(student.getId(), null, "01.01.2022", grade.getId());
-//        assertEquals("01.01.2022", updatedNullValueAndDate.getEvaluationDate());
-//        assertEquals(grade, updatedNullValueAndDate);
-//
-//        // when updating with the same evaluation date
-//
-//        updatedSameDate = studentsService.updateGrade(student.getId(), 8, grade.getEvaluationDate(), grade.getId());
-//        assertEquals(grade.getEvaluationDate(), updatedSameDate.getEvaluationDate());
+        Grade updatedValidDate = studentsService.updateGrade(student.getId(), 8, "10.05.2023", grade.getId());
+        assertEquals("10.05.2023", updatedValidDate.getEvaluationDate());
 
+        // when updating with the same evaluation date
+        Grade updatedSameDate = studentsService.updateGrade(student.getId(), 8, "05.11.2022", grade.getId());
+        assertEquals("05.11.2022", updatedSameDate.getEvaluationDate());
 
+        // when updating with null value and different evaluation date
+        Grade updatedNullValueAndDate = studentsService.updateGrade(student.getId(), null, "01.01.2022", grade.getId());
+        assertEquals("01.01.2022", updatedNullValueAndDate.getEvaluationDate());
+        assertEquals(grade, updatedNullValueAndDate);
+
+        // when updating with the same evaluation date
+
+        updatedSameDate = studentsService.updateGrade(student.getId(), 8, grade.getEvaluationDate(), grade.getId());
+        assertEquals(grade.getEvaluationDate(), updatedSameDate.getEvaluationDate());
     }
 
     @Test

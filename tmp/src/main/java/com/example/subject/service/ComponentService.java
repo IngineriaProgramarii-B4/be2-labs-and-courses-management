@@ -29,7 +29,7 @@ public class ComponentService {
     }
 
     public boolean validateComponent(String title, Component component) {
-        if(component.getNumberWeeks() <= 0 || component.isDeleted()) return false;
+        if(component.getNumberWeeks() <= 0 || component.getIsDeleted()) return false;
         if(!validateType(component.getType()))
             return false;
         Optional<Subject> subject = courseDao.selectSubjectByTitle(title);
@@ -41,7 +41,7 @@ public class ComponentService {
     }
 
     public boolean validateComponentToUpdate(String title, String type, Component component) {
-        if(component.getNumberWeeks() <= 0 || component.isDeleted()) return false;
+        if(component.getNumberWeeks() <= 0 || component.getIsDeleted()) return false;
         if(!Objects.equals(component.getType(), type))
             return false;
         Optional<Subject> subject = courseDao.selectSubjectByTitle(title);

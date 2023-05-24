@@ -80,7 +80,15 @@ public class StudentsController {
         studentsService.saveStudent(student);
         return new ResponseEntity<>(student, HttpStatus.CREATED);
     }
-
+    @Operation(summary = "Get a student with the given id.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Found student that match the given id",
+                    content = @Content
+            ),
+            @ApiResponse(responseCode = "404", description = "Haven't found students that match the given id",
+                    content = @Content
+            )
+    })
     @GetMapping("/students/enrolledCourse/{course}")
     public ResponseEntity<Set<Student>> getStudentsByCourse(@PathVariable String course) {
         Set<Student> students = studentsService.getStudentByEnrolledCourse(course);
@@ -102,7 +110,18 @@ public class StudentsController {
 
     // <-------------------------------- FROM CATALOG ----------------------------------> //
 
-    // La acest Get, cred ca e mai ok sa intoarcem doar ResponseEntity ca sa nu apara exception pe front
+    @Operation(summary = "Get the list of grades of the student with id={id}. The format is property_from_grade_schema=value")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Found the grades of the student with the given id.",
+                    content = @Content(
+                            mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = Grade.class))
+                    )
+            ),
+            @ApiResponse(responseCode = "404", description = "Haven't found the student with the given id.",
+                    content = @Content
+            )
+    })
     @GetMapping("students/{id}/grades")
     public ResponseEntity<List<Grade>> getStudentByIdGrades(@PathVariable("id") String id) {
         Optional<Student> students = Optional.ofNullable(studentsService.getStudentById(UUID.fromString(id)));
@@ -113,7 +132,18 @@ public class StudentsController {
         }
     }
 
-    // ** //
+    @Operation(summary = "Get the list of grades of the student with id={id} on a certain subject. The format is property_from_grade_schema=value")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Found the grades on the given subject of the student with the given id.",
+                    content = @Content(
+                            mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = Grade.class))
+                    )
+            ),
+            @ApiResponse(responseCode = "404", description = "Haven't found the student with the given id.",
+                    content = @Content
+            )
+    })
     @GetMapping("students/{id}/{subject}")
     public List<Grade> getStudentByIdSubjectGrades(@PathVariable("id") UUID id, @PathVariable String subject) {
         Optional<Student> student = Optional.ofNullable(studentsService.getStudentById(id));
@@ -126,21 +156,18 @@ public class StudentsController {
         }
         else return List.of();
     }
-
-    @Nullable
-    @DeleteMapping(value = "students/{id}",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Student> delete(@PathVariable("id") UUID id) {
-        Optional<Student> isRemoved = Optional.ofNullable(studentsService.getStudentById(id));
-        if (isRemoved.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        isRemoved.get().setIsDeleted(true);
-        return new ResponseEntity<>(isRemoved.get(), HttpStatus.OK);
-    }
-
-    //
+    @Operation(summary = "Get the grade with the id={gradeId} of the student with id={id}. The format is property_from_grade_schema=value")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Found the grade with the given id of the student with the given id.",
+                    content = @Content(
+                            mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = Grade.class))
+                    )
+            ),
+            @ApiResponse(responseCode = "404", description = "Haven't found the student or the grade with the given id.",
+                    content = @Content
+            )
+    })
     @GetMapping("students/{id}/grades/{gradeId}")
     @Nullable
     public ResponseEntity<Grade> getGradeById(@PathVariable("id") UUID id, @PathVariable("gradeId") UUID gradeId) {
@@ -153,8 +180,33 @@ public class StudentsController {
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
-    //
+    @Operation(summary = "Soft deleting an existing student from the database.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "404", description = "Haven't found the student with the given id.",
+                    content = @Content),
+            @ApiResponse(responseCode = "200", description = "Student soft deleted successfully",
+                    content = @Content)
+    })
+    @Nullable
+    @DeleteMapping(value = "students/{id}",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Student> deleteStudent(@PathVariable("id") UUID id) {
+        Optional<Student> isRemoved = Optional.ofNullable(studentsService.getStudentById(id));
+        if (isRemoved.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        isRemoved.get().setIsDeleted(true);
+        return new ResponseEntity<>(isRemoved.get(), HttpStatus.OK);
+    }
 
+    @Operation(summary = "Receive necessary data in order to add a new grade in the student's grades.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Resource added successfully",
+                    content = @Content),
+            @ApiResponse(responseCode = "404", description = "Haven't found the student with the given id.",
+                    content = @Content)
+    })
     @PostMapping(path = "students/{id}/grades",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
@@ -162,8 +214,7 @@ public class StudentsController {
     public ResponseEntity<Grade> addGrade(@PathVariable UUID id, @RequestBody Grade grade) {
         Optional <Student> students = Optional.ofNullable(studentsService.getStudentById(id));
         if (students.isPresent()
-                && subjectService.getSubjectByTitle(grade.getSubject()).isPresent()
-        ) {
+                && subjectService.getSubjectByTitle(grade.getSubject()).isPresent()) {
             studentsService.addGrade(id, grade);
             return new ResponseEntity<>(grade, HttpStatus.CREATED);
         } else {
@@ -171,7 +222,13 @@ public class StudentsController {
         }
     }
 
-    // ResponseEntity<> poate avea si un singur argument de HttpStatus, nu e necesar null
+    @Operation(summary = "Soft deleting an existing grade from the student's grades.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "404", description = "Haven't found the student or the grade with the given id.",
+                    content = @Content),
+            @ApiResponse(responseCode = "200", description = "Grade soft deleted successfully",
+                    content = @Content)
+    })
     @Nullable
     @DeleteMapping(value = "students/{id}/grades/{gradeId}",
             consumes = MediaType.APPLICATION_JSON_VALUE,
@@ -183,7 +240,14 @@ public class StudentsController {
         }
         return new ResponseEntity<>(isRemoved, HttpStatus.OK);
     }
-
+    @Operation(summary = "Receive necessary data in order to update information about a student's certain grade")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Resource updated successfully",
+                    content = @Content),
+            @ApiResponse(responseCode = "404", description = "Haven't found student or grade with given id",
+                    content = @Content
+            )
+    })
     @Nullable
     @PutMapping("students/{id}/grades/{gradeId}")
     public ResponseEntity<Grade> updateGradeValue(@PathVariable("id") UUID id, @PathVariable("gradeId") UUID gradeId,@RequestParam(required = false) String evaluationDate,@RequestParam(required = false) Integer value){

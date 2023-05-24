@@ -28,7 +28,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @AutoConfigureMockMvc(addFilters = false)
-public class CatalogTeachersServiceTest {
+class CatalogTeachersServiceTest {
     @InjectMocks
     TeachersService teachersService;
     @Mock
@@ -51,7 +51,9 @@ public class CatalogTeachersServiceTest {
     }
 
     @Test
-    void canGetAllTeachers() {
+    void whenGetAllTeachers_thenReturnExistingTeachers() {
+
+        // given
         given(teachersRepository.findTeachersByParams(
                 nullable(UUID.class),
                 nullable(String.class),
@@ -70,7 +72,7 @@ public class CatalogTeachersServiceTest {
     }
 
     @Test
-    void canGetTeacherById() {
+    void givenValidTeacherId_whenGetTeacherById_thenReturnsSameTeacher() {
         // given
 
         when(teachersRepository.findById(teacher.getId())).thenReturn(Optional.of(teacher));
@@ -86,9 +88,10 @@ public class CatalogTeachersServiceTest {
                 nullable(String.class)
         ))
                 .willReturn(List.of(teacher));
-
+        // when
         Teacher get_result = teachersService.getTeachersByParams(Map.of("id", teacher.getId())).get(0);
 
+        // then
         ArgumentCaptor<Teacher> teacherArgumentCaptor = ArgumentCaptor.forClass(Teacher.class);
         teachersRepository.save(teacherArgumentCaptor.capture());
         verify(teachersRepository).save(teacherArgumentCaptor.capture());
@@ -107,12 +110,15 @@ public class CatalogTeachersServiceTest {
         }
     }
     @Test
-    void canAddTeacher() {
-
+    void givenValidTeacherId_whenAddTeacher_thenReturnsSameTeacher() {
+        // given
         when(teachersRepository.findById(teacher.getId())).thenReturn(Optional.of(teacher));
         assertEquals(Optional.of(teacher), teachersRepository.findById(teacher.getId()));
+
+        // when
         teachersService.saveTeacher(teacher);
 
+        // then
         ArgumentCaptor<Teacher> teacherArgumentCaptor = ArgumentCaptor.forClass(Teacher.class);
         verify(teachersRepository).save(teacherArgumentCaptor.capture());
 

@@ -5,10 +5,10 @@ import java.util.Arrays;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class CredentialsTest {
+class CredentialsTest {
 
     @Test
-    public void testSettersAndGetters() {
+    void testSettersAndGetters() {
         String userId = "user1";
         String email = "test@example.com";
         String firstname = "Test";

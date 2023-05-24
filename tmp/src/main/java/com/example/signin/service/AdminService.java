@@ -1,7 +1,6 @@
 package com.example.signin.service;
 
 import com.example.security.objects.Admin;
-import com.example.security.objects.Teacher;
 import com.example.security.repositories.AdminsRepository;
 import com.example.signin.exception.StudentNotFoundException;
 import jakarta.transaction.Transactional;

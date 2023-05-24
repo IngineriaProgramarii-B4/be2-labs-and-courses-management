@@ -143,12 +143,9 @@ public class StudentsService {
 
     // <-------------------------------- FROM CATALOG ----------------------------------> //
 
-    // Q: te poti folosi de getStudentsByParams - A: nu, ca da o lista de studenti si n-am nevoie de o lista daca sigur o sa-mi returneze un singur student
     public Student getStudentById(UUID id) {
         return studentsRepository.findStudentById(id);
     }
-
-    // Q: asta nu ar trebui in GradeService? ca si toate cele de mai jos, avand in vedere ca returneaza Grade - A: idk, apeleaza functii din studentService, idk what to say
     public Grade getGradeById(UUID id, UUID gradeId) {
         Student student = studentsRepository.findStudentById(id);
         Grade grade = student.getGradeById(gradeId);
@@ -158,14 +155,12 @@ public class StudentsService {
             throw new IllegalStateException("There is no grade with the id " + gradeId);
         }
     }
-
     @Transactional
     public Grade addGrade(UUID id, Grade grade) {
         Student student = getStudentById(id);
         student.addGrade(grade);
         return grade;
     }
-
     @Transactional
     public Grade deleteGrade(UUID id, UUID gradeId) {
         try {
@@ -174,7 +169,6 @@ public class StudentsService {
             return null;
         }
     }
-
     @Transactional
     public Grade updateGrade(UUID id, Integer value, String evaluationDate, UUID gradeId) {
         Student student = studentsRepository.findStudentById(id);
@@ -194,13 +188,12 @@ public class StudentsService {
         }
 
         if (evaluationDate != null && !evaluationDate.equals(grade.getEvaluationDate())) {
-//            grade.setEvaluationDate(evaluationDate);
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
             try {
                 LocalDate.parse(evaluationDate, formatter);
                 grade.setEvaluationDate(evaluationDate);
             } catch (DateTimeParseException exception) {
-
+                throw new IllegalStateException("The date doesn't match the required format. "+exception);
             }
         }
 
