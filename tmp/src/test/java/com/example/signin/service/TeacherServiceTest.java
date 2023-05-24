@@ -1,6 +1,5 @@
 package com.example.signin.service;
 
-
 import com.example.security.objects.Teacher;
 import com.example.security.repositories.TeachersRepository;
 import com.example.signin.exception.StudentNotFoundException;
@@ -24,68 +23,70 @@ class TeacherServiceTest {
     @Mock
     private PasswordEncoder passwordEncoder;
 
+    private Teacher teacher;
+    private final String REGISTRATIONNUMBER="123";
+    private final String NEWPASSWORD="newPassword";
+
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
         teacherService = new TeacherService(teacherRepository, passwordEncoder);
+
+        teacher = new Teacher();
+        teacher.setRegistrationNumber(REGISTRATIONNUMBER);
     }
 
     @Test
     void testAddTeacher() {
-        Teacher teacher = new Teacher();
-        teacher.setRegistrationNumber("123");
-
+        // Act
         when(teacherRepository.save(teacher)).thenReturn(teacher);
 
         teacherService.addTeacher(teacher);
 
+        // Assert
         verify(teacherRepository, times(1)).save(teacher);
     }
 
     @Test
     void testUpdateTeacher() {
-        String registrationNumber = "123";
-        String newPassword = "newPassword";
-        Teacher teacher = new Teacher();
-        teacher.setRegistrationNumber(registrationNumber);
+        // Arrange
         teacher.setPassword("oldPassword");
 
-        when(teacherRepository.findByRegistrationNumber(registrationNumber)).thenReturn(teacher);
-        when(passwordEncoder.encode(newPassword)).thenReturn("encodedNewPassword");
+        // Act
+        when(teacherRepository.findByRegistrationNumber(REGISTRATIONNUMBER)).thenReturn(teacher);
+        when(passwordEncoder.encode(NEWPASSWORD)).thenReturn("encodedNewPassword");
 
-        assertThrows(StudentNotFoundException.class, () -> teacherService.updateTeacher(registrationNumber, newPassword));
+        // Assert
+        assertThrows(StudentNotFoundException.class, () -> teacherService.updateTeacher(REGISTRATIONNUMBER, NEWPASSWORD));
 
-        verify(teacherRepository, times(1)).findByRegistrationNumber(registrationNumber);
-        verify(passwordEncoder, times(1)).encode(newPassword);
+        verify(teacherRepository, times(1)).findByRegistrationNumber(REGISTRATIONNUMBER);
+        verify(passwordEncoder, times(1)).encode(NEWPASSWORD);
     }
 
     @Test
     void testGetTeacherByRegistrationNumber() {
-        String registrationNumber = "123";
+        // Act
+        when(teacherRepository.findByRegistrationNumber(REGISTRATIONNUMBER)).thenReturn(teacher);
 
-        Teacher teacher = new Teacher();
-        teacher.setRegistrationNumber(registrationNumber);
+        Teacher found = teacherService.getTeacherByRegistrationNumber(REGISTRATIONNUMBER);
 
-        when(teacherRepository.findByRegistrationNumber(registrationNumber)).thenReturn(teacher);
-
-        Teacher found = teacherService.getTeacherByRegistrationNumber(registrationNumber);
-
+        // Assert
         assertEquals(found, teacher);
-        verify(teacherRepository, times(1)).findByRegistrationNumber(registrationNumber);
+        verify(teacherRepository, times(1)).findByRegistrationNumber(REGISTRATIONNUMBER);
     }
+
     @Test
     void testUpdateTeacher_WhenTeacherNotFound() {
-        String registrationNumber = "123";
 
-        String newPassword = "newPassword";
+        // Act
+        when(teacherRepository.findByRegistrationNumber(REGISTRATIONNUMBER)).thenReturn(null);
 
-        when(teacherRepository.findByRegistrationNumber(registrationNumber)).thenReturn(null);
+        // Assert
+        assertThrows(StudentNotFoundException.class, () -> teacherService.updateTeacher(REGISTRATIONNUMBER, NEWPASSWORD));
 
-        assertThrows(StudentNotFoundException.class, () -> teacherService.updateTeacher(registrationNumber, newPassword));
-
-        verify(teacherRepository, times(1)).findByRegistrationNumber(registrationNumber);
+        verify(teacherRepository, times(1)).findByRegistrationNumber(REGISTRATIONNUMBER);
         verifyNoMoreInteractions(passwordEncoder);
         verifyNoMoreInteractions(teacherRepository);
     }
-
 }

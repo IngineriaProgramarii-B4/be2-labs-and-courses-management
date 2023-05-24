@@ -6,30 +6,33 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CredentialsTest {
+    private final String USERID = "user1";
+    private final String EMAIL = "test@example.com";
+    private final String FIRSTNAME = "Test";
+    private final String LASTNAME = "User";
+    private final String PASSWORD = "Password1";
+
 
     @Test
     void testSettersAndGetters() {
-        String userId = "user1";
-        String email = "test@example.com";
-        String firstname = "Test";
-        String lastname = "User";
-        String password = "Password1!";
+        // Arrange
         Role role = new Role();
-        role.setName("USER");
+        role.setName(LASTNAME);
 
         Credentials credentials = new Credentials();
-        credentials.setUserId(userId);
-        credentials.setEmail(email);
-        credentials.setFirstname(firstname);
-        credentials.setLastname(lastname);
-        credentials.setPassword(password);
+        credentials.setUserId(USERID);
+        credentials.setEmail(EMAIL);
+        credentials.setFirstname(FIRSTNAME);
+        credentials.setLastname(LASTNAME);
+        credentials.setPassword(PASSWORD);
         credentials.setRoles(Arrays.asList(role));
 
-        assertEquals(userId, credentials.getUserId());
-        assertEquals(email, credentials.getEmail());
-        assertEquals(firstname, credentials.getFirstname());
-        assertEquals(lastname, credentials.getLastname());
-        assertEquals(password, credentials.getPassword());
+        // Assert
+        assertEquals(USERID, credentials.getUserId());
+        assertEquals(EMAIL, credentials.getEmail());
+        assertEquals(FIRSTNAME, credentials.getFirstname());
+        assertEquals(LASTNAME, credentials.getLastname());
+        assertEquals(PASSWORD, credentials.getPassword());
         assertTrue(credentials.getRoles().contains(role));
     }
 }

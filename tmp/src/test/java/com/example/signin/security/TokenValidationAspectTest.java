@@ -22,6 +22,11 @@ class TokenValidationAspectTest {
 
     private TokenValidationAspect tokenValidationAspect;
     private MockHttpServletRequest request;
+    private final String INVALIDTOKEN="invalidToken";
+
+    private final String VALIDTOKEN= "validToken";
+
+
 
     @BeforeEach
     public void setUp() {
@@ -33,25 +38,30 @@ class TokenValidationAspectTest {
 
     @Test
     void validateToken_throwsException_whenTokenNotFound() {
+        // Assert
         assertThrows(RuntimeException.class, () -> tokenValidationAspect.validateToken(joinPoint));
     }
 
     @Test
     void validateToken_throwsException_whenTokenInvalid() {
-        String token = "invalidToken";
-        request.addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + token);
-        when(jwtGenerator.validateToken(token)).thenReturn(false);
+        // Arrange
+        request.addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + INVALIDTOKEN);
+        // Act
+        when(jwtGenerator.validateToken(INVALIDTOKEN)).thenReturn(false);
 
+        // Assert
         assertThrows(RuntimeException.class, () -> tokenValidationAspect.validateToken(joinPoint));
     }
 
     @Test
     void validateToken_doesNotThrowException_whenTokenIsValid() throws Throwable {
-        String token = "validToken";
-        request.addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + token);
-        when(jwtGenerator.validateToken(token)).thenReturn(true);
+        // Arrange
+        request.addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + VALIDTOKEN);
+        // Act
+        when(jwtGenerator.validateToken(VALIDTOKEN)).thenReturn(true);
 
         tokenValidationAspect.validateToken(joinPoint);
-        verify(jwtGenerator).validateToken(token);
+        // Assert
+        verify(jwtGenerator).validateToken(VALIDTOKEN);
     }
 }

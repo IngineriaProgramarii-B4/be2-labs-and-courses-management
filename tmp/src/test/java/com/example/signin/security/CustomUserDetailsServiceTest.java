@@ -30,22 +30,36 @@ class CustomUserDetailsServiceTest {
 
     private User user;
 
+    private final String EMAIL="test@example.com";
+
+    private final String INVALID="invalid@example.com";
+
+    private final String PASSWORD="password123";
+
+    private final String USER="USER";
+
+
     @BeforeEach
     void setUp() {
+
         Role role = new Role();
-        role.setName("USER");
+        role.setName(USER);
 
         user = mock(User.class, Mockito.withSettings().lenient());
-        when(user.getEmail()).thenReturn("test@example.com");
-        when(user.getPassword()).thenReturn("password123");
+        when(user.getEmail()).thenReturn(EMAIL);
+        when(user.getPassword()).thenReturn(PASSWORD);
         when(user.getRoles()).thenReturn(Collections.singletonList(role));
     }
+
     @Test
     void loadUserByUsername_withValidUsername() {
+
+        // Act
         when(usersRepository.findByEmail(user.getEmail())).thenReturn(user);
 
         UserDetails userDetails = customUserDetailsService.loadUserByUsername(user.getEmail());
 
+        // Assert
         assertNotNull(userDetails);
         assertEquals(user.getEmail(), userDetails.getUsername());
         verify(usersRepository, times(1)).findByEmail(user.getEmail());
@@ -53,12 +67,15 @@ class CustomUserDetailsServiceTest {
 
     @Test
     void loadUserByUsername_withInvalidUsername() {
-        when(usersRepository.findByEmail("invalid@example.com")).thenReturn(null);
 
+        // Arrange
+        when(usersRepository.findByEmail(INVALID)).thenReturn(null);
+
+        // Assert
         assertThrows(UsernameNotFoundException.class, () -> {
-            customUserDetailsService.loadUserByUsername("invalid@example.com");
+            customUserDetailsService.loadUserByUsername(INVALID);
         });
 
-        verify(usersRepository, times(1)).findByEmail("invalid@example.com");
+        verify(usersRepository, times(1)).findByEmail(INVALID);
     }
 }

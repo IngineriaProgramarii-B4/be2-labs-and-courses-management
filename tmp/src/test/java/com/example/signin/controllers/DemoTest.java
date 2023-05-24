@@ -29,89 +29,118 @@ class DemoTest {
         MockitoAnnotations.openMocks(this);
     }
 
+    public final String AUTHHEADERVALID ="Bearer validToken";
+    public final String AUTHHEADERINVALID ="Bearer invalidToken";
+
+
     @Test
     void testSayStudent() {
-        String authHeader = "Bearer validToken";
-        when(request.getHeader("Authorization")).thenReturn(authHeader);
+
+        // Arrange
+        when(request.getHeader("Authorization")).thenReturn(AUTHHEADERVALID);
         when(jwtGenerator.validateToken("validToken")).thenReturn(true);
 
+        // Act
         ResponseEntity<String> response = demo.sayStudent(request);
 
+        // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals("This is a STUDENT page", response.getBody());
     }
 
     @Test
     void testSayStudentWithInvalidToken() {
-        String authHeader = "Bearer invalidToken";
-        when(request.getHeader("Authorization")).thenReturn(authHeader);
+
+        // Arrange
+        when(request.getHeader("Authorization")).thenReturn(AUTHHEADERINVALID);
         when(jwtGenerator.validateToken("invalidToken")).thenReturn(false);
 
+        // Act
         ResponseEntity<String> response = demo.sayStudent(request);
 
+        // Assert
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertEquals("Token expired or invalid", response.getBody());
     }
 
     @Test
     void testSayTeacher() {
-        String authHeader = "Bearer validToken";
-        when(request.getHeader("Authorization")).thenReturn(authHeader);
+
+        // Arrange
+        when(request.getHeader("Authorization")).thenReturn(AUTHHEADERVALID);
         when(jwtGenerator.validateToken("validToken")).thenReturn(true);
 
+        // Act
         ResponseEntity<String> response = demo.sayTeacher(request);
 
+        // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals("This is a TEACHER page", response.getBody());
     }
 
     @Test
     void testSayTeacherWithInvalidToken() {
-        String authHeader = "Bearer invalidToken";
-        when(request.getHeader("Authorization")).thenReturn(authHeader);
+        // Arrange
+        when(request.getHeader("Authorization")).thenReturn(AUTHHEADERINVALID);
         when(jwtGenerator.validateToken("invalidToken")).thenReturn(false);
 
+        // Act
         ResponseEntity<String> response = demo.sayTeacher(request);
 
+        // Assert
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertEquals("Token expired or invalid", response.getBody());
     }
     @Test
     void testSayStudentNoAuthorizationHeader() {
+
+        // Arrange
         when(request.getHeader("Authorization")).thenReturn(null);
 
+        // Act
         ResponseEntity<String> response = demo.sayStudent(request);
 
+        // Assert
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertEquals("Token expired or invalid", response.getBody());
     }
 
     @Test
     void testSayStudentInvalidAuthorizationHeader() {
+
+        // Arrange
         when(request.getHeader("Authorization")).thenReturn("InvalidHeader");
 
+        // Act
         ResponseEntity<String> response = demo.sayStudent(request);
 
+        // Assert
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertEquals("Token expired or invalid", response.getBody());
     }
 
     @Test
     void testSayTeacherNoAuthorizationHeader() {
+        // Arrange
         when(request.getHeader("Authorization")).thenReturn(null);
 
+        // Act
         ResponseEntity<String> response = demo.sayTeacher(request);
 
+        // Assert
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertEquals("Token expired or invalid", response.getBody());
     }
 
     @Test
     void testSayTeacherInvalidAuthorizationHeader() {
+        // Arrange
         when(request.getHeader("Authorization")).thenReturn("InvalidHeader");
 
+        // Act
         ResponseEntity<String> response = demo.sayTeacher(request);
 
+        // Assert
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertEquals("Token expired or invalid", response.getBody());
     }

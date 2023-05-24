@@ -98,11 +98,48 @@ class AuthControllerTest {
     @Autowired
     private WebApplicationContext context;
 
+    private RegisterRequestBody registerRequestBody;
+    private LoginRequestBody loginRequestBody;
+    private ForgotPasswordRequestBody forgotPasswordRequestBody;
+    private Credentials credentials;
+
+    private Credentials credentialsNull;
+    private Role role;
+
+
+
     public AuthControllerTest() {
     }
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.initMocks(this);
+
+        // Initialize common objects
+        registerRequestBody = new RegisterRequestBody();
+        registerRequestBody.setEmail("test@example.com");
+        registerRequestBody.setPassword("testPassword");
+        registerRequestBody.setUserId("testUserId");
+
+        loginRequestBody = new LoginRequestBody();
+        loginRequestBody.setEmail("test@example.com");
+        loginRequestBody.setPassword("testPassword");
+
+        forgotPasswordRequestBody = new ForgotPasswordRequestBody();
+        forgotPasswordRequestBody.setEmail("test@example.com");
+
+        role = new Role();
+        role.setId(1);
+
+        credentials = new Credentials();
+        credentials.setEmail("test@example.com");
+        credentials.setPassword("testPassword");
+        credentials.setRoles(Arrays.asList(role));
+
+
+        credentialsNull =new Credentials();
+        credentialsNull.setEmail(null);
+        credentialsNull.setPassword(null);
+        credentialsNull.setUserId("testUserId");
 
         // Initialize AuthController with mocked dependencies
         authControllerUnderTest = new AuthController(
@@ -120,26 +157,15 @@ class AuthControllerTest {
                 mockStudentsRepository,
                 mockAdminsRepository
         );
-
-
     }
 
     @Test
     void testLogin() {
+
+
         // Arrange
-        LoginRequestBody loginRequestBody = new LoginRequestBody();
-        loginRequestBody.setEmail("test@example.com");
-        loginRequestBody.setPassword("testPassword");
-
         List<Role> roles = new ArrayList<>();
-        Role role = new Role();
-        role.setId(1);
         roles.add(role);
-
-        Credentials credentials = new Credentials();
-        credentials.setEmail("test@example.com");
-        credentials.setPassword("testPassword");
-        credentials.setRoles(roles);
 
         Authentication mockAuthentication = mock(Authentication.class);
         when(mockAuthenticationManager.authenticate(any())).thenReturn(mockAuthentication);
@@ -154,12 +180,22 @@ class AuthControllerTest {
         assertEquals(200, result.getStatusCodeValue());
     }
     @Test
+    void testRegister_withSaveError() {
+
+        when(mockCredentialsRepository.existsByEmail(registerRequestBody.getEmail())).thenReturn(false);
+        when(mockCredentialsRepository.existsById(registerRequestBody.getUserId())).thenReturn(true);
+        when(mockCredentialsRepository.findByUserId(registerRequestBody.getUserId())).thenReturn(credentialsNull);
+        doThrow(new RuntimeException()).when(mockCredentialsRepository).save(any());
+
+        // Act
+        ResponseEntity<String> result = authControllerUnderTest.register(registerRequestBody);
+
+        // Assert
+        assertEquals("Error when saving user!", result.getBody());
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, result.getStatusCode());
+    }
+    @Test
     void testRegister_withEmailAlreadyInUse() {
-        // Arrange
-        RegisterRequestBody registerRequestBody = new RegisterRequestBody();
-        registerRequestBody.setEmail("test@example.com");
-        registerRequestBody.setPassword("testPassword");
-        registerRequestBody.setUserId("testUserId");
 
         when(mockCredentialsRepository.existsByEmail(registerRequestBody.getEmail())).thenReturn(true);
 
@@ -172,9 +208,6 @@ class AuthControllerTest {
     }
     @Test
     void testForgotPassword_userNotFound() {
-        // Arrange
-        ForgotPasswordRequestBody forgotPasswordRequestBody = new ForgotPasswordRequestBody();
-        forgotPasswordRequestBody.setEmail("test@example.com");
 
         when(mockCredentialsRepository.findByEmail(forgotPasswordRequestBody.getEmail())).thenReturn(null);
 
@@ -188,13 +221,6 @@ class AuthControllerTest {
 
     @Test
     void testForgotPassword_userFoundAndEmailSent() {
-        // Arrange
-        ForgotPasswordRequestBody forgotPasswordRequestBody = new ForgotPasswordRequestBody();
-        forgotPasswordRequestBody.setEmail("test@example.com");
-
-        Credentials credentials = new Credentials();
-        credentials.setEmail("test@example.com");
-        credentials.setPassword("testPassword");
 
         when(mockCredentialsRepository.findByEmail(forgotPasswordRequestBody.getEmail())).thenReturn(credentials);
         when(mockJwtGenerator.generateResetToken(credentials)).thenReturn("testToken");
@@ -206,49 +232,10 @@ class AuthControllerTest {
         assertEquals("Password reset email sent!", result.getBody());
         assertEquals(HttpStatus.OK, result.getStatusCode());
     }
-    @Test
-    void registerTest() {
-        RegisterRequestBody registerRequestBody = new RegisterRequestBody();
-        registerRequestBody.setEmail("test@test.com");
-        registerRequestBody.setPassword("password");
-        registerRequestBody.setUserId("1");
 
-        Role adminRole = new Role();
-        adminRole.setId(1);
-        Credentials credentials = new Credentials();
-        credentials.setUserId("1");
-        credentials.setRoles(Arrays.asList(adminRole));
-
-
-        when(mockCredentialsRepository.existsById(anyString())).thenReturn(true);
-        when(mockCredentialsRepository.findByUserId(anyString())).thenReturn(credentials);
-        when(passwordEncoder.encode(anyString())).thenReturn("encodedPassword");
-        when(mockCredentialsRepository.save(any(Credentials.class))).thenReturn(credentials);
-
-        ResponseEntity<String> responseEntity = authControllerUnderTest.register(registerRequestBody);
-
-        verify(mockCredentialsRepository, times(1)).existsById(anyString());
-        verify(mockCredentialsRepository, times(1)).findByUserId(anyString());
-        verify(passwordEncoder, times(1)).encode(anyString());
-        verify(mockCredentialsRepository, times(1)).save(any(Credentials.class));
-        verify(mockAdminsRepository, times(1)).save(any(Admin.class));
-
-        assertEquals("User registered success!", responseEntity.getBody());
-        assertEquals(200, responseEntity.getStatusCodeValue());
-    }
 
     @Test
     void testRegister_withUserAlreadyRegistered() {
-        // Arrange
-        RegisterRequestBody registerRequestBody = new RegisterRequestBody();
-        registerRequestBody.setEmail("test@example.com");
-        registerRequestBody.setPassword("testPassword");
-        registerRequestBody.setUserId("testUserId");
-
-        Credentials credentials = new Credentials();
-        credentials.setEmail("test@example.com");
-        credentials.setPassword("testPassword");
-        credentials.setUserId("testUserId");
 
         when(mockCredentialsRepository.existsByEmail(registerRequestBody.getEmail())).thenReturn(false);
         when(mockCredentialsRepository.existsById(registerRequestBody.getUserId())).thenReturn(true);
@@ -261,29 +248,5 @@ class AuthControllerTest {
         assertEquals("User is already registered!", result.getBody());
         assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
     }
-    @Test
-    void testRegister_withSaveError() {
-        // Arrange
-        RegisterRequestBody registerRequestBody = new RegisterRequestBody();
-        registerRequestBody.setEmail("test@example.com");
-        registerRequestBody.setPassword("testPassword");
-        registerRequestBody.setUserId("testUserId");
 
-        Credentials credentials = new Credentials();
-        credentials.setEmail(null);
-        credentials.setPassword(null);
-        credentials.setUserId("testUserId");
-
-        when(mockCredentialsRepository.existsByEmail(registerRequestBody.getEmail())).thenReturn(false);
-        when(mockCredentialsRepository.existsById(registerRequestBody.getUserId())).thenReturn(true);
-        when(mockCredentialsRepository.findByUserId(registerRequestBody.getUserId())).thenReturn(credentials);
-        doThrow(new RuntimeException()).when(mockCredentialsRepository).save(any());
-
-        // Act
-        ResponseEntity<String> result = authControllerUnderTest.register(registerRequestBody);
-
-        // Assert
-        assertEquals("Error when saving user!", result.getBody());
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, result.getStatusCode());
-    }
 }

@@ -22,6 +22,7 @@ class JWTGeneratorTest {
     private List<Role> roles;
     private Authentication authentication;
 
+
     @BeforeEach
     public void setUp() {
         jwtGenerator = new JWTGenerator();
@@ -32,39 +33,49 @@ class JWTGeneratorTest {
 
         roles = Arrays.asList(new Role());
         authentication = new UsernamePasswordAuthenticationToken(user.getEmail(), "password");
+
     }
 
     @Test
     void testGenerateToken() {
+
+        // Arrange
         String token = jwtGenerator.generateToken(authentication, roles);
 
+        // Assert
         assertNotNull(token);
         assertEquals(user.getEmail(), jwtGenerator.getEmailFromJWT(token));
     }
 
     @Test
     void testValidateToken() {
+        // Arrange
         String token = jwtGenerator.generateToken(authentication, roles);
+        // Assert
         assertTrue(jwtGenerator.validateToken(token));
     }
 
     @Test
     void testGenerateResetToken() {
+        // Arrange
         String resetToken = jwtGenerator.generateResetToken(user);
 
+        // Assert
         assertNotNull(resetToken);
         assertEquals(user.getEmail(), jwtGenerator.getEmailFromJWT(resetToken));
     }
     @Test
     void testValidateTokenWithInvalidToken() {
-        // Generate an invalid token by appending some random characters at the end
+        // Arrange
         String token = jwtGenerator.generateToken(authentication, roles) + "invalid";
 
+        // Act
         AuthenticationCredentialsNotFoundException exception = assertThrows(
                 AuthenticationCredentialsNotFoundException.class,
                 () -> jwtGenerator.validateToken(token)
         );
 
+        // Assert
         assertEquals("JWT was expired or incorrect", exception.getMessage());
     }
 }

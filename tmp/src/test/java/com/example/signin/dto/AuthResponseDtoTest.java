@@ -1,39 +1,56 @@
 package com.example.signin.dto;
 
+import com.example.signin.controllers.AuthController;
+import com.example.signin.model.Credentials;
+import com.example.signin.model.Role;
+import com.example.signin.security.ForgotPasswordRequestBody;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockitoAnnotations;
+
+import java.util.Arrays;
 
 class AuthResponseDtoTest {
 
+    public final String ACCESSTOKEN="exampleAccessToken";
+
+    private AuthResponseDto authResponseDto;
+
+
+    @BeforeEach
+    public void setUp() {
+        authResponseDto =new AuthResponseDto(ACCESSTOKEN);
+
+    }
+
     @Test
     void testConstructor() {
-        String accessToken = "exampleAccessToken";
 
-        AuthResponseDto authResponseDto = new AuthResponseDto(accessToken);
-
-        Assertions.assertEquals(accessToken, authResponseDto.getAccessToken());
+        // Assert
+        Assertions.assertEquals(ACCESSTOKEN, authResponseDto.getAccessToken());
         Assertions.assertEquals("Bearer ", authResponseDto.getTokenType());
     }
 
     @Test
     void testSettersAndGetters() {
-        AuthResponseDto authResponseDto = new AuthResponseDto("exampleAccessToken");
+        // Arrange
+        authResponseDto.setAccessToken(ACCESSTOKEN);
+        // Assert
+        Assertions.assertEquals(ACCESSTOKEN, authResponseDto.getAccessToken());
 
-        String newAccessToken = "newAccessToken";
-        authResponseDto.setAccessToken(newAccessToken);
-        Assertions.assertEquals(newAccessToken, authResponseDto.getAccessToken());
+        // Arrange
+        authResponseDto.setTokenType(ACCESSTOKEN);
+        // Assert
+        Assertions.assertEquals(ACCESSTOKEN, authResponseDto.getTokenType());
 
-        String newTokenType = "newTokenType";
-        authResponseDto.setTokenType(newTokenType);
-        Assertions.assertEquals(newTokenType, authResponseDto.getTokenType());
     }
 
     @Test
     void testToString() {
-        String accessToken = "exampleAccessToken";
-        AuthResponseDto authResponseDto = new AuthResponseDto(accessToken);
-
-        String expectedToStringResult = "AuthResponseDto(accessToken=" + accessToken + ", tokenType=Bearer )";
+        // Arrange
+        String expectedToStringResult = "AuthResponseDto(accessToken=" + ACCESSTOKEN + ", tokenType=Bearer )";
+        // Assert
         Assertions.assertEquals(expectedToStringResult, authResponseDto.toString());
     }
 }

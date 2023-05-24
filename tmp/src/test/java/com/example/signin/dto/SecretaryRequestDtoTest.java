@@ -1,52 +1,38 @@
 package com.example.signin.dto;
 
-import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class SecretaryRequestDtoTest {
 
-    @Test
-    public void testGetRegistrationNumber() {
-        String registrationNumber = "123456";
-        SecretaryRequestDto dto = new SecretaryRequestDto();
-        dto.setRegistrationNumber(registrationNumber);
+    private String REGISTRATIONNUMBER= "123456";
+    private final String FIRSTNAME="John";
+    private SecretaryRequestDto dto;
 
-        String getRegistrationNumberResult = dto.getRegistrationNumber();
-
-        Assertions.assertEquals(registrationNumber, getRegistrationNumberResult);
+    @BeforeEach
+    public void setUp() {
+        dto = new SecretaryRequestDto();
+        dto.setRegistrationNumber(REGISTRATIONNUMBER);
+        dto.setFirstname(FIRSTNAME);
     }
 
     @Test
-    public void testSetRegistrationNumber() {
-        String registrationNumber = "123456";
-        SecretaryRequestDto dto = new SecretaryRequestDto();
+    public void testGetRegistrationNumber() {
+        // Arrange
+         String getRegistrationNumberResult = dto.getRegistrationNumber();
 
-        dto.setRegistrationNumber(registrationNumber);
-
-        String getRegistrationNumberResult = dto.getRegistrationNumber();
-        Assertions.assertEquals(registrationNumber, getRegistrationNumberResult);
+        // Assert
+        Assertions.assertEquals(REGISTRATIONNUMBER, getRegistrationNumberResult);
     }
 
     @Test
     public void testGetFirstname() {
-        String firstname = "John";
-        SecretaryRequestDto dto = new SecretaryRequestDto();
-        dto.setFirstname(firstname);
-
+        // Arrange
         String getFirstnameResult = dto.getFirstname();
-
-        Assertions.assertEquals(firstname, getFirstnameResult);
+        // Assert
+        Assertions.assertEquals(FIRSTNAME, getFirstnameResult);
     }
 
-    @Test
-    public void testSetFirstname() {
-        String firstname = "John";
-        SecretaryRequestDto dto = new SecretaryRequestDto();
-
-        dto.setFirstname(firstname);
-
-        String getFirstnameResult = dto.getFirstname();
-        Assertions.assertEquals(firstname, getFirstnameResult);
-    }
 
 }

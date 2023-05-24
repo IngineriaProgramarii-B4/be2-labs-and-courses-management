@@ -5,16 +5,18 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class PasswordResetTest {
+    private final String PASSWORD= "newPassword123";
 
     @Test
     void testSetNewPasswordAndGetNewPassword() {
-        String expectedPassword = "newPassword123";
 
+        // Arrange
         PasswordResetRequest passwordResetRequest = new PasswordResetRequest();
-        passwordResetRequest.setNewPassword(expectedPassword);
+        passwordResetRequest.setNewPassword(PASSWORD);
 
         String actualPassword = passwordResetRequest.getNewPassword();
 
-        assertEquals(expectedPassword, actualPassword, "The actual password should match the expected password");
+        // Assert
+        assertEquals(PASSWORD, actualPassword, "The actual password should match the expected password");
     }
 }
