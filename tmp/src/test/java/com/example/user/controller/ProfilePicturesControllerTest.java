@@ -95,7 +95,7 @@ class ProfilePicturesControllerTest {
     @Test
     void deleteFileFoundTest() throws IOException {
         //When
-        when(profilePicturesService.delete("profile-pics/test.jpg")).thenReturn(true);
+        when(profilePicturesService.delete("test.jpg")).thenReturn(true);
 
         ResponseEntity<byte[]> response = profilePicturesController.delete("test.jpg");
 
@@ -106,7 +106,7 @@ class ProfilePicturesControllerTest {
     @Test
     void deleteFileNotFoundTest() throws IOException {
         //When
-        when(profilePicturesService.delete("profile-pics/test.jpg")).thenReturn(false);
+        when(profilePicturesService.delete("test.jpg")).thenReturn(false);
 
         ResponseEntity<byte[]> response = profilePicturesController.delete("test.jpg");
 
