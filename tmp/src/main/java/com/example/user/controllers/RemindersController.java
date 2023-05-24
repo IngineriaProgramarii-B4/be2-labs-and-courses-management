@@ -88,9 +88,9 @@ public class RemindersController {
                     content = @Content)
     })
     @PostMapping(value = "/reminders")
-    public ResponseEntity<Void> saveReminder(@RequestBody Reminder reminder) {
+    public ResponseEntity<Reminder> saveReminder(@RequestBody Reminder reminder) {
         remindersService.saveReminder(reminder);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(reminder, HttpStatus.CREATED);
     }
 
     @Operation(summary = "Soft deleting an existing reminder from the database.")
@@ -112,18 +112,17 @@ public class RemindersController {
 
     @Operation(summary = "Receive necessary data in order to update information about a reminder in the database")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Resource updated successfully",
+            @ApiResponse(responseCode = "200", description = "Resource updated successfully",
                     content = @Content),
             @ApiResponse(responseCode = "404", description = "Haven't found reminder that match the requirements",
                     content = @Content
             )
     })
     @PatchMapping(value = "/reminder/{id}")
-    public ResponseEntity<Void> updateReminder(@PathVariable UUID id, @RequestBody Reminder reminder) {
+    public ResponseEntity<Reminder> updateReminder(@PathVariable UUID id, @RequestBody Reminder reminder) {
         if (!remindersService.getRemindersByParams(Map.of("id", id)).isEmpty()) {
-            System.out.println(reminder);
             remindersService.updateReminder(id, reminder);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(reminder, HttpStatus.NO_CONTENT);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }

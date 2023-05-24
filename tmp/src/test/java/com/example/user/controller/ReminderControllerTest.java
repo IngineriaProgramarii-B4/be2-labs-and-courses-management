@@ -146,7 +146,7 @@ class ReminderControllerTest {
         doNothing().when(remindersService).updateReminder(reminder1.getId(), reminder1);
         when(remindersService.getRemindersByParams(Map.of("id", reminder1.getId()))).thenReturn(List.of(reminder1));
 
-        ResponseEntity<Void> response = remindersController.updateReminder(reminder1.getId(), reminder1);
+        ResponseEntity<Reminder> response = remindersController.updateReminder(reminder1.getId(), reminder1);
 
         //Then
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
@@ -162,7 +162,7 @@ class ReminderControllerTest {
         //When
         when(remindersService.getRemindersByParams(Map.of("id", reminder1.getId()))).thenReturn(Collections.emptyList());
 
-        ResponseEntity<Void> response = remindersController.updateReminder(reminder1.getId(), reminder1);
+        ResponseEntity<Reminder> response = remindersController.updateReminder(reminder1.getId(), reminder1);
 
         //Then
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
@@ -178,7 +178,7 @@ class ReminderControllerTest {
         //When
         doNothing().when(remindersService).saveReminder(reminder1);
 
-        ResponseEntity<Void> response = remindersController.saveReminder(reminder1);
+        ResponseEntity<Reminder> response = remindersController.saveReminder(reminder1);
 
         //Then
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
