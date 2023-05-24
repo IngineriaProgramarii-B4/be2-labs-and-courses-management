@@ -40,6 +40,10 @@ public class Teacher extends AcademicStaff {
         this.taughtSubjects = taughtSubjects;
     }
 
+    public Set<Subject> getTaughtSubjects() {
+        return taughtSubjects;
+    }
+
     public String getTitle() {
         return title;
     }
