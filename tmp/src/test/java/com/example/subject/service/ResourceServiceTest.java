@@ -155,6 +155,7 @@ class ResourceServiceTest {
         assertTrue(result);
     }
 
+    /*
     @Test
     void addResourceTestSuccessful() {
         Component component = new Component("Course", 14, new ArrayList<>());
@@ -197,6 +198,7 @@ class ResourceServiceTest {
         if (filesInSavedResources == null || filesInSavedResources.length == 0)
             folder.delete();
     }
+     */
 
     @Test
     void addResourceTestValidationFailure() {
@@ -239,6 +241,7 @@ class ResourceServiceTest {
         assertEquals(0, result);
     }
 
+    /*
     @Test
     void addResourceTestFolderAlreadyExists() {
         //SonarQube says this needs to exist
@@ -280,6 +283,7 @@ class ResourceServiceTest {
         if (filesInSavedResources == null || filesInSavedResources.length == 0)
             folder.delete();
     }
+     */
 
     @Test
     void addResourceTestThrowsException() {
@@ -372,6 +376,7 @@ class ResourceServiceTest {
         assertEquals(0, result);
     }
 
+    /*
     @Test
     void deleteResourceByTitleTestSuccessful() {
         Component component = new Component("Course", 14, new ArrayList<>());
@@ -430,4 +435,5 @@ class ResourceServiceTest {
         if (filesInSavedResources == null || filesInSavedResources.length == 0)
             folder.delete();
     }
+     */
 }

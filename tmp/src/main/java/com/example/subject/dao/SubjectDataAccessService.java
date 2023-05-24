@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Repository("postgres")
 public class SubjectDataAccessService implements CourseDao{
@@ -261,8 +263,38 @@ public class SubjectDataAccessService implements CourseDao{
         if(resourceToDelete == null)
             return 0;
 
-        resourceToDelete.setDeleted(true);
         resourceToDelete.setLocation("DELETED/" + subjectTitle + "/" + componentType + "/" + resourceTitle);
+
+        String nameInDatabase = resourceToDelete.getLocation().substring(0, resourceToDelete.getLocation().lastIndexOf('.'));
+        String extension = resourceToDelete.getLocation().substring(resourceToDelete.getLocation().lastIndexOf('.'));
+        Pattern pattern = Pattern.compile(Pattern.quote(nameInDatabase) + "\\((\\d+)\\)\\.[^.]+$");
+
+        int countDeletedResourcesSameName = 0;
+        Subject subject = subjectRepo.findSubjectByTitle(subjectTitle).orElse(null);
+        if (subject != null) {
+            for (Component component : subject.getComponentList()) {
+                if (component.getType().equals(componentType)) {
+                    for (Resource resource : component.getResources()) {
+                        if (resource.getLocation().equals(resourceToDelete.getLocation()) && countDeletedResourcesSameName == 0 && resource.getIsDeleted()) {
+                            countDeletedResourcesSameName = 1;
+                        }
+
+                        Matcher matcher = pattern.matcher(resource.getLocation());
+                        System.out.println(resource.getLocation());
+                        if (matcher.find()) {
+                            int number = Integer.parseInt(matcher.group(1));
+                            if (number > countDeletedResourcesSameName)
+                                countDeletedResourcesSameName = number;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (countDeletedResourcesSameName != 0)
+            resourceToDelete.setLocation(nameInDatabase + "(" + countDeletedResourcesSameName + ")" + extension);
+
+        resourceToDelete.setDeleted(true);
         resourceToDelete.setUpdatedAt(formatDateTime());
         resourceRepo.save(resourceToDelete);
 
