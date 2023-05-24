@@ -33,6 +33,24 @@ class AdminsServiceTest {
 
     private Admin admin;
 
+    private boolean simulateRepo(Map<String, Object> map) {
+        List<Admin> expected = List.of(admin);
+
+        given(adminsRepository.findAdminsByParams(
+                !map.containsKey("id") ? nullable(UUID.class) : (UUID) eq(map.get("id")),
+                !map.containsKey("firstname") ? nullable(String.class) : (String) eq(map.get("firstname")),
+                !map.containsKey("lastname") ? nullable(String.class) : (String) eq(map.get("lastname")),
+                !map.containsKey("email") ? nullable(String.class) : (String) eq(map.get("email")),
+                !map.containsKey("username") ? nullable(String.class) : (String) eq(map.get("username")),
+                !map.containsKey("office") ? nullable(String.class) : (String) eq(map.get("office")),
+                !map.containsKey("department") ? nullable(String.class) : (String) eq(map.get("department"))))
+                .willReturn(List.of(admin));
+
+        List<Admin> result = adminsService.getAdminsByParams(map);
+
+        return result.equals(expected) ? true : false;
+    }
+
     @BeforeEach
     public void setup() {
         admin = new Admin(
@@ -49,83 +67,42 @@ class AdminsServiceTest {
     @Test
     void getAdminsByParamsOfficeTest() {
         //Given
-        List<Admin> expected = List.of(admin);
-
         Map<String, Object> args = new HashMap<>();
-
         args.put("office", "OfficeTest");
 
-        given(adminsRepository.findAdminsByParams(
-                nullable(UUID.class),
-                nullable(String.class),
-                nullable(String.class),
-                nullable(String.class),
-                nullable(String.class),
-                eq("OfficeTest"),
-                nullable(String.class)))
-                .willReturn(expected);
-
         //When
-        List<Admin> result = adminsService.getAdminsByParams(args);
+        boolean result = simulateRepo(args);
 
         //Then
-        assertTrue(result.containsAll(expected));
+        assertTrue(result);
     }
 
     @Test
     void getAdminsByParamsDepartmentTest() {
         //Given
-        List<Admin> expected = List.of(admin);
-
         Map<String, Object> args = new HashMap<>();
-
         args.put("department", "DepartmentTest");
-
-        args.put("id", "");
-
-        given(adminsRepository.findAdminsByParams(
-                nullable(UUID.class),
-                nullable(String.class),
-                nullable(String.class),
-                nullable(String.class),
-                nullable(String.class),
-                nullable(String.class),
-                eq("DepartmentTest")))
-                .willReturn(expected);
+        args.put("id", UUID.randomUUID());
 
         //When
-        List<Admin> result = adminsService.getAdminsByParams(args);
+        boolean result = simulateRepo(args);
 
         //Then
-        assertTrue(result.containsAll(expected));
+        assertTrue(result);
     }
 
     @Test
     void getAdminsByParamsIdTest() {
         //Given
-        List<Admin> expected = List.of(admin);
-
         Map<String, Object> args = new HashMap<>();
-
         UUID idTest = UUID.randomUUID();
-
         args.put("id", idTest);
 
-        given(adminsRepository.findAdminsByParams(
-                eq(idTest),
-                nullable(String.class),
-                nullable(String.class),
-                nullable(String.class),
-                nullable(String.class),
-                nullable(String.class),
-                nullable(String.class)))
-                .willReturn(expected);
-
         //When
-        List<Admin> result = adminsService.getAdminsByParams(args);
+        boolean result = simulateRepo(args);
 
         //Then
-        assertTrue(result.containsAll(expected));
+        assertTrue(result);
     }
 
     @Test

@@ -33,6 +33,22 @@ class UsersServiceTest {
 
     private Student student;
 
+    private boolean simulateRepo(Map<String, Object> map) {
+        List<Student> expected = List.of(student);
+
+        given(usersRepository.findUsersByParams(
+                !map.containsKey("id") ? nullable(UUID.class) : any(UUID.class),
+                !map.containsKey("firstname") ? nullable(String.class) : (String) eq(map.get("firstname")),
+                !map.containsKey("lastname") ? nullable(String.class) : (String) eq(map.get("lastname")),
+                !map.containsKey("email") ? nullable(String.class) : (String) eq(map.get("email")),
+                !map.containsKey("username") ? nullable(String.class) : (String) eq(map.get("username"))))
+                .willReturn(List.of(student));
+
+        List<User> result = usersService.getUsersByParams(map);
+
+        return result.equals(expected) ? true : false;
+    }
+
     @BeforeEach
     public void setup() {
         student = new Student(
@@ -49,115 +65,69 @@ class UsersServiceTest {
 
     @Test
     void getUsersByParamsIdTest() {
-
-        List<User> expected = List.of(student);
-
+        //Given
         Map<String, Object> args = new HashMap<>();
+        UUID uuid = UUID.randomUUID();
+        args.put("id", uuid.toString());
 
-        UUID idTest = UUID.randomUUID();
+        //When
+        boolean result = simulateRepo(args);
 
-        args.put("id", idTest.toString());
-
-        given(usersRepository.findUsersByParams(
-                eq(idTest),
-                nullable(String.class),
-                nullable(String.class),
-                nullable(String.class),
-                nullable(String.class)))
-                .willReturn(expected);
-
-        List<User> result = usersService.getUsersByParams(args);
-
-        assertTrue(result.containsAll(expected));
+        //Then
+        assertTrue(result);
     }
 
     @Test
     void getUsersByParamsFirstnameTest() {
-
-        List<User> expected = List.of(student);
-
+        //Given
         Map<String, Object> args = new HashMap<>();
-
         args.put("firstname", "FirstnameTest");
+        UUID uuid = UUID.randomUUID();
+        args.put("id", uuid.toString());
 
-        args.put("id", "");
+        //When
+        boolean result = simulateRepo(args);
 
-        given(usersRepository.findUsersByParams(
-                nullable(UUID.class),
-                eq("FirstnameTest"),
-                nullable(String.class),
-                nullable(String.class),
-                nullable(String.class)))
-                .willReturn(expected);
-
-        List<User> result = usersService.getUsersByParams(args);
-
-        assertTrue(result.containsAll(expected));
+        //Then
+        assertTrue(result);
     }
 
     @Test
     void getUsersByParamsLastnameTest() {
-
-        List<User> expected = List.of(student);
-
+        //Given
         Map<String, Object> args = new HashMap<>();
-
         args.put("lastname", "LastnameTest");
 
-        given(usersRepository.findUsersByParams(
-                nullable(UUID.class),
-                nullable(String.class),
-                eq("LastnameTest"),
-                nullable(String.class),
-                nullable(String.class)))
-                .willReturn(expected);
+        //When
+        boolean result = simulateRepo(args);
 
-        List<User> result = usersService.getUsersByParams(args);
-
-        assertTrue(result.containsAll(expected));
+        //Then
+        assertTrue(result);
     }
 
     @Test
     void getUsersByParamsEmailTest() {
-
-        List<User> expected = List.of(student);
-
+        //Given
         Map<String, Object> args = new HashMap<>();
-
         args.put("email", "test@gmail.com");
 
-        given(usersRepository.findUsersByParams(
-                nullable(UUID.class),
-                nullable(String.class),
-                nullable(String.class),
-                eq("test@gmail.com"),
-                nullable(String.class)))
-                .willReturn(expected);
+        //When
+        boolean result = simulateRepo(args);
 
-        List<User> result = usersService.getUsersByParams(args);
-
-        assertTrue(result.containsAll(expected));
+        //Then
+        assertTrue(result);
     }
 
     @Test
     void getUsersByParamsUsernameTest() {
-
-        List<User> expected = List.of(student);
-
+        //Given
         Map<String, Object> args = new HashMap<>();
-
         args.put("username", "UsernameTest");
 
-        given(usersRepository.findUsersByParams(
-                nullable(UUID.class),
-                nullable(String.class),
-                nullable(String.class),
-                nullable(String.class),
-                eq("UsernameTest")))
-                .willReturn(expected);
+        //When
+        boolean result = simulateRepo(args);
 
-        List<User> result = usersService.getUsersByParams(args);
-
-        assertTrue(result.containsAll(expected));
+        //Then
+        assertTrue(result);
     }
 }

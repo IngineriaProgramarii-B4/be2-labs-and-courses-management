@@ -55,17 +55,17 @@ public class StudentsController {
 
     @Operation(summary = "Receive necessary data in order to update information about a student in the database")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Resource updated successfully",
+            @ApiResponse(responseCode = "200", description = "Resource updated successfully",
                     content = @Content),
             @ApiResponse(responseCode = "404", description = "Haven't found students that match the requirements",
                     content = @Content
             )
     })
     @PatchMapping(value = "/student/{id}")
-    public ResponseEntity<Void> updateStudent(@PathVariable UUID id, @RequestBody Student student) {
+    public ResponseEntity<Student> updateStudent(@PathVariable UUID id, @RequestBody Student student) {
         if (!studentsService.getStudentsByParams(Map.of("id", id)).isEmpty()) {
             studentsService.updateStudent(id, student);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(student, HttpStatus.NO_CONTENT);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }

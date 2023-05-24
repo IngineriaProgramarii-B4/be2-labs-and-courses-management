@@ -51,19 +51,20 @@ public class AdminsController {
 
     @Operation(summary = "Receive necessary data in order to update information about an admin in the database")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Resource updated successfully",
+            @ApiResponse(responseCode = "200", description = "Resource updated successfully",
                     content = @Content),
-            @ApiResponse(responseCode = "400", description = "Resource not found",
+            @ApiResponse(responseCode = "404", description = "Resource to be patched not found",
                     content = @Content)
     })
     @PatchMapping(value = "/admin/{id}")
-    public ResponseEntity<Void> updateAdmin(@PathVariable UUID id, @RequestBody Admin admin) {
+    public ResponseEntity<Admin> updateAdmin(@PathVariable UUID id, @RequestBody Admin admin) {
         if (!adminsService.getAdminsByParams(Map.of("id", id)).isEmpty()) {
             adminsService.updateAdmin(id, admin);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(admin, HttpStatus.NO_CONTENT);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
+
 
     @Operation(summary = "Receive necessary data in order to add a new admin in the database")
     @ApiResponses(value = {
@@ -71,8 +72,8 @@ public class AdminsController {
                     content = @Content)
     })
     @PostMapping(value = "/admins")
-    public ResponseEntity<String> saveAdmin(@RequestBody Admin admin) {
+    public ResponseEntity<Admin> saveAdmin(@RequestBody Admin admin) {
         adminsService.saveAdmin(admin);
-        return new ResponseEntity<>("Resource added successfully", HttpStatus.CREATED);
+        return new ResponseEntity<>(admin, HttpStatus.CREATED);
     }
 }
