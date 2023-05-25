@@ -23,27 +23,16 @@ public class ProfilePicturesService {
         return false;
     }
 
-    private byte[] downloadBasedOnExt(String path, String ext) throws IOException {
-        String newPath = "profile-pics/" + path + "." + ext;
-        try {
-            return firebaseStorageStrategy.download(newPath);
-        } catch (NullPointerException e) {
-            return null;
-        }
-    }
 
-    public byte[] download(String fullPath) throws IOException {
-        byte[] file;
-        file = downloadBasedOnExt(fullPath, "png");
-        if (file == null) {
-            file = downloadBasedOnExt(fullPath, "jpg");
-            if (file == null) {
-                file = downloadBasedOnExt(fullPath, "jpeg");
-                return file;
-            }
-            return file;
-        }
-        return file;
+    public byte[] download(String path) throws IOException {
+        // TODO: de cautat extensia din db
+
+//        path = "profile-pics/" + path + "." + extensie;
+//        byte[] file;
+//        file = firebaseStorageStrategy.download(path);
+
+//        return file;
+        return null;
     }
 
     public boolean delete(String filename) throws IOException {
