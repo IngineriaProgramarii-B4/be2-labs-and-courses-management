@@ -38,7 +38,7 @@ public class ProfilePicturesController {
 
     @DeleteMapping("/profile/delete/{filename}")
     public ResponseEntity<byte[]> delete(@PathVariable("filename") String filename) throws IOException {
-        if (profilePicturesService.delete("profile-pics/" + filename)) {
+        if (profilePicturesService.delete(filename)) {
             return ResponseEntity.status(NO_CONTENT).body("File deleted successfully".getBytes());
         }
         return ResponseEntity.status(NOT_FOUND).body("File not found".getBytes());

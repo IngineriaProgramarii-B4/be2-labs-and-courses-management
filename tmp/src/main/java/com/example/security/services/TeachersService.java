@@ -51,7 +51,6 @@ public class TeachersService {
 
     @Transactional
     public void updateTeacher(UUID id, Teacher teacher) {
-        // TODO : update the courses, it implies another table that makes connection between teacher and subjects
         teachersRepository.updateTeacher(id, teacher.getFirstname(), teacher.getLastname(), teacher.getEmail(), teacher.getUsername(), teacher.getOffice(), teacher.getTitle());
     }
 
