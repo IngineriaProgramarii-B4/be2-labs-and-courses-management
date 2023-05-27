@@ -1,5 +1,4 @@
 package com.example.user.controllers;
-
 import com.example.security.objects.Teacher;
 import com.example.security.services.TeachersService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -52,19 +51,19 @@ public class TeachersController {
 
     @Operation(summary = "Receive necessary data in order to update information about a teacher in the database")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Resource updated successfully",
+            @ApiResponse(responseCode = "200", description = "Resource updated successfully",
                     content = @Content),
             @ApiResponse(responseCode = "404", description = "Haven't found the teacher",
                     content = @Content
             )
     })
     @PatchMapping(value = "/teacher/{id}")
-    public ResponseEntity<String> updateTeacher(@PathVariable UUID id, @RequestBody Teacher teacher) {
+    public ResponseEntity<Teacher> updateTeacher(@PathVariable UUID id, @RequestBody Teacher teacher) {
         if (!teachersService.getTeachersByParams(Map.of("id", id)).isEmpty()) {
             teachersService.updateTeacher(id, teacher);
-            return new ResponseEntity<>("Resource updated successfully", HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(teacher, HttpStatus.NO_CONTENT);
         }
-        return new ResponseEntity<>("Haven't found the teacher", HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @Operation(summary = "Receive necessary data in order to add a new teacher in the database")
@@ -73,8 +72,8 @@ public class TeachersController {
                     content = @Content)
     })
     @PostMapping(value = "/teachers")
-    public ResponseEntity<String> saveTeacher(@RequestBody Teacher teacher) {
+    public ResponseEntity<Teacher> saveTeacher(@RequestBody Teacher teacher) {
         teachersService.saveTeacher(teacher);
-        return new ResponseEntity<>("Resource added successfully", HttpStatus.CREATED);
+        return new ResponseEntity<>(teacher, HttpStatus.CREATED);
     }
 }

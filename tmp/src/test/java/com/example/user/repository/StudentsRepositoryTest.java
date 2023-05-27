@@ -1,6 +1,7 @@
 package com.example.user.repository;
 
 import com.example.security.objects.Student;
+import com.example.security.repositories.AdminsRepository;
 import com.example.security.repositories.StudentsRepository;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -17,6 +21,22 @@ class StudentsRepositoryTest {
 
     @Autowired
     private StudentsRepository studentsRepository;
+
+    @Autowired
+    protected boolean findInRepo(Map<String, Object> map)
+    {
+        var student = studentsRepository.findStudentsByParams(
+                (UUID) map.get("id"),
+                (String)map.get("firstname"),
+                (String)map.get("lastname"),
+                (String)map.get("email"),
+                (String)map.get("username"),
+                map.get("year") == null ? 0 : (Integer)map.get("year"),
+                map.get("semester") == null ? 0 : (Integer)map.get("semester"),
+                (String)map.get("registrationNumber")
+        );
+        return (!student.isEmpty());
+    }
 
     private Student student = new Student(
             "testName",
@@ -49,21 +69,12 @@ class StudentsRepositoryTest {
         //
         //When
         //
-        List<Student> result = studentsRepository.findStudentsByParams(
-                null,
-                null,
-                null,
-                email,
-                null,
-                0,
-                0,
-                null
-        );
+        var exists = findInRepo(Map.of("email", email));
 
         //
         //Then
         //
-        assertTrue(result.contains(student));
+        assertTrue(exists);
     }
 
     @Test
@@ -76,21 +87,12 @@ class StudentsRepositoryTest {
         //
         //When
         //
-        List<Student> result = studentsRepository.findStudentsByParams(
-                null,
-                null,
-                null,
-                email,
-                null,
-                0,
-                0,
-                null
-        );
+        var exists = findInRepo(Map.of("email", email));
 
         //
         //Then
         //
-        assertTrue(result.isEmpty());
+        assertFalse(exists);
     }
 
     @Test
@@ -104,21 +106,11 @@ class StudentsRepositoryTest {
         //
         //When
         //
-        List<Student> result = studentsRepository.findStudentsByParams(
-                null,
-                null,
-                null,
-                null,
-                username,
-                0,
-                0,
-                null
-        );
-
+        var exists = findInRepo(Map.of("username", username));
         //
         //Then
         //
-        assertTrue(result.contains(student));
+        assertTrue(exists);
     }
 
     @Test
@@ -127,25 +119,14 @@ class StudentsRepositoryTest {
         //Given
         //
         String username = "nonexisetntUsername";
-
         //
         //When
         //
-        List<Student> result = studentsRepository.findStudentsByParams(
-                null,
-                null,
-                null,
-                null,
-                username,
-                0,
-                0,
-                null
-        );
-
+        var exists = findInRepo(Map.of("username", username));
         //
         //Then
         //
-        assertTrue(result.isEmpty());
+        assertFalse(exists);
     }
 
     @Test
@@ -159,21 +140,12 @@ class StudentsRepositoryTest {
         //
         //When
         //
-        List<Student> result = studentsRepository.findStudentsByParams(
-                null,
-                null,
-                null,
-                null,
-                null,
-                1,
-                1,
-                regisNr
-        );
 
+        var exists = findInRepo(Map.of("registrationNumber", regisNr));
         //
         //Then
         //
-        assertTrue(result.contains(student));
+        assertTrue(exists);
     }
 
     @Test
@@ -186,20 +158,10 @@ class StudentsRepositoryTest {
         //
         //When
         //
-        List<Student> result = studentsRepository.findStudentsByParams(
-                null,
-                null,
-                null,
-                null,
-                null,
-                1,
-                1,
-                regisNr
-        );
-
+        var exists = findInRepo(Map.of("registrationNumber", regisNr));
         //
         //Then
         //
-        assertTrue(result.isEmpty());
+        assertFalse(exists);
     }
 }

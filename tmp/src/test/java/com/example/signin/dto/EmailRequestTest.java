@@ -5,16 +5,18 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class EmailRequestTest {
+    private final String EMAIL="test@example.com";
 
     @Test
     void testSetEmailAndGetEmail() {
-        String expectedEmail = "test@example.com";
 
+        // Arrange
         EmailRequest emailRequest = new EmailRequest();
-        emailRequest.setEmail(expectedEmail);
+        emailRequest.setEmail(EMAIL);
 
         String actualEmail = emailRequest.getEmail();
 
-        assertEquals(expectedEmail, actualEmail, "The actual email should match the expected email");
+        // Assert
+        assertEquals(EMAIL, actualEmail, "The actual email should match the expected email");
     }
 }

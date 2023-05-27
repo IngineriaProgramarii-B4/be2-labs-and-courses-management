@@ -1,33 +1,40 @@
 package com.example.signin.dto;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class LoginRequestBodyTest {
+    private String email;
+    private String password;
+    private LoginRequestBody loginRequestBody;
 
+    private final String PASSWORD= "Password123";
+
+    private final String EMAIL= "example@example.com";
+
+    @BeforeEach
+    void setUp() {
+
+        loginRequestBody = new LoginRequestBody();
+        loginRequestBody.setEmail(EMAIL);
+        loginRequestBody.setPassword(PASSWORD);
+    }
     @Test
     void testSettersAndGetters() {
-        String email = "example@example.com";
-        String password = "password123";
 
-        LoginRequestBody loginRequestBody = new LoginRequestBody();
-        loginRequestBody.setEmail(email);
-        loginRequestBody.setPassword(password);
-
-        Assertions.assertEquals(email, loginRequestBody.getEmail());
-        Assertions.assertEquals(password, loginRequestBody.getPassword());
+        // Assert
+        Assertions.assertEquals(EMAIL, loginRequestBody.getEmail());
+        Assertions.assertEquals(PASSWORD, loginRequestBody.getPassword());
     }
 
     @Test
     void testToString() {
-        String email = "example@example.com";
-        String password = "password123";
 
-        LoginRequestBody loginRequestBody = new LoginRequestBody();
-        loginRequestBody.setEmail(email);
-        loginRequestBody.setPassword(password);
 
-        String expectedToStringResult = "LoginRequestBody(email=" + email + ", password=" + password + ")";
+        // Arrange
+         String expectedToStringResult = "LoginRequestBody(email=" + EMAIL + ", password=" + PASSWORD + ")";
+        // Assert
         Assertions.assertEquals(expectedToStringResult, loginRequestBody.toString());
     }
 }

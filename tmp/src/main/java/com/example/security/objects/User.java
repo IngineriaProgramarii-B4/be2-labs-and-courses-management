@@ -117,6 +117,10 @@ public class User extends DBObject {
         return roles;
     }
 
+    public void setRoles(List<Role> roles) {
+        this.roles = roles;
+    }
+
     public String getPassword() {
         return password;
     }

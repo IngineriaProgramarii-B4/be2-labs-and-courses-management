@@ -33,11 +33,14 @@ class SecurityConfigTest {
 
     @Test
     void testAuthenticationManager() throws Exception {
+        // Arrange
         AuthenticationManager authenticationManager = mock(AuthenticationManager.class);
+        // Act
         when(authenticationConfiguration.getAuthenticationManager()).thenReturn(authenticationManager);
 
         AuthenticationManager result = securityConfig.authenticationManager(authenticationConfiguration);
 
+        // Assert
         assertEquals(authenticationManager, result);
         verify(authenticationConfiguration, times(1)).getAuthenticationManager();
     }

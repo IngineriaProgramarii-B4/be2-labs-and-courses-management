@@ -27,8 +27,6 @@ class SecurityConfigTest {
     @Mock
     private JwtAuthEntryPoint authEntryPoint;
 
-    @Mock
-    private AuthenticationConfiguration authenticationConfiguration;
 
     private SecurityConfig securityConfig;
 
@@ -41,7 +39,9 @@ class SecurityConfigTest {
 
     @Test
     void testPasswordEncoder() {
+        // Arrange
         PasswordEncoder passwordEncoder = securityConfig.passwordEncoder();
+        // Assert
         assertTrue(passwordEncoder instanceof BCryptPasswordEncoder);
     }
 }

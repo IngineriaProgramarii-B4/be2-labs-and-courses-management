@@ -27,25 +27,26 @@ import static org.mockito.Mockito.*;
     private JavaMailSender mailSender;
 
     private Credentials user;
-    private String url;
+    private final String URL="http://example.com/resetPassword";
 
     @BeforeEach
      void setup() {
         user = new Credentials();
         user.setEmail("test@example.com");
-
-        url = "http://example.com/resetPassword";
     }
 
     @Test
      void testSendPasswordResetEmail() throws MessagingException, UnsupportedEncodingException {
-        MimeMessage mimeMessage = mock(MimeMessage.class);
+       // Arrange
+       MimeMessage mimeMessage = mock(MimeMessage.class);
 
-        when(mailSender.createMimeMessage()).thenReturn(mimeMessage);
+       // Act
+       when(mailSender.createMimeMessage()).thenReturn(mimeMessage);
 
-        emailService.sendPasswordResetEmail(user, url);
+        emailService.sendPasswordResetEmail(user, URL);
 
-        verify(mailSender, times(1)).createMimeMessage();
+       // Assert
+       verify(mailSender, times(1)).createMimeMessage();
         verify(mailSender, times(1)).send(any(MimeMessage.class));
     }
 }

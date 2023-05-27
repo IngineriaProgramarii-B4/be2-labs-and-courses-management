@@ -23,99 +23,119 @@ class PasswordResetTokenServiceTest {
     @Mock
     private PasswordResetTokenRepository passwordResetTokenRepository;
 
+    private Credentials CREDENTIALS;
+
+    private final String TOKEN="token";
+
+    private PasswordResetToken PASSWORDRESETTOKEN;
     @BeforeEach
     void setup() {
         MockitoAnnotations.openMocks(this);
         passwordResetTokenService = new PasswordResetTokenService(passwordResetTokenRepository);
+
+        CREDENTIALS=new Credentials();
+        PASSWORDRESETTOKEN = new PasswordResetToken(TOKEN, CREDENTIALS);
+
     }
 
     @Test
     void testCreatePasswordResetTokenForUser() {
-        Credentials credentials = new Credentials();
-        String passwordToken = "token";
-        PasswordResetToken passwordResetToken = new PasswordResetToken(passwordToken, credentials);
 
-        // Stub the behavior of the repository
-        when(passwordResetTokenRepository.save(any(PasswordResetToken.class))).thenReturn(passwordResetToken);
+        // Act
+        when(passwordResetTokenRepository.save(any(PasswordResetToken.class))).thenReturn(PASSWORDRESETTOKEN);
 
-        // Call the method under test
-        passwordResetTokenService.createPasswordResetTokenForUser(credentials, passwordToken);
+        passwordResetTokenService.createPasswordResetTokenForUser(CREDENTIALS, TOKEN);
 
-        // Verify that the save method was called once
+        // Assert
         verify(passwordResetTokenRepository, times(1)).save(any(PasswordResetToken.class));
+    }
+    @Test
+    void testFindUserByPasswordTokenWithExistingToken() {
+
+        // Act
+        when(passwordResetTokenRepository.findByToken(TOKEN)).thenReturn(PASSWORDRESETTOKEN);
+
+        Optional<Credentials> result = passwordResetTokenService.findUserByPasswordToken(TOKEN);
+
+        // Assert
+        assertTrue(result.isPresent());
+        assertEquals(CREDENTIALS, result.get());
     }
 
     @Test
     void testValidatePasswordResetTokenWithValidToken() {
+        // Arrange
         String passwordResetToken = "validToken";
         PasswordResetToken validPasswordToken = new PasswordResetToken(passwordResetToken, new Credentials());
 
+        // Act
         when(passwordResetTokenRepository.findByToken(passwordResetToken)).thenReturn(validPasswordToken);
 
         String result = passwordResetTokenService.validatePasswordResetToken(passwordResetToken);
 
+        // Assert
         assertEquals("valid", result);
     }
-
     @Test
-    void testValidatePasswordResetTokenWithInvalidToken() {
-        String passwordResetToken = "invalidToken";
+    void testFindPasswordResetToken() {
+        // Arrange
+        PasswordResetToken passwordResetTokenObj = new PasswordResetToken(TOKEN, new Credentials());
 
-        when(passwordResetTokenRepository.findByToken(passwordResetToken)).thenReturn(null);
+        // Act
+        when(passwordResetTokenRepository.findByToken(TOKEN)).thenReturn(passwordResetTokenObj);
 
-        String result = passwordResetTokenService.validatePasswordResetToken(passwordResetToken);
+        PasswordResetToken result = passwordResetTokenService.findPasswordResetToken(TOKEN);
 
-        assertEquals("Invalid verification token", result);
+        // Assert
+        assertEquals(passwordResetTokenObj, result);
     }
 
     @Test
     void testValidatePasswordResetTokenWithExpiredToken() {
+        // Arrange
         String passwordResetToken = "expiredToken";
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_MONTH, -1);
         PasswordResetToken expiredPasswordToken = new PasswordResetToken(passwordResetToken, new Credentials());
         expiredPasswordToken.setExpirationTime(calendar.getTime());
 
+        // Act
         when(passwordResetTokenRepository.findByToken(passwordResetToken)).thenReturn(expiredPasswordToken);
 
         String result = passwordResetTokenService.validatePasswordResetToken(passwordResetToken);
 
+        // Assert
         assertEquals("Link already expired, resend link", result);
     }
-
     @Test
-    void testFindUserByPasswordTokenWithExistingToken() {
-        String passwordResetToken = "token";
-        Credentials credentials = new Credentials();
-        PasswordResetToken passwordResetTokenObj = new PasswordResetToken(passwordResetToken, credentials);
+    void testValidatePasswordResetTokenWithInvalidToken() {
+        // Arrange
+        String passwordResetToken = "invalidToken";
 
-        when(passwordResetTokenRepository.findByToken(passwordResetToken)).thenReturn(passwordResetTokenObj);
+        // Act
+        when(passwordResetTokenRepository.findByToken(passwordResetToken)).thenReturn(null);
 
-        Optional<Credentials> result = passwordResetTokenService.findUserByPasswordToken(passwordResetToken);
+        String result = passwordResetTokenService.validatePasswordResetToken(passwordResetToken);
 
-        assertTrue(result.isPresent());
-        assertEquals(credentials, result.get());
+        // Assert
+        assertEquals("Invalid verification token", result);
     }
+
+
+
     @Test
     void testFindUserByPasswordTokenWithNonExistingToken() {
+        // Arrange
         String passwordResetToken = "nonExistingToken";
 
+        // Act
         when(passwordResetTokenRepository.findByToken(passwordResetToken)).thenReturn(null);
 
         Optional<Credentials> result = passwordResetTokenService.findUserByPasswordToken(passwordResetToken);
 
+        // Assert
         assertTrue(result.isEmpty());
     }
 
-    @Test
-    void testFindPasswordResetToken() {
-        String passwordResetToken = "token";
-        PasswordResetToken passwordResetTokenObj = new PasswordResetToken(passwordResetToken, new Credentials());
 
-        when(passwordResetTokenRepository.findByToken(passwordResetToken)).thenReturn(passwordResetTokenObj);
-
-        PasswordResetToken result = passwordResetTokenService.findPasswordResetToken(passwordResetToken);
-
-        assertEquals(passwordResetTokenObj, result);
-    }
 }
