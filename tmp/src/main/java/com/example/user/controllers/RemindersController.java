@@ -42,11 +42,11 @@ public class RemindersController {
                     content = @Content
             )
     })
-    @GetMapping(value = {"/reminders/{username}/{id}"})
-    public ResponseEntity<List<Reminder>> getRemindersByParams(@PathVariable String username, @PathVariable UUID id) {
+    @GetMapping(value = {"/reminders/{creatorId}/{id}"})
+    public ResponseEntity<List<Reminder>> getRemindersByParams(@PathVariable UUID creatorId, @PathVariable UUID id) {
         Map<String, Object> args = new HashMap<>();
 
-        args.put("creatorUsername", username);
+        args.put("creatorId", creatorId);
         args.put("id", id);
 
         List<Reminder> reminders = remindersService.getRemindersByParams(args);
@@ -69,10 +69,10 @@ public class RemindersController {
                     content = @Content
             )
     })
-    @GetMapping(value = {"/reminders/{username}"})
-    public ResponseEntity<List<Reminder>> getRemindersOfLoggedUser(@PathVariable String username) {
+    @GetMapping(value = {"/reminders/{creatorId}"})
+    public ResponseEntity<List<Reminder>> getRemindersOfLoggedUser(@PathVariable UUID creatorId) {
 
-        Map<String, Object> params = Map.of("creatorUsername", username);
+        Map<String, Object> params = Map.of("creatorId", creatorId);
 
         List<Reminder> reminders = remindersService.getRemindersByParams(params);
 
@@ -112,17 +112,17 @@ public class RemindersController {
 
     @Operation(summary = "Receive necessary data in order to update information about a reminder in the database")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Resource updated successfully",
+            @ApiResponse(responseCode = "204", description = "Resource updated successfully",
                     content = @Content),
             @ApiResponse(responseCode = "404", description = "Haven't found reminder that match the requirements",
                     content = @Content
             )
     })
     @PatchMapping(value = "/reminder/{id}")
-    public ResponseEntity<Reminder> updateReminder(@PathVariable UUID id, @RequestBody Reminder reminder) {
+    public ResponseEntity<String> updateReminder(@PathVariable UUID id, @RequestBody Reminder reminder) {
         if (!remindersService.getRemindersByParams(Map.of("id", id)).isEmpty()) {
             remindersService.updateReminder(id, reminder);
-            return new ResponseEntity<>(reminder, HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>("Reminder updated successfully", HttpStatus.NO_CONTENT);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }

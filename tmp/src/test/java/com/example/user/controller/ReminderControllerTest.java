@@ -79,9 +79,9 @@ class ReminderControllerTest {
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
 
         //When
-        when(remindersService.getRemindersByParams(Map.of("creatorUsername", reminder1.getCreatorUsername(), "id", reminder1.getId()))).thenReturn(List.of(reminder1));
+        when(remindersService.getRemindersByParams(Map.of("creatorId", reminder1.getCreatorId(), "id", reminder1.getId()))).thenReturn(List.of(reminder1));
 
-        ResponseEntity<List<Reminder>> response = remindersController.getRemindersByParams(reminder1.getCreatorUsername(), reminder1.getId());
+        ResponseEntity<List<Reminder>> response = remindersController.getRemindersByParams(reminder1.getCreatorId(), reminder1.getId());
 
         //Then
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -97,7 +97,7 @@ class ReminderControllerTest {
         //When
         when(remindersService.getRemindersByParams(Map.of("creatorUsername", reminder1.getCreatorUsername(), "id", reminder1.getId()))).thenReturn(Collections.emptyList());
 
-        ResponseEntity<List<Reminder>> response = remindersController.getRemindersByParams(reminder1.getCreatorUsername(), reminder1.getId());
+        ResponseEntity<List<Reminder>> response = remindersController.getRemindersByParams(reminder1.getCreatorId(), reminder1.getId());
 
         //Then
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
@@ -111,9 +111,9 @@ class ReminderControllerTest {
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
 
         //When
-        when(remindersService.getRemindersByParams(Map.of("creatorUsername", reminder1.getCreatorUsername()))).thenReturn(List.of(reminder1, reminder2));
+        when(remindersService.getRemindersByParams(Map.of("creatorId", reminder1.getCreatorId()))).thenReturn(List.of(reminder1, reminder2));
 
-        ResponseEntity<List<Reminder>> response = remindersController.getRemindersOfLoggedUser(reminder1.getCreatorUsername());
+        ResponseEntity<List<Reminder>> response = remindersController.getRemindersOfLoggedUser(reminder1.getCreatorId());
 
         //Then
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -129,7 +129,7 @@ class ReminderControllerTest {
         //When
         when(remindersService.getRemindersByParams(Map.of("creatorUsername", reminder1.getCreatorUsername()))).thenReturn(Collections.emptyList());
 
-        ResponseEntity<List<Reminder>> response = remindersController.getRemindersOfLoggedUser(reminder1.getCreatorUsername());
+        ResponseEntity<List<Reminder>> response = remindersController.getRemindersOfLoggedUser(reminder1.getCreatorId());
 
         //Then
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
@@ -146,7 +146,7 @@ class ReminderControllerTest {
         doNothing().when(remindersService).updateReminder(reminder1.getId(), reminder1);
         when(remindersService.getRemindersByParams(Map.of("id", reminder1.getId()))).thenReturn(List.of(reminder1));
 
-        ResponseEntity<Reminder> response = remindersController.updateReminder(reminder1.getId(), reminder1);
+        ResponseEntity<String> response = remindersController.updateReminder(reminder1.getId(), reminder1);
 
         //Then
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
@@ -162,7 +162,7 @@ class ReminderControllerTest {
         //When
         when(remindersService.getRemindersByParams(Map.of("id", reminder1.getId()))).thenReturn(Collections.emptyList());
 
-        ResponseEntity<Reminder> response = remindersController.updateReminder(reminder1.getId(), reminder1);
+        ResponseEntity<String> response = remindersController.updateReminder(reminder1.getId(), reminder1);
 
         //Then
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());

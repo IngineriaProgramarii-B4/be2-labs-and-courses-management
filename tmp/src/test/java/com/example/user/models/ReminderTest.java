@@ -1,7 +1,6 @@
 package com.example.user.models;
 
 import com.example.security.objects.Student;
-import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -15,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 
 class ReminderTest {
 
-    private Reminder reminder1, reminder2;
+    private Reminder reminder1, reminder2, reminder3;
     private Student tempStudent;
 
     @BeforeEach
@@ -46,6 +45,13 @@ class ReminderTest {
                 "25.04.2023 14:30",
                 "Examen la pedagogie",
                 "Examen maine la pedagogie la ora 16 in C2"
+        );
+
+        reminder3 = new Reminder(
+                tempStudent,
+                "25.04.2023 14:30",
+                "Examen",
+                "Examen la oop"
         );
     }
 

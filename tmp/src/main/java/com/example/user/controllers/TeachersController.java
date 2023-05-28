@@ -51,17 +51,17 @@ public class TeachersController {
 
     @Operation(summary = "Receive necessary data in order to update information about a teacher in the database")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Resource updated successfully",
+            @ApiResponse(responseCode = "204", description = "Resource updated successfully",
                     content = @Content),
             @ApiResponse(responseCode = "404", description = "Haven't found the teacher",
                     content = @Content
             )
     })
     @PatchMapping(value = "/teacher/{id}")
-    public ResponseEntity<Teacher> updateTeacher(@PathVariable UUID id, @RequestBody Teacher teacher) {
+    public ResponseEntity<String> updateTeacher(@PathVariable UUID id, @RequestBody Teacher teacher) {
         if (!teachersService.getTeachersByParams(Map.of("id", id)).isEmpty()) {
             teachersService.updateTeacher(id, teacher);
-            return new ResponseEntity<>(teacher, HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>("Teacher information successfully", HttpStatus.NO_CONTENT);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
