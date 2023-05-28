@@ -15,5 +15,8 @@ public interface ResourceRepo extends JpaRepository<Resource, UUID> {
 
     @Query("SELECT r FROM Subject s JOIN s.componentList c JOIN c.resources r WHERE s.title = ?1 AND s.isDeleted = FALSE AND c.type = ?2 AND c.isDeleted = FALSE AND r.title = ?3 AND r.isDeleted = FALSE")
     Optional<Resource> findBySubjectTitleAndComponentTypeAndResourceTitle(String subjectTitle, String componentType, String resourceTitle);
+
+    @Query("SELECT r FROM Subject s JOIN s.componentList c JOIN c.resources r WHERE r.location = ?1 AND r.isDeleted = TRUE")
+    Optional<Resource> findDeletedByLocation(String location);
 }
 

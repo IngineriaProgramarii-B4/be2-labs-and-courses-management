@@ -2,18 +2,12 @@ package com.example.subject.dao;
 
 import com.example.subject.model.*;
 import com.example.subject.repository.*;
-import jakarta.xml.bind.SchemaOutputResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.*;
 
 @Repository("postgres")
 public class SubjectDataAccessService implements CourseDao{
@@ -40,6 +34,21 @@ public class SubjectDataAccessService implements CourseDao{
             e.printStackTrace();
         }
         return date;
+    }
+    private String getAvailableLocation(String location) {
+        Optional<Resource> optionalResource = resourceRepo.findDeletedByLocation(location);
+        if (optionalResource.isEmpty())
+            return location;
+
+        int suffix = 1;
+        String availableLocation = location;
+        while (optionalResource.isPresent()) {
+            availableLocation = location + "(" + suffix + ")";
+            optionalResource = resourceRepo.findDeletedByLocation(availableLocation);
+            suffix++;
+        }
+
+        return availableLocation;
     }
 
     // SUBJECTS
@@ -106,7 +115,6 @@ public class SubjectDataAccessService implements CourseDao{
             for (Component component : subjectToUpdate.getComponentList()) {
                 for (Resource resource : component.getResources()) {
                     if (!component.getIsDeleted() && !resource.getIsDeleted()) {
-                        String resLocation = resource.getLocation();
                         String newResLocation = subject.getTitle() + "/" + component.getType() + "/" + resource.getTitle();
                         resource.setLocation(newResLocation);
 
@@ -263,37 +271,9 @@ public class SubjectDataAccessService implements CourseDao{
         if(resourceToDelete == null)
             return 0;
 
-        resourceToDelete.setLocation("DELETED/" + subjectTitle + "/" + componentType + "/" + resourceTitle);
-
-        String nameInDatabase = resourceToDelete.getLocation().substring(0, resourceToDelete.getLocation().lastIndexOf('.'));
-        String extension = resourceToDelete.getLocation().substring(resourceToDelete.getLocation().lastIndexOf('.'));
-        Pattern pattern = Pattern.compile(Pattern.quote(nameInDatabase) + "\\((\\d+)\\)\\.[^.]+$");
-
-        int countDeletedResourcesSameName = 0;
-        Subject subject = subjectRepo.findSubjectByTitle(subjectTitle).orElse(null);
-        if (subject != null) {
-            for (Component component : subject.getComponentList()) {
-                if (component.getType().equals(componentType)) {
-                    for (Resource resource : component.getResources()) {
-                        if (resource.getLocation().equals(resourceToDelete.getLocation()) && countDeletedResourcesSameName == 0 && resource.getIsDeleted()) {
-                            countDeletedResourcesSameName = 1;
-                        }
-
-                        Matcher matcher = pattern.matcher(resource.getLocation());
-                        System.out.println(resource.getLocation());
-                        if (matcher.find()) {
-                            int number = Integer.parseInt(matcher.group(1));
-                            if (number > countDeletedResourcesSameName)
-                                countDeletedResourcesSameName = number;
-                        }
-                    }
-                }
-            }
-        }
-
-        if (countDeletedResourcesSameName != 0)
-            resourceToDelete.setLocation(nameInDatabase + "(" + countDeletedResourcesSameName + ")" + extension);
-
+        String newLocation = "DELETED/" + subjectTitle + "/" + componentType + "/" + resourceTitle;
+        newLocation = getAvailableLocation(newLocation);
+        resourceToDelete.setLocation(newLocation);
         resourceToDelete.setDeleted(true);
         resourceToDelete.setUpdatedAt(formatDateTime());
         resourceRepo.save(resourceToDelete);
