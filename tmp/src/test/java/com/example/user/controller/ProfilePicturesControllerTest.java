@@ -1,6 +1,7 @@
 package com.example.user.controller;
 
 import com.example.user.controllers.ProfilePicturesController;
+import com.example.user.models.TupleProfilePicture;
 import com.example.user.services.ProfilePicturesService;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -13,6 +14,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
@@ -30,6 +32,8 @@ class ProfilePicturesControllerTest {
     @Test
     void uploadProfilePictureSuccessTest() throws Exception {
         //Given
+        UUID testId = UUID.randomUUID();
+
         MockMultipartFile mockFile = new MockMultipartFile(
                 "file",
                 "test.jpg",
@@ -38,10 +42,10 @@ class ProfilePicturesControllerTest {
         );
 
         //When
-        when(profilePicturesService.uploadProfilePicture(mockFile, mockFile.getOriginalFilename()))
+        when(profilePicturesService.uploadProfilePicture(mockFile, testId))
                 .thenReturn(true);
 
-        ResponseEntity<byte[]> response = profilePicturesController.uploadProfilePicture(mockFile);
+        ResponseEntity<byte[]> response = profilePicturesController.uploadProfilePicture(testId, mockFile);
 
         //Then
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
@@ -50,6 +54,8 @@ class ProfilePicturesControllerTest {
     @Test
     void uploadProfilePictureFailureTest() {
         //Given
+        UUID testId = UUID.randomUUID();
+
         MockMultipartFile mockFile = new MockMultipartFile(
                 "file",
                 "test.jpg",
@@ -58,10 +64,10 @@ class ProfilePicturesControllerTest {
         );
 
         //When
-        when(profilePicturesService.uploadProfilePicture(mockFile, mockFile.getOriginalFilename()))
+        when(profilePicturesService.uploadProfilePicture(mockFile, testId))
                 .thenReturn(false);
 
-        ResponseEntity<byte[]> response = profilePicturesController.uploadProfilePicture(mockFile);
+        ResponseEntity<byte[]> response = profilePicturesController.uploadProfilePicture(testId, mockFile);
 
         //Then
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -71,11 +77,12 @@ class ProfilePicturesControllerTest {
     void downloadFileFoundTest() throws IOException {
         //Given
         byte[] fileData = "Test file content".getBytes();
+        UUID testId = UUID.randomUUID();
 
         //When
-        when(profilePicturesService.download("test.jpg")).thenReturn(fileData);
+        when(profilePicturesService.download(testId)).thenReturn(new TupleProfilePicture(fileData, null));
 
-        ResponseEntity<byte[]> response = profilePicturesController.download("test.jpg");
+        ResponseEntity<byte[]> response = profilePicturesController.download(testId);
 
         //Then
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -83,10 +90,13 @@ class ProfilePicturesControllerTest {
 
     @Test
     void downloadFileNotFoundTest() throws IOException {
-        //When
-        when(profilePicturesService.download("test.jpg")).thenReturn(null);
+        //Given
+        UUID testId = UUID.randomUUID();
 
-        ResponseEntity<byte[]> response = profilePicturesController.download("test.jpg");
+        //When
+        when(profilePicturesService.download(testId)).thenReturn(null);
+
+        ResponseEntity<byte[]> response = profilePicturesController.download(testId);
 
         //Then
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
@@ -95,9 +105,9 @@ class ProfilePicturesControllerTest {
     @Test
     void deleteFileFoundTest() throws IOException {
         //When
-        when(profilePicturesService.delete("test.jpg")).thenReturn(true);
+        when(profilePicturesService.delete("test")).thenReturn(true);
 
-        ResponseEntity<byte[]> response = profilePicturesController.delete("test.jpg");
+        ResponseEntity<byte[]> response = profilePicturesController.delete("test");
 
         //Then
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
@@ -106,7 +116,7 @@ class ProfilePicturesControllerTest {
     @Test
     void deleteFileNotFoundTest() throws IOException {
         //When
-        when(profilePicturesService.delete("test.jpg")).thenReturn(false);
+        when(profilePicturesService.delete("profile-pics/test.jpg")).thenReturn(false);
 
         ResponseEntity<byte[]> response = profilePicturesController.delete("test.jpg");
 

@@ -1,6 +1,9 @@
 package com.example.user.service;
 
 import com.example.firebase.FirebaseStorageStrategy;
+import com.example.user.models.ProfilePicture;
+import com.example.user.models.TupleProfilePicture;
+import com.example.user.repository.ProfilePicturesRepository;
 import com.example.user.services.ProfilePicturesService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -13,6 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 
 import java.io.IOException;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -27,9 +31,14 @@ class ProfilePicturesServiceTest {
     @Mock
     FirebaseStorageStrategy firebaseStorageStrategy;
 
+    @Mock
+    ProfilePicturesRepository profilePicturesRepository;
+
     @Test
     void uploadProfilePictureSuccessTest() {
         //Given
+        UUID testId = UUID.randomUUID();
+
         MockMultipartFile mockFile = new MockMultipartFile(
                 "file",
                 "test.jpeg",
@@ -39,8 +48,12 @@ class ProfilePicturesServiceTest {
 
         //When
         when(firebaseStorageStrategy.upload(Mockito.any(), anyString(), anyString())).thenReturn(true);
+        when(profilePicturesRepository.findProfilePictureByParams(testId)).thenReturn(null);
+        when(profilePicturesRepository.findProfilePictureByName("test")).thenReturn(null);
 
-        boolean result = profilePicturesService.uploadProfilePicture(mockFile, "test.jpg");
+        boolean result = profilePicturesService.uploadProfilePicture(mockFile, testId);
+
+        profilePicturesRepository.deleteByName(mockFile.getOriginalFilename());
 
         //Then
         assertTrue(result);
@@ -49,60 +62,51 @@ class ProfilePicturesServiceTest {
     @Test
     void uploadProfilePictureFailureTest() {
         //Given
+        UUID testId = UUID.randomUUID();
+
         MockMultipartFile mockFile = new MockMultipartFile(
                 "file",
-                "test.jpg",
-                "image/jpeg",
+                "test",
+                "jpeg",
                 "Test data".getBytes()
         );
 
         //When
         when(firebaseStorageStrategy.upload(Mockito.any(), anyString(), anyString())).thenReturn(false);
+        when(profilePicturesRepository.findProfilePictureByParams(testId)).thenReturn(null);
+        when(profilePicturesRepository.findProfilePictureByName("test")).thenReturn(null);
 
-        boolean result = profilePicturesService.uploadProfilePicture(mockFile, "test.jpg");
+        boolean result = profilePicturesService.uploadProfilePicture(mockFile, testId);
 
         //Then
         assertFalse(result);
     }
 
     @Test
-    void downloadFoundPngTest() throws IOException {
+    void downloadFoundTest() throws IOException {
         //Given
         byte[] fileData = "Test file content".getBytes();
+        UUID testId = UUID.randomUUID();
 
         //When
         when(firebaseStorageStrategy.download(anyString())).thenReturn(fileData);
+        when(profilePicturesRepository.findProfilePictureByParams(testId)).thenReturn(new ProfilePicture(UUID.randomUUID(), "test", "png"));
 
-        byte[] result = profilePicturesService.download("test");
-
-        //Then
-        assertArrayEquals(fileData, result);
-    }
-
-    @Test
-    void downloadFoundJpgTest2() throws IOException {
-        //Given
-        byte[] fileData = "Test file content".getBytes();
-
-        //When
-        when(firebaseStorageStrategy.download("profile-pics/test.jpg"))
-                .thenReturn(fileData);
-
-        when(firebaseStorageStrategy.download("profile-pics/test.png"))
-                .thenThrow(NullPointerException.class);
-
-        byte[] result = profilePicturesService.download("test");
+        TupleProfilePicture result = profilePicturesService.download(testId);
 
         //Then
-        assertArrayEquals(fileData, result);
+        assertArrayEquals(fileData, result.getBytes());
     }
 
     @Test
     void downloadNotFoundTest() throws IOException {
-        //When
-        when(firebaseStorageStrategy.download(anyString())).thenThrow(NullPointerException.class);
+        //Given
+        UUID testId = UUID.randomUUID();
 
-        byte[] result = profilePicturesService.download("test.jpg");
+        //When
+        when(profilePicturesRepository.findProfilePictureByParams(testId)).thenReturn(null);
+
+        TupleProfilePicture result = profilePicturesService.download(testId);
 
         //Then
         assertNull(result);
@@ -111,9 +115,10 @@ class ProfilePicturesServiceTest {
     @Test
     void deleteSuccessTest() throws IOException {
         //When
-        when(firebaseStorageStrategy.deleteFile(anyString())).thenReturn(true);
+        when(firebaseStorageStrategy.deleteFile("profile-pics/" + "test.png")).thenReturn(true);
+        doNothing().when(profilePicturesRepository).deleteByName("test");
 
-        boolean result = profilePicturesService.delete("test.jpg");
+        boolean result = profilePicturesService.delete("test.png");
 
         //Then
         assertTrue(result);
@@ -122,9 +127,9 @@ class ProfilePicturesServiceTest {
     @Test
     void deleteFailureTest() throws IOException {
         //When
-        when(firebaseStorageStrategy.deleteFile(anyString())).thenReturn(false);
+        when(firebaseStorageStrategy.deleteFile("profile-pics/" + "test")).thenReturn(false);
 
-        boolean result = profilePicturesService.delete("test.jpg");
+        boolean result = profilePicturesService.delete("test");
 
         //Then
         assertFalse(result);
