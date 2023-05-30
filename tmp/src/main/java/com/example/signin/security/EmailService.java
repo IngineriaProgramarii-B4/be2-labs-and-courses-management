@@ -1,5 +1,6 @@
 package com.example.signin.security;
 
+import com.example.catalog.models.Grade;
 import com.example.signin.model.Credentials;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -21,7 +22,6 @@ public class EmailService {
         this.mailSender = mailSender;
     }
 
-
     public void sendPasswordResetEmail(Credentials credentials, String url) throws MessagingException, UnsupportedEncodingException {
 
         String subject = "Password Reset Request Verification";
@@ -41,5 +41,24 @@ public class EmailService {
 
     }
 
+    public void sendGradeAddedEmail(String email, Grade grade) {
+        String subject = "You have a new grade!";
+        String senderName = "Labs and Courses Portal Service";
+        String mailContent = "<p> Hi, </p>" +
+                "<p><b>You've been evaluated with " + grade.getValue() + " in " + grade.getSubject() + ".<b>" +
+                ".\n Have a great day!";
+        MimeMessage message = mailSender.createMimeMessage();
+        var messageHelper = new MimeMessageHelper(message);
+        try {
+            messageHelper.setFrom("noreply_b4@gmail.com", senderName);
+            messageHelper.setTo(email);
+            messageHelper.setSubject(subject);
+            messageHelper.setText(mailContent, true);
+        }
+        catch (Exception e) {
+            e.addSuppressed(e);
+        }
+        mailSender.send(message);
+    }
 
 }

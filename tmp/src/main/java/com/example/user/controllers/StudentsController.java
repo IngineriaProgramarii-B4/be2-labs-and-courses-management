@@ -3,6 +3,7 @@ package com.example.user.controllers;
 import com.example.catalog.models.Grade;
 import com.example.security.objects.Student;
 import com.example.security.services.StudentsService;
+import com.example.signin.security.EmailService;
 import com.example.subject.service.SubjectService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -25,10 +26,12 @@ import java.util.*;
 public class StudentsController {
     private final StudentsService studentsService;
     private final SubjectService subjectService;
+    private final EmailService emailService;
     @Autowired
-    public StudentsController(StudentsService studentsService, SubjectService subjectService) {
+    public StudentsController(StudentsService studentsService, SubjectService subjectService, EmailService emailService) {
         this.studentsService = studentsService;
         this.subjectService = subjectService;
+        this.emailService = emailService;
     }
 
     @Operation(summary = "Get a list of students based on 0 or more filters passed as queries. The format is property_from_student_schema=value.")
@@ -212,10 +215,11 @@ public class StudentsController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Nullable
     public ResponseEntity<Grade> addGrade(@PathVariable UUID id, @RequestBody Grade grade) {
-        Optional <Student> students = Optional.ofNullable(studentsService.getStudentById(id));
-        if (students.isPresent()
+        Optional <Student> student = Optional.ofNullable(studentsService.getStudentById(id));
+        if (student.isPresent()
                 && subjectService.getSubjectByTitle(grade.getSubject()).isPresent()) {
             studentsService.addGrade(id, grade);
+            emailService.sendGradeAddedEmail(student.get().getEmail(), grade);
             return new ResponseEntity<>(grade, HttpStatus.CREATED);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
