@@ -16,9 +16,9 @@
     <properties>
         <java.version>17</java.version>
         <sonar.host.url>http://localhost:9000/</sonar.host.url>
-        <sonar.token>sqp_ebacd29ae77929c8d6df4373b3b6bcd7a1c7604f
+        <sonar.token>sqp_a7f8f35c975f117cfb2d22483caa406aa40dfb6d
         </sonar.token>
-        <sonar.projectKey>retry-integration</sonar.projectKey>
+        <sonar.projectKey>IP_Project</sonar.projectKey>
     </properties>
     <dependencies>
         <dependency>

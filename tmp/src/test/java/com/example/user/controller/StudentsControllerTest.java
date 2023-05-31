@@ -1,6 +1,7 @@
 package com.example.user.controller;
 import com.example.security.objects.Student;
 import com.example.security.services.StudentsService;
+import com.example.signin.security.EmailService;
 import com.example.subject.service.SubjectService;
 import com.example.user.controllers.StudentsController;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -35,6 +36,9 @@ class StudentsControllerTest {
     private StudentsService studentsService;
     @MockBean
     private SubjectService subjectService;
+
+    @MockBean
+    private EmailService emailService;
 
     private Student stud1, stud2, stud3;
 

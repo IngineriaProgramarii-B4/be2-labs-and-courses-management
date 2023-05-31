@@ -105,6 +105,8 @@ public class AuthController {
                         adminAuth.setEmail(credentials.getEmail());
                         adminAuth.setPassword(credentials.getPassword());
                         adminAuth.setUsername(credentials.getEmail().substring(0, credentials.getEmail().indexOf('@')));
+                        adminAuth.setFirstname(credentials.getFirstname());
+                        adminAuth.setLastname(credentials.getLastname());
                         adminsRepository.save(adminAuth);
                     }
                      if(role == 2){

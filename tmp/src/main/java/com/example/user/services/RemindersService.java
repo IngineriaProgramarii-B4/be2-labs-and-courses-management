@@ -18,9 +18,10 @@ public class RemindersService {
     }
 
     public List<Reminder> getRemindersByParams(Map<String, Object> params) {
-        String creatorUsername = (String)params.get("creatorUsername");
+        //String creatorUsername = (String)params.get("creatorUsername");
         UUID id = (UUID) params.get("id");
-        return remindersRepository.findRemindersByParams(creatorUsername, id);
+        UUID creatorId = (UUID) params.get("creatorId");
+        return remindersRepository.findRemindersByParams(id, creatorId);
     }
 
     public void saveReminder(Reminder reminder) {

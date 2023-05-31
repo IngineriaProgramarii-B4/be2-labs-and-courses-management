@@ -73,12 +73,12 @@ class ReminderServiceTest {
 
         Map<String, Object> args = new HashMap<>();
 
-        args.put("creatorUsername", reminder1.getCreatorUsername());
+        args.put("creatorId", reminder1.getCreatorId());
         args.put("id", reminder1.getId());
 
         given(remindersRepository.findRemindersByParams(
-                reminder1.getCreatorUsername(),
-                reminder1.getId()
+                reminder1.getId(),
+                reminder1.getCreatorId()
         )).willReturn(expected);
 
         //When
