@@ -3,6 +3,7 @@ package com.example.user.controller;
 import com.example.catalog.models.Grade;
 import com.example.security.objects.Student;
 import com.example.security.services.StudentsService;
+import com.example.signin.security.EmailService;
 import com.example.subject.model.Subject;
 import com.example.subject.service.SubjectService;
 import com.example.user.controllers.StudentsController;
@@ -39,6 +40,10 @@ class CatalogStudentsControllerTest {
     private StudentsService studentsService;
     @MockBean
     private SubjectService subjectService;
+
+    @MockBean
+    private EmailService emailService;
+
     private Student student;
     private String subject;
     private Grade grade;
