@@ -7,9 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Repository("postgres")
 public class SubjectDataAccessService implements CourseDao{
@@ -36,6 +34,21 @@ public class SubjectDataAccessService implements CourseDao{
             e.printStackTrace();
         }
         return date;
+    }
+    private String getAvailableLocation(String location) {
+        Optional<Resource> optionalResource = resourceRepo.findDeletedByLocation(location);
+        if (optionalResource.isEmpty())
+            return location;
+
+        int suffix = 1;
+        String availableLocation = location;
+        while (optionalResource.isPresent()) {
+            availableLocation = location + "(" + suffix + ")";
+            optionalResource = resourceRepo.findDeletedByLocation(availableLocation);
+            suffix++;
+        }
+
+        return availableLocation;
     }
 
     // SUBJECTS
@@ -73,10 +86,7 @@ public class SubjectDataAccessService implements CourseDao{
         Resource oldImage = optionalSubject.get().getImage();
         if (oldImage != null) {
             String oldImageLocation = oldImage.getLocation(); //RESOURCE_PATH/Subject_image.jpg
-            String oldImageLocationUpdated = oldImageLocation.substring(
-                    0,
-                    oldImageLocation.lastIndexOf("/") + 1
-            ) + "DELETED_" + title + "_" + oldImage.getTitle();
+            String oldImageLocationUpdated = "DELETED/" + oldImageLocation;
             oldImage.setLocation(oldImageLocationUpdated);
             oldImage.setDeleted(true);
             oldImage.setUpdatedAt(formatDateTime());
@@ -97,37 +107,29 @@ public class SubjectDataAccessService implements CourseDao{
         if(subjectToUpdate == null)
             return 0;
 
-
         if (!subjectToUpdate.getTitle().equals(subject.getTitle())) {
             subjectToUpdate.setTitle(subject.getTitle());
 
             //updating resources:
+            List<Resource> updatedResources = new ArrayList<>();
             for (Component component : subjectToUpdate.getComponentList()) {
                 for (Resource resource : component.getResources()) {
-                    component.removeResource(resource);
+                    if (!component.getIsDeleted() && !resource.getIsDeleted()) {
+                        String newResLocation = subject.getTitle() + "/" + component.getType() + "/" + resource.getTitle();
+                        resource.setLocation(newResLocation);
 
-                    String resLocation = resource.getLocation();
-                    String newResLocation = resLocation.substring(
-                            0,
-                            resLocation.lastIndexOf("/") + 1
-                    ) + subject.getTitle() + "_" + component.getType() + "_" + resource.getTitle();
-                    resource.setLocation(newResLocation);
-                    //resource location: RESOURCE_PATH/OldSubjectTitle_Component_Resource.txt ->
-                    // -> RESOURCE_PATH/NewSubjectTitle_Component_Resource.txt
-                    component.addResource(resource);
-                    resourceRepo.save(resource);
+                        resourceRepo.save(resource);
+                        updatedResources.add(resource);
+                    }
                 }
+                component.setResources(updatedResources);
                 componentRepo.save(component);
             }
         }
 
         Resource oldImage = subjectToUpdate.getImage();
         if (oldImage != null) {
-            String locationOfOldImage = oldImage.getLocation(); //RESOURCE_PATH/OldSubjectTitle_image.jpg
-            String locationOfOldImageUpdated = locationOfOldImage.substring(
-                    0,
-                    locationOfOldImage.lastIndexOf("/") + 1
-            ) + subject.getTitle() + "_" + oldImage.getTitle();
+            String locationOfOldImageUpdated = subject.getTitle() + "/" + oldImage.getTitle();
 
             oldImage.setLocation(locationOfOldImageUpdated);
             resourceRepo.save(oldImage);
@@ -152,10 +154,7 @@ public class SubjectDataAccessService implements CourseDao{
         Resource oldImage = subjectToUpdate.getImage();
         if (oldImage != null) {
             String oldImageLocation = oldImage.getLocation(); //RESOURCE_PATH/Subject_image.jpg
-            String oldImageLocationUpdated = oldImageLocation.substring(
-                    0,
-                    oldImageLocation.lastIndexOf("/") + 1
-            ) + "OUTDATED_" + title + "_" + oldImage.getTitle();
+            String oldImageLocationUpdated = "OUTDATED/" + oldImageLocation;
 
             oldImage.setLocation(oldImageLocationUpdated);
 
@@ -272,11 +271,10 @@ public class SubjectDataAccessService implements CourseDao{
         if(resourceToDelete == null)
             return 0;
 
+        String newLocation = "DELETED/" + subjectTitle + "/" + componentType + "/" + resourceTitle;
+        newLocation = getAvailableLocation(newLocation);
+        resourceToDelete.setLocation(newLocation);
         resourceToDelete.setDeleted(true);
-        resourceToDelete.setLocation(resourceToDelete.getLocation().substring(
-                0,
-                resourceToDelete.getLocation().lastIndexOf("/") + 1
-        ) + "DELETED_" + subjectTitle + "_" + componentType + "_" + resourceTitle);
         resourceToDelete.setUpdatedAt(formatDateTime());
         resourceRepo.save(resourceToDelete);
 

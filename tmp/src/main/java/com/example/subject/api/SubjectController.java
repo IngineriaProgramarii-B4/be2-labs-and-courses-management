@@ -1,6 +1,7 @@
 
 package com.example.subject.api;
 
+import com.example.firebase.FirebaseStorageStrategy;
 import com.example.subject.model.Subject;
 import com.example.subject.service.SubjectService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,8 +11,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.nio.file.Files;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,9 +25,12 @@ public class SubjectController {
 
     private final SubjectService subjectService;
 
+    private final FirebaseStorageStrategy firebaseStorageStrategy;
+
     @Autowired
-    public SubjectController(SubjectService subjectService) {
+    public SubjectController(SubjectService subjectService, FirebaseStorageStrategy firebaseStorageStrategy) {
         this.subjectService = subjectService;
+        this.firebaseStorageStrategy = firebaseStorageStrategy;
     }
 
     @GetMapping
@@ -89,7 +91,8 @@ public class SubjectController {
         if(subjectMaybe.isEmpty())
             return ResponseEntity.status(NOT_FOUND).body(SUBJECT_ERROR.getBytes());
         try {
-            byte[] img = Files.readAllBytes(new File(subjectMaybe.get().getImage().getLocation()).toPath());
+            /*byte[] img = Files.readAllBytes(new File(subjectMaybe.get().getImage().getLocation()).toPath());*/
+            byte[] img = firebaseStorageStrategy.download(subjectMaybe.get().getImage().getLocation());
             return ResponseEntity
                     .status(OK)
                     .contentType(MediaType.valueOf(subjectMaybe.get().getImage().getType()))

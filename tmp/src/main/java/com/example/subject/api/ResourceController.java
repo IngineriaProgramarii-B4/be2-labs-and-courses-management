@@ -1,5 +1,6 @@
 package com.example.subject.api;
 
+import com.example.firebase.FirebaseStorageStrategy;
 import com.example.subject.model.Resource;
 import com.example.subject.service.ComponentService;
 import com.example.subject.service.ResourceService;
@@ -13,8 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.io.File;
-import java.nio.file.Files;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,11 +30,15 @@ public class ResourceController {
     private final ResourceService resourceService;
     private final SubjectService subjectService;
     private final ComponentService componentService;
+    private final FirebaseStorageStrategy firebaseStorageStrategy;
+
     @Autowired
-    public ResourceController(ResourceService resourceService, SubjectService subjectService, ComponentService componentService) {
+    public ResourceController(ResourceService resourceService, SubjectService subjectService, ComponentService componentService,
+                              FirebaseStorageStrategy firebaseStorageStrategy) {
         this.resourceService = resourceService;
         this.subjectService = subjectService;
         this.componentService = componentService;
+        this.firebaseStorageStrategy = firebaseStorageStrategy;
     }
 
     @GetMapping
@@ -88,7 +91,8 @@ public class ResourceController {
             throw new ResponseStatusException(NOT_FOUND, RESOURCE_ERROR);
         Resource resource1 = resource.get();
         try{
-            byte[] file = Files.readAllBytes(new File(resource1.getLocation()).toPath());
+            /*byte[] file = Files.readAllBytes(new File(resource1.getLocation()).toPath());*/
+            byte[] file = firebaseStorageStrategy.download(resource1.getLocation());
             return ResponseEntity.status(HttpStatus.OK)
                     .contentType(MediaType.valueOf(resource1.getType()))
                     .body(file);

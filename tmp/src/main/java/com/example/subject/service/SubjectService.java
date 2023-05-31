@@ -1,6 +1,7 @@
 
 package com.example.subject.service;
 
+import com.example.firebase.FirebaseStorageStrategy;
 import com.example.subject.dao.CourseDao;
 import com.example.subject.model.Component;
 import com.example.subject.model.Resource;
@@ -13,10 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import java.util.logging.Logger;
 
@@ -24,13 +22,15 @@ import java.util.logging.Logger;
 @Transactional
 public class SubjectService {
     private final CourseDao courseDao;
-    private static final String RESOURCE_PATH = "savedResources/";
     private static final String RENAME_FAILURE = "RENAME FAILURE";
     private static final Logger logger = Logger.getLogger(SubjectService.class.getName());
 
+    private final FirebaseStorageStrategy firebaseStorageStrategy;
+
     @Autowired
-    public SubjectService(@Qualifier("postgres") CourseDao courseDao) {
+    public SubjectService(@Qualifier("postgres") CourseDao courseDao, FirebaseStorageStrategy firebaseStorageStragetegy) {
         this.courseDao = courseDao;
+        this.firebaseStorageStrategy = firebaseStorageStragetegy;
     }
 
     public boolean validateSubject(Subject subject){
@@ -92,7 +92,7 @@ public class SubjectService {
     }
 
     public int deleteSubjectByTitle(String title) {
-        ComponentService componentService = new ComponentService(courseDao);
+        ComponentService componentService = new ComponentService(courseDao, firebaseStorageStrategy);
 
         if (!validateTitle(title))
             return 0;
@@ -108,18 +108,11 @@ public class SubjectService {
         }
         oldImage = subject.get().getImage();
         if (oldImage != null) {
-            File oldImageFile = new File(oldImage.getLocation());
-            String oldImageLocation = oldImage.getLocation(); //RESOURCE_PATH/Subject_image.jpg
-            String oldImageLocationUpdated = oldImageLocation.substring(
-                    0,
-                    oldImageLocation.lastIndexOf("/") + 1
-            ) + "DELETED_" + title + "_" + oldImage.getTitle();
-            //-> RESOURCE_PATH/DELETED_Subject_image.jpg
-
-            if (oldImageFile.renameTo(new File(oldImageLocationUpdated))) {
-                logger.info(oldImageLocationUpdated);
+            try {
+                firebaseStorageStrategy.deleteFile(oldImage.getLocation());
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            else logger.info(RENAME_FAILURE);
         }
 
         return courseDao.deleteSubjectByTitle(title);
@@ -129,38 +122,55 @@ public class SubjectService {
         if(!validateUpdate(title, subject.getTitle()))
             return 0;
 
-        for (Component component : courseDao.getComponents(title))
-            for (Resource resource : courseDao.getResourcesForComponentType(title, component.getType())) {
-                String resLocation = resource.getLocation();
-                File resFile = new File(resLocation);
-
-                String newResLocation = resLocation.substring(
-                        0,
-                        resLocation.lastIndexOf("/") + 1
-                ) + subject.getTitle() + "_" + component.getType() + "_" + resource.getTitle();
-
-                if (resFile.renameTo(new File(newResLocation))) {
-                    logger.info(newResLocation);
+        List<Component> components = courseDao.getComponents(title);
+        List<Resource> allResources = new ArrayList<>();
+        List<byte[]> allResourcesBytes = new ArrayList<>();
+        int nrResources = 0;
+        for (Component component : components) {
+            List<Resource> compResource = courseDao.getResourcesForComponentType(title, component.getType());
+            allResources.addAll(compResource);
+            nrResources += compResource.size();
+            for(Resource resource : compResource){
+                try {
+                    allResourcesBytes.add(firebaseStorageStrategy.download(resource.getLocation()));
+                    firebaseStorageStrategy.deleteFile(resource.getLocation());
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-                else logger.info(RENAME_FAILURE);
             }
+        }
+
+        for(int i = 0; i < nrResources; i++){
+            Resource resource = allResources.get(i);
+            byte[] resourceBytes = allResourcesBytes.get(i);
+            String resourceLocation = resource.getLocation();
+            String resourceLocationUpdated = resourceLocation.substring(
+                    resourceLocation.indexOf("/") + 1
+            );
+            resourceLocationUpdated = subject.getTitle() + "/" + resourceLocationUpdated;
+            resourceLocationUpdated = resourceLocationUpdated.substring(
+                    0,
+                    resourceLocationUpdated.lastIndexOf("/")
+            );
+            try {
+                firebaseStorageStrategy.uploadBytes(resourceBytes, resource.getTitle(), resourceLocationUpdated);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 
         Optional<Subject> subject1 = courseDao.selectSubjectByTitle(title);
         Resource oldImage = null;
         if(subject1.isPresent())
             oldImage = subject1.get().getImage();
         if (oldImage != null) {
-            String oldImageLocation = oldImage.getLocation();
-            File oldImageFile = new File(oldImageLocation);
-
-            String oldImageLocationUpdated = oldImageLocation.substring(
-                    0,
-                    oldImageLocation.lastIndexOf("/") + 1
-            ) + subject.getTitle() + "_" + oldImage.getTitle();
-            if (oldImageFile.renameTo(new File(oldImageLocationUpdated))) {
-                logger.info(oldImageLocationUpdated);
+            try {
+                byte[] imageBytes = firebaseStorageStrategy.download(oldImage.getLocation());
+                firebaseStorageStrategy.deleteFile(oldImage.getLocation());
+                firebaseStorageStrategy.uploadBytes(imageBytes, oldImage.getTitle(), subject.getTitle());
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            else logger.info(RENAME_FAILURE);
         }
 
         return courseDao.updateSubjectByTitle(title, subject);
@@ -177,37 +187,14 @@ public class SubjectService {
             oldImageLocation = oldImage.getLocation();
         }
 
-        String fileName = title + "_" + image.getOriginalFilename();
-        String filePath = RESOURCE_PATH + fileName;
+        String fileName = title + "/" + image.getOriginalFilename();
         String fileType = image.getContentType();
-        Resource resource = new Resource(image.getOriginalFilename(), filePath, fileType);
+        Resource resource = new Resource(image.getOriginalFilename(), fileName, fileType);
         if(courseDao.saveImageToSubject(title, resource) == 0)
             return 0;
         try {
-            String absPath = new File("").getAbsolutePath();
-            Path absolutePath = Path.of(absPath);
-            Path folderPath = absolutePath.resolve(RESOURCE_PATH);
-            File folder = new File(folderPath.toString());
-            if (!folder.exists()) {
-                folder.mkdir();
-            }
-
-            if (oldImage != null) {
-                File oldImageFile = new File(oldImageLocation);
-                String oldImageLocationUpdated = oldImageLocation.substring(
-                        0,
-                        oldImageLocation.lastIndexOf("/") + 1
-                ) + "OUTDATED_" + title + "_" + oldImage.getTitle();
-
-                oldImage.setLocation(oldImageLocationUpdated);
-                // -> RESOURCE_PATH/OUTDATED_Subject_image.jpg
-
-                if (oldImageFile.renameTo(new File(oldImageLocationUpdated))) {
-                    logger.info(oldImageLocationUpdated);
-                }
-                else logger.info(RENAME_FAILURE);
-            }
-            image.transferTo(new File(folderPath.resolve(fileName).toString()));
+            firebaseStorageStrategy.deleteFile(oldImageLocation);
+            firebaseStorageStrategy.upload(image, image.getOriginalFilename(), title);
             return 1;
         } catch (Exception e) {
             logger.log(java.util.logging.Level.SEVERE, "Exception: ", e);

@@ -1,5 +1,6 @@
 package com.example.subject.service;
 
+import com.example.firebase.FirebaseStorageStrategy;
 import com.example.subject.dao.CourseDao;
 import com.example.subject.model.Component;
 import com.example.subject.model.Resource;
@@ -9,8 +10,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,12 +19,14 @@ import java.util.logging.Logger;
 @Transactional
 public class ResourceService {
     private final CourseDao courseDao;
-    private static final String RESOURCE_PATH = "savedResources/";
     private static final Logger logger = Logger.getLogger(ResourceService.class.getName());
+    private final FirebaseStorageStrategy firebaseStorageStrategy;
 
     @Autowired
-    public ResourceService(@Qualifier("postgres") CourseDao courseDao) {
+    public ResourceService(@Qualifier("postgres") CourseDao courseDao,
+                           FirebaseStorageStrategy firebaseStorageStrategy) {
         this.courseDao = courseDao;
+        this.firebaseStorageStrategy = firebaseStorageStrategy;
     }
 
     public boolean validateExistingResource(String title, String type, Resource resource){
@@ -52,25 +53,16 @@ public class ResourceService {
     }
 
     public int addResource(MultipartFile file, String title, String type){
-        String fileName = title + "_" + type + "_" + file.getOriginalFilename();
+        String fileName = title + "/" + type + "/" + file.getOriginalFilename();
         Resource resource = new Resource(
-                file.getOriginalFilename(),
-                RESOURCE_PATH + fileName,
-                file.getContentType()
+                file.getOriginalFilename(), fileName, file.getContentType()
         );
         if(!validateNewResource(title, type, resource))
             return 0;
         if(courseDao.addResourceForComponentType(title, type, resource) == 0)
             return 0;
         try {
-            String absPath = new File("").getAbsolutePath();
-            Path absolutePath = Path.of(absPath);
-            Path folderPath = absolutePath.resolve(RESOURCE_PATH);
-            File folder = new File(folderPath.toString());
-            if (!folder.exists()) {
-                folder.mkdir();
-            }
-            file.transferTo(new File(folderPath.resolve(fileName).toString()));
+            firebaseStorageStrategy.upload(file, file.getOriginalFilename(), title + "/" + type);
             return 1;
         } catch (Exception e) {
             logger.log(java.util.logging.Level.SEVERE, "Exception: ", e);
@@ -92,17 +84,14 @@ public class ResourceService {
             return 0;
         }
         Resource resource = optionalResource.get();
-        String newResLocation = resource.getLocation().substring(
-                0,
-                resource.getLocation().lastIndexOf("/") + 1
-        ) + "DELETED_" + title + "_" + type + "_" + resource.getTitle();
-        File file = new File(resource.getLocation());
 
         if (validateExistingResource(title, type, resource)) {
-            if (file.renameTo(new File(newResLocation))) {
-                logger.info(newResLocation);
+            try {
+                firebaseStorageStrategy.deleteFile(resource.getLocation());
+            } catch (Exception e) {
+                logger.log(java.util.logging.Level.SEVERE, "Exception: ", e);
+                return 0;
             }
-            else logger.info("RENAME FAILED");
             return courseDao.deleteResourceByTitleForComponentType(title, type, resourceTitle);
         }
         return 0;

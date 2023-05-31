@@ -40,6 +40,16 @@ public class FirebaseStorageStrategy{
         return tempFile;
     }
 
+    public boolean uploadBytes(byte[] bytes, String fileName, String rootFolder) throws IOException {
+        String unified = rootFolder + "/" + fileName;
+        BlobId blobId = BlobId.of("unimanager-8952e.appspot.com", unified);
+        BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("media").build();
+        Credentials credentials = GoogleCredentials.fromStream(new FileInputStream(firebasePropsPath));
+        Storage storage = StorageOptions.newBuilder().setCredentials(credentials).build().getService();
+        storage.create(blobInfo, bytes);
+        return true;
+    }
+
     public boolean upload(MultipartFile multipartFile, String fileName, String rootFolder) {
         try {
             File file = this.convertToFile(multipartFile, fileName);
